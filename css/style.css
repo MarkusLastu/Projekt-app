@@ -99,7 +99,6 @@
 }
 
 
-
 .page {
     display: grid;
     grid-template-areas:
@@ -111,12 +110,14 @@
     gap: var(--spacing-md);
     max-width: var(--page-maxwidth);
     margin: 0 auto;
+    
 }
 
 header {
     grid-area: header;
     background-color: var(--bg-header);
     padding: var(--spacing-lg);
+    
 }
 
 nav {

@@ -27,7 +27,7 @@ button.addEventListener("click", funcionName());
 
 // #region FUNCTIONS
 /* Här ligger all logik. */
-
+ 
 function functionName(inputValue) {
    console.log(inputValue);
 }
