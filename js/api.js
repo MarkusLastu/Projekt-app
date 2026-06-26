@@ -9,17 +9,17 @@ console.log('Ansluten med minSupabaseKlient')
 
 // ladda län
 
-async function laddaLan() {
+async function arter() {
     // Tänk på att uppdatera ID:t i din HTML till 'lanSelect' också!
-    const select = document.getElementById('lanSelect');
+    const select = document.getElementById('ArtNamnSelect');
     const status = document.getElementById('status');
 
-    status.textContent = '🔄 Hämtar län...';
+    status.textContent = '🔄 Hämtar arter...';
 
     try {
         const { data, error } = await minSupabaseKlient
-            .from('sverige')
-            .select('id, lan')
+            .from('arter')
+            .select('id, namn')
             .order('lan');
 
         if (error) {
@@ -28,16 +28,16 @@ async function laddaLan() {
             return;
         }
 
-        select.innerHTML = '<option value="">-- Välj län --</option>';
+        select.innerHTML = '<option value="">-- Välj art --</option>';
 
-        data.forEach(lanItem => {
+        data.forEach(artItem => {
             const option = document.createElement('option');
-            option.value = lanItem.id;
-            option.textContent = lanItem.lan;
+            option.value = artItem.id;
+            option.textContent = artItem.namn;
             select.appendChild(option);
         });
 
-        status.textContent = '✅ ' + data.length + ' län laddade!';
+        status.textContent = '✅ ' + data.length + ' arter laddade!';
 
     } catch (error) {
         status.textContent = '❌ Nätverksfel: ' + error.message;
