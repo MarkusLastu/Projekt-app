@@ -53,70 +53,58 @@ async function laddaKommuner() {
 
 // === LADDA OBSERVATIONER ===
 async function laddaObservationer() {
+    skapaLoggar("Laddar observationer...", observationStatus);
 
-   skapaLoggar("Laddar observationer...", observationStatus)
+    try {
+        const { data: observationer, error } = await mySupabaseClient
+            .from('Observationer')
+            .select("id, Datum, Latitude, Longitude, Art_id, Arter(ArtNamn)")
+            .order('Datum', { ascending: false });
 
-   try {
-      const { data: observationer, error } = await mySupabaseClient
-         .from('vargar')
-         .select("id, created_at, lat, lon, antal, kommun_id, datum, gavleborg(kommunnamn)")
-         .order('datum', { ascending: false });
-      if (error) {
-         console.error('Fel:', error);
-         return;
-      }
-      const lista = document.getElementById('observationerLista');
-      lista.innerHTML = '';
-      if (!observationer || observationer.length === 0) {
-         lista.innerHTML = `
-            <div class="empty-state">
-            <span class="emoji">🐺</span>
-            <p>Inga observationer än.</p>
-            </div>
-         `;
-         // Rensa kartmarkörer
-         clearObservationMarkers();
-         return;
-      }
-      // Rensa kartmarkörer
-      clearObservationMarkers();
-      observationer.forEach(obs => {
-         const div = document.createElement('div');
-         div.className = 'observation';
-         const antal = obs.antal || 1;
-         const datum = new Date(obs.datum).toLocaleDateString('sv-SE');
+        if (error) {
+            console.error('Fel:', error);
+            return;
+        }
 
-         div.innerHTML = `
-            <div class="kommun">${obs.gavleborg.kommunnamn}</div>
-            <div class="datum">📅 ${datum}</div>
-            <div class="koordinater">📍 ${obs.lat}, ${obs.lon}</div>
-            <div>🐺 ${antal} varg${antal > 1 ? 'ar' : ''}</div>
+        const lista = document.getElementById('observationerLista');
+        lista.innerHTML = '';
+        clearObservationMarkers(); // Rensa gamla markörer
+
+        if (!observationer || observationer.length === 0) {
+            lista.innerHTML = `<div class="empty-state"><p>Inga observationer än.</p></div>`;
+            return;
+        }
+
+        observationer.forEach(obs => {
+            const div = document.createElement('div');
+            div.className = 'observation';
+            const datum = new Date(obs.Datum).toLocaleDateString('sv-SE');
+            const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur';
+
+            div.innerHTML = `
+                <div>🐾 ${artNamn}</div>
+                <div class="datum">📅 ${datum}</div>
+                <div class="koordinater">📍 ${obs.Latitude}, ${obs.Longitude}</div>
             `;
-         lista.appendChild(div);
-         // Karta, lägg till markör om koordinater finns
-         if (obs.lat && obs.lon) {
-            addObservationMarker(obs.lat, obs.lon, obs.kommunnamn,
-               antal, obs.datum);
-         }
-      });
+            lista.appendChild(div);
 
-      // Anpassa kartvy till alla markörer
-      if (observationMarkers.length > 0) {
-         const group = L.featureGroup(observationMarkers);
-         map.fitBounds(group.getBounds().pad(0.1));
-      } else {
-         // Återställ till standardvy om inga markörer
-         map.setView([61.5, 16.5], 8);
-      }
+            // KARTA: Lägg till markör om koordinater finns
+            if (obs.Latitude && obs.Longitude) {
+                // Vi skickar med artnamnet istället för kommun
+                addObservationMarker(obs.Latitude, obs.Longitude, artNamn, 1, obs.Datum);
+            }
+        });
 
-      
-      skapaLoggar('✅ ' + observationer.length + ' observationer laddade!', observationStatus);
-      console.log('=== OBSERVATIONER: ===');
-      console.log(observationer);
+        // Anpassa kartvy
+        if (observationMarkers.length > 0) {
+            const group = L.featureGroup(observationMarkers);
+            map.fitBounds(group.getBounds().pad(0.1));
+        }
 
-   } catch (error) {
-      console.error('Nätverksfel:', error);
-   }
+        skapaLoggar('✅ ' + observationer.length + ' observationer laddade!', observationStatus);
+    } catch (error) {
+        console.error('Nätverksfel:', error);
+    }
 }
 // -------------------------------------------------------
 
