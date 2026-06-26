@@ -10,9 +10,8 @@ const kartaStatus = document.getElementById('kartaStatus');
 
 // #region === STATE - GLOBALA VARIABLER ===
 /* Vilken information behöver programmet komma ihåg? */
-let map;
-let marker = null;
-let observationMarkers = [];
+
+
 // -------------------------------------------------------
 // #endregion
 
@@ -40,30 +39,6 @@ async function visaVaderForObservation(lat, lon) {
    }
 }
 
-
-
-// === Skapa loggar ===
-function skapaLoggar(text, statusElement) {
-   // text = texten du vill skriva i loggen och på sidan
-   // statusElement = (ID på elementet du vill skicka texten till) (jag har skapat flera divvar i HTML med olika Namn: kommunStatus, obersvationStatus, kartaStatus)
-   // -----------------------------------------------------
-   // Lägg in dessa längst js-filen utanför denna funktion
-   // const kommunStatus = document.getElementById("kommunStatus");
-   // const observationStatus = document.getElementById('observationStatus');
-   // const kartaStatus = document.getElementById('kartaStatus');
-   // -----------------------------------------------------
-   // Anropa så här från andra funktioner:
-   // skapaLoggar("Laddar kommuner...", kommunStatus);
-   // skapaLoggar("Sparar observation...", observationStatus);
-   // skapaLoggar("Kartan är klar", kartaStatus);
-   // -----------------------------------------------------
-   // Då är det enklare att följa hur långt koden funka om det går fel nånstans.
-
-   console.log(text);
-   if (statusElement) {
-      document.getElementById(statusElement.textContent = text)
-   }
-}
 // -------------------------------------------------------
 // #endregion
 
@@ -74,22 +49,27 @@ function skapaLoggar(text, statusElement) {
 // #region STARTUP
 /* Kod som ska köras när sidan laddas. */
 
+import * as ui from "./ui.js";
+import * as database from "./database.js";
+import * as map from "./map.js";
+import * as api from "./api.js";
+
 document.addEventListener('DOMContentLoaded', function () {
-   skapaLoggar('🚀 Appen startar...');
+   ui.skapaLoggar('🚀 Appen startar...');
 
    // 1. Skapa kartan med OSM-bakgrund
-   skapaKarta();
+   map.skapaKarta();
 
    // 2. Lägg till klick-funktionalitet
-   laggTillKlickFunktion();
+   map.laggTillKlickFunktion();
 
    // 3. Ladda data från Supsabase
 
-   laddaKommuner();
-   laddaObservationer();
+   database.laddaKommuner();
+   database.laddaObservationer();
 
    // 4. Event listeners
-   document.getElementById('sparaBtn').addEventListener('click', sparaObservation);
+   // document.getElementById('sparaBtn').addEventListener('click', sparaObservation);
 });
 
 // #endregion

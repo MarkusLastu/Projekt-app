@@ -1,22 +1,32 @@
 // -------------------------------------------------------
 
 
+// === KOPPLAR TILL ANDRA JS-FILER ===
+import { skapaLoggar } from "./ui.js";
+
+
+// -------------------------------------------------------
+
+
 // === ANSLUT TILL SUPABASECLIENT ===
-skapaLoggar('Ansluter till mySupabaseClient');
+skapaLoggar('Ansluter till mySupabaseClient', dbStatus);
+
 const mySupabaseClient = window.supabase.createClient(
-   "https://tlfodbbdftijglhatvqp.supabase.co",
-   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsZm9kYmJkZnRpamdsaGF0dnFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyODM1MjIsImV4cCI6MjA5Nzg1OTUyMn0.rqgYwfWLNjPFHbHnnzV8jiivkOtK9TfAFQKgY4IpSIw"
-)
-skapaLoggar('✅ Ansluten med mySupabaseClient');
+   "https://tevnovztzryjomtrtkcc.supabase.co",
+   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRldm5vdnp0enJ5am9tdHJ0a2NjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MzYzNjAsImV4cCI6MjA5ODAxMjM2MH0.Av5W6Xbt4oMgZcMxvkmVPrGYLxtQL9-lTYPmJQZhLRo"
+);
+
+skapaLoggar('✅ Ansluten med mySupabaseClient', dbStatus);
 // -------------------------------------------------------
 
 
 // === LADDA KOMMUNER ===
-async function laddaKommuner() {
+export async function laddaKommuner() {
 
    const select = document.getElementById("kommunSelect");
+   const dbKommunStatus = document.getElementById("dbKommunStatus");
 
-   skapaLoggar("Laddar kommuner...", kommunStatus);
+   skapaLoggar("Laddar kommuner...", dbKommunStatus);
 
    try {
       const { data: kommuner, error } = await mySupabaseClient
@@ -25,8 +35,7 @@ async function laddaKommuner() {
          .order("kommunnamn");
 
       if (error) {
-         kommunStatus.textContent = "❌ Fel: " + error.message;
-         console.error(error);
+         skapaLoggar("❌ Fel: " + error.message, dbKommunStatus);
          return;
       }
 
@@ -39,7 +48,7 @@ async function laddaKommuner() {
          select.appendChild(option);
       });
 
-      skapaLoggar('✅ ' + kommuner.length + ' kommuner laddade!', kommunStatus);
+      skapaLoggar('✅ ' + kommuner.length + ' kommuner laddade!', dbKommunStatus);
       console.log(kommuner);
 
 
@@ -52,8 +61,11 @@ async function laddaKommuner() {
 
 
 // === LADDA OBSERVATIONER ===
-async function laddaObservationer() {
-   skapaLoggar("Laddar observationer...", observationStatus);
+export async function laddaObservationer() {
+   
+   const dbObservationStatus = document.getElementById("dbObservationStatus");
+
+   skapaLoggar("Laddar observationer...", dbObservationStatus);
 
    try {
       const { data: observationer, error } = await mySupabaseClient
@@ -62,7 +74,7 @@ async function laddaObservationer() {
          .order('Datum', { ascending: false });
 
       if (error) {
-         console.error('Fel:', error);
+         skapaLoggar('Fel:' + error, dbObservationStatus);
          return;
       }
 
@@ -101,16 +113,20 @@ async function laddaObservationer() {
          map.fitBounds(group.getBounds().pad(0.1));
       }
 
-      skapaLoggar('✅ ' + observationer.length + ' observationer laddade!', observationStatus);
+      skapaLoggar('✅ ' + observationer.length + ' observationer laddade!', dbObservationStatus);
+      console.log(observationer)
    } catch (error) {
-      console.error('Nätverksfel:', error);
+      skapaLoggar('Nätverksfel:', error);
    }
 }
 // -------------------------------------------------------
 
 
 // === SPARA OBSERVATION ===
-async function sparaObservation() {
+export async function sparaObservation() {
+   const dbSaveObservationStatus = document.getElementById("dbSaveObservationStatus");
+   skapaLoggar("Laddar observationer...", dbSaveObservationStatus);
+
    // Hämta värden från HTML (se till att ID:n stämmer med din HTML)
    const artId = document.getElementById("ArtNamnSelect").value; // Byt från kommunSelect
    const datum = document.getElementById("datumInput").value;
@@ -146,6 +162,8 @@ async function sparaObservation() {
 
       laddaObservationer(); // Ladda om listan
 
+      skapaLoggar('✅ Observation sparad!', dbSaveObservationStatus);
+
    } catch (error) {
       console.error('Nätverksfel: ' + error.message);
    }
@@ -163,5 +181,5 @@ mySupabaseClient
    )
    .subscribe();
 
-skapaLoggar.log('Supabase har uppdaterats');
+skapaLoggar('Supabase har uppdaterats', dbStatus);
 // -------------------------------------------------------

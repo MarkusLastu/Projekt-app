@@ -1,7 +1,19 @@
+// -------------------------------------------------------
+
+// === KOPPLAR TILL ANDRA JS-FILER ===
+import { skapaLoggar } from "./ui.js";
+
+// -------------------------------------------------------
+
+
 // === EXTERNA API-TJÄNSTER ===
 
 // Wikipedia
-async function hamtaWikiSammanfattning(sokord) {
+export async function hamtaWikiSammanfattning(sokord) {
+    const wikiStatus = document.getElementById("wikiStatus");
+    skapaLoggar('Läser från Wikipedia...', wikiStatus);
+
+
     try {
         const url = `https://sv.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(sokord)}`;
         const response = await fetch(url);
@@ -12,6 +24,8 @@ async function hamtaWikiSammanfattning(sokord) {
             text: data.extract,
             bildUrl: data.thumbnail ? data.thumbnail.source : null
         };
+        skapaLoggar('✅ Wikipedia inläst', wikiStatus);
+
     } catch (error) {
         console.error('Wikipedia-fel:', error);
         return null;
@@ -19,8 +33,12 @@ async function hamtaWikiSammanfattning(sokord) {
 }
 
 // Unsplash
-async function hamtaBakgrundsbild(sokord) {
+export async function hamtaBakgrundsbild(sokord) {
+    const unsplashStatus = document.getElementById("unsplashStatus");
+    skapaLoggar('Läser från Unsplash...', unsplashStatus);
+
     const accessKey = 'z3_YcJGOVhxQf56FRurRqQCy0z35MDLvLI3tXq_4yKI';
+
     try {
         const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(sokord)}&client_id=${accessKey}&per_page=1`;
         const response = await fetch(url);
@@ -31,6 +49,7 @@ async function hamtaBakgrundsbild(sokord) {
             url: data.results[0].urls.regular,
             altText: data.results[0].alt_description
         };
+        skapaLoggar('✅ nsplash inläst', unsplashStatus);
     } catch (error) {
         console.error('Unsplash-fel:', error);
         return null;
@@ -38,7 +57,10 @@ async function hamtaBakgrundsbild(sokord) {
 }
 
 // Väder (Open-Meteo)
-async function hamtaVader(lat, lon) {
+export async function hamtaVader(lat, lon) {
+    const weatherStatus = document.getElementById("weatherStatus");
+    skapaLoggar('Hämtar väderuppgifter...', weatherStatus);
+
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
         const response = await fetch(url);
@@ -50,6 +72,7 @@ async function hamtaVader(lat, lon) {
             beskrivning: vaderInfo.text,
             emoji: vaderInfo.emoji
         };
+        skapaLoggar('✅ Väderuppgifter inläst', weatherStatus);
     } catch (error) {
         console.error('Open-Meteo fel:', error);
         return null;
@@ -57,7 +80,7 @@ async function hamtaVader(lat, lon) {
 }
 
 // Hjälpfunktion för väder
-function tolkaVaderKod(kod) {
+export function tolkaVaderKod(kod) {
     const koder = {
         0: { text: "Klart", emoji: "☀️" },
         1: { text: "Mestadels klart", emoji: "🌤️" },

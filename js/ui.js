@@ -2,7 +2,7 @@
 
 
 // === SKAPA LOGG I CONSOLE OCH DIV-ELEMENT ===
-function skapaLoggar(text, statusElement) {
+export function skapaLoggar(text, statusElement) {
    // text = texten du vill skriva i loggen och på sidan
    // statusElement = (ID på elementet du vill skicka texten till) (jag har skapat flera divvar i HTML med olika Namn: kommunStatus, obersvationStatus, kartaStatus)
    // -----------------------------------------------------

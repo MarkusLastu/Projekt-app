@@ -1,11 +1,27 @@
 // -------------------------------------------------------
 
 
+// === KOPPLAR TILL ANDRA JS-FILER ===
+import { skapaLoggar } from "./ui.js";
+
+
+// -------------------------------------------------------
+
+// === KONSTANTER OCH VARIABLER ===
+let map;
+let marker = null;
+let observationMarkers = [];
+
+// -------------------------------------------------------
+
 // === SKAPA KARTAN ===
 
-function skapaKarta() {
+export function skapaKarta() {
+
+   const mapCreateStatus = document.getElementById("mapCreateStatus");
+
    // Skapar kartan och centrerar över Gävle
-   skapaLoggar("Laddar kartan...", mapStatus);
+   skapaLoggar("Laddar kartan...", mapCreateStatus);
 
    map = L.map('map').setView([61.5, 16.5], 8);
 
@@ -23,7 +39,7 @@ function skapaKarta() {
 
    skapaLoggar('🗺️ Zoom och skala tillagd på kartan');
 
-   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', mapStatus);
+   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', mapCreateStatus);
 
    return map;
 }
@@ -32,8 +48,10 @@ function skapaKarta() {
 
 // === LÄGGER TILL KLICK-FUNKTION PÅ KARTAN ===
 // === När användaren klickar fylls koordinaterna i formuläret ===
-function laggTillKlickFunktion() {
-   skapaLoggar('Klickfunktion på kartan körs.');
+export function laggTillKlickFunktion() {
+   const mapAddClickStatus = document.getElementById("mapAddClickStatus");
+   skapaLoggar('Klickfunktion på kartan körs.', mapAddClickStatus);
+
    map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
       const lon = e.latlng.lng.toFixed(6);
@@ -53,7 +71,9 @@ function laggTillKlickFunktion() {
 
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
-function addObservationMarker(lat, lon, artNamn, antal, datum) {
+   
+
+function addObservationMarker(lat, lon, artNamn, antal, datum) {   
    const popupContent = `
         <strong>${artNamn}</strong><br>
         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
