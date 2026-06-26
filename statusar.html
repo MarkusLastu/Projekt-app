@@ -5,18 +5,21 @@
     <meta charset="UTF-8">
     <title>Världens bästa hemsida</title>
 
-    <!-- <link rel="stylesheet" href="css/root.css"> -->
     <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 </head>
 
 <body>
-    
+
     <div class="page">
 
         <header>
-            <h1>Nu kör vi!</h1>
-            <p>Tjo och tjim!?</p>
+            <h1>Status på våra anrop</h1>
+            <p></p>
         </header>
 
         <nav>
@@ -28,19 +31,23 @@
         <main>
 
             <section>
-                <h2>Huvudinnehåll</h2>
-                <p>
-                    Här visas sidans huvudinnehåll.
-                </p>
-                <p>
-                    Section ligger i den vänstra delen av main.
-                </p>
+                <h2>Databas anrop</h2>
+                <p id="dbStatus">...</p>
+
+                <h2>Wiki API</h2>
+                <p id="wikiStatus">...</p>
+
+                <h2>Weather API</h2>
+                <p id="weatherStatus">...</p>
+
+                <h2>Unsplash API</h2>
+                <p id="unsplashStatus">...</p>
+
+
             </section>
             <aside>
-                <h3>Fakta</h3>
-                <p>
-                    Aside ligger i den högra delen av main.
-                </p>
+                <h3>Kartan</h3>
+                <p id=mapStatus>...</p>
             </aside>
 
         </main>
@@ -52,7 +59,7 @@
 
         <script src="js/api.js"></script>
         <script src="js/database.js"></script>
-        <script src="js/map.js"></script>        
+        <script src="js/map.js"></script>
         <script src="js/ui.js"></script>
         <script src="js/app.js"></script>
 

@@ -5,7 +5,7 @@
 
 function skapaKarta() {
    // Skapar kartan och centrerar över Gävle
-   skapaLoggar("Laddar kartan...", kartaStatus);
+   skapaLoggar("Laddar kartan...", mapStatus);
 
    map = L.map('map').setView([61.5, 16.5], 8);
 
@@ -23,7 +23,7 @@ function skapaKarta() {
 
    skapaLoggar('🗺️ Zoom och skala tillagd på kartan');
 
-   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', kartaStatus);
+   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', mapStatus);
 
    return map;
 }
