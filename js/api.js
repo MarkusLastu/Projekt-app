@@ -7,7 +7,7 @@ const minSupabaseKlient = window.supabase.createClient(
 
 console.log('Ansluten med minSupabaseKlient')
 
-// ladda län
+// ladda arter
 
 async function arter() {
     // Tänk på att uppdatera ID:t i din HTML till 'lanSelect' också!
@@ -18,9 +18,9 @@ async function arter() {
 
     try {
         const { data, error } = await minSupabaseKlient
-            .from('arter')
-            .select('id, namn')
-            .order('lan');
+            .from('observationer')
+            .select('id, arter')
+            .order('arter');
 
         if (error) {
             status.textContent = '❌ Fel: ' + error.message;
@@ -33,7 +33,7 @@ async function arter() {
         data.forEach(artItem => {
             const option = document.createElement('option');
             option.value = artItem.id;
-            option.textContent = artItem.namn;
+            option.textContent = artItem.arter;
             select.appendChild(option);
         });
 
@@ -50,7 +50,7 @@ async function arter() {
 async function laddaObservationer() {
     try {
         const { data, error } = await minSupabaseKlient
-            .from('vargar')
+            .from('observationer')
             .select('*')
             .order('datum', { ascending: false });
 
@@ -105,8 +105,8 @@ async function sparaObservation() {
     const lon = parseFloat(document.getElementById('lonInput').value);
     const antal = parseInt(document.getElementById('antalInput').value) || 1;
 
-    if (!lanId) {
-        alert('Välj ett län!');
+    if (!artId) {
+        alert('Välj en art!');
         return;
     }
     if (!datum) {
@@ -127,7 +127,7 @@ async function sparaObservation() {
             .single();
 
         const { error } = await minSupabaseKlient
-            .from('vargar')
+            .from('observationer')
             .insert({
                 datum: datum,
                 lan: lanData.lan,
