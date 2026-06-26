@@ -10,7 +10,6 @@ console.log('Ansluten med minSupabaseKlient')
 // ladda arter
 
 async function arter() {
-    // Tänk på att uppdatera ID:t i din HTML till 'lanSelect' också!
     const select = document.getElementById('ArtNamnSelect');
     const status = document.getElementById('status');
 
@@ -18,13 +17,12 @@ async function arter() {
 
     try {
         const { data, error } = await minSupabaseKlient
-            .from('observationer')
-            .select('id, arter')
-            .order('arter');
+            .from('Arter')
+            .select('Art_id, ArtNamn')
+            .order('ArtNamn'); 
 
         if (error) {
             status.textContent = '❌ Fel: ' + error.message;
-            console.error(error);
             return;
         }
 
@@ -32,8 +30,8 @@ async function arter() {
 
         data.forEach(artItem => {
             const option = document.createElement('option');
-            option.value = artItem.id;
-            option.textContent = artItem.arter;
+            option.value = artItem.Art_id;
+            option.textContent = artItem.ArtNamn;
             select.appendChild(option);
         });
 
@@ -41,7 +39,6 @@ async function arter() {
 
     } catch (error) {
         status.textContent = '❌ Nätverksfel: ' + error.message;
-        console.error(error);
     }
 }
 
@@ -50,9 +47,10 @@ async function arter() {
 async function laddaObservationer() {
     try {
         const { data, error } = await minSupabaseKlient
-            .from('observationer')
-            .select('*')
-            .order('datum', { ascending: false });
+            .from('Observationer')
+            // Magi: Vi hämtar all data från Observationer, OCH artnamnet från Arter-tabellen!
+            .select('*, Arter(ArtNamn)') 
+            .order('Datum', { ascending: false });
 
         if (error) {
             console.error('Fel:', error);
@@ -65,7 +63,7 @@ async function laddaObservationer() {
         if (!data || data.length === 0) {
             lista.innerHTML = `
                 <div class="empty-state">
-                    <span class="emoji">🐺</span>
+                    <span class="emoji">🐾</span>
                     <p>Inga observationer än.</p>
                 </div>
             `;
@@ -76,15 +74,16 @@ async function laddaObservationer() {
             const div = document.createElement('div');
             div.className = 'observation';
 
-            const antal = obs.antal || 1;
-            const datum = new Date(obs.datum).toLocaleDateString('sv-SE');
-
+            const datum = new Date(obs.Datum).toLocaleDateString('sv-SE');
+            
+            // Om koppling finns, hämta namnet. Annars skriv "Okänt djur"
+            const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur'; 
 
             div.innerHTML = `
-                <div class="lan">${obs.lan}</div>
+                <div class="lan">${obs.Lan || 'Okänt län'}</div>
                 <div class="datum">📅 ${datum}</div>
-                <div class="koordinater">📍 ${obs.lat},${obs.lon}</div>
-                <div>🐺 ${antal} varg${antal > 1 ? 'ar' : ''}</div>
+                <div class="koordinater">📍 ${obs.Latitude}, ${obs.Longitude}</div>
+                <div>🐾 ${artNamn}</div>
             `;
             lista.appendChild(div);
         });
