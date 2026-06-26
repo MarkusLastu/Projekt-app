@@ -1,8 +1,26 @@
 // -------------------------------------------------------
 
-<<<<<<< HEAD
 // #region === KOPPLA ELEMENT I HTML ===
-=======
+const kommunStatus = document.getElementById("kommunStatus");
+const observationStatus = document.getElementById('observationStatus');
+const kartaStatus = document.getElementById('kartaStatus');
+// -------------------------------------------------------
+// #endregion
+
+
+// #region === STATE - GLOBALA VARIABLER ===
+/* Vilken information behöver programmet komma ihåg? */
+let map;
+let marker = null;
+let observationMarkers = [];
+// -------------------------------------------------------
+// #endregion
+
+
+
+
+// #region FUNCTIONS
+/* Här ligger all logik. */
 
 async function uppdateraDashboard(lanNamn) {
    // Kör alla tre samtidigt!
@@ -23,40 +41,8 @@ async function visaVaderForObservation(lat, lon) {
 }
 
 
-// #region ELEMENT
->>>>>>> 28645f949a312bfdb774630b4872ad5c82caeba7
-/* Här hämtar du allt från HTML. */
-const kommunStatus = document.getElementById("kommunStatus");
-const observationStatus = document.getElementById('observationStatus');
-const kartaStatus = document.getElementById('kartaStatus');
 
-// #endregion
-
-// #region === STATE - GLOBALA VARIABLER ===
-/* Vilken information behöver programmet komma ihåg? */
-let map;
-let marker = null;
-let observationMarkers = [];
-
-// #endregion
-
-<<<<<<< HEAD
-// #region === STARTUP ===
-=======
-// #region EVENT LISTENERS
-/* Här kopplar du alla lyssnare. */
-
-button.addEventListener("click", function (inputValue) {
-   console.log(inputValue);
-});
-
-button.addEventListener("click", funcionName());
-// #endregion
-
-// #region FUNCTIONS
-/* Här ligger all logik. */
-
-// === Logga progress ===
+// === Skapa loggar ===
 function skapaLoggar(text, statusElement) {
    // text = texten du vill skriva i loggen och på sidan
    // statusElement = (ID på elementet du vill skicka texten till) (jag har skapat flera divvar i HTML med olika Namn: kommunStatus, obersvationStatus, kartaStatus)
@@ -78,17 +64,19 @@ function skapaLoggar(text, statusElement) {
       document.getElementById(statusElement.textContent = text)
    }
 }
-
+// -------------------------------------------------------
 // #endregion
 
+
+
+
+
 // #region STARTUP
->>>>>>> 28645f949a312bfdb774630b4872ad5c82caeba7
 /* Kod som ska köras när sidan laddas. */
 
 document.addEventListener('DOMContentLoaded', function () {
    skapaLoggar('🚀 Appen startar...');
 
-<<<<<<< HEAD
    // 1. Skapa kartan med OSM-bakgrund
    skapaKarta();
 
@@ -104,7 +92,5 @@ document.addEventListener('DOMContentLoaded', function () {
    document.getElementById('sparaBtn').addEventListener('click', sparaObservation);
 });
 
-=======
->>>>>>> 28645f949a312bfdb774630b4872ad5c82caeba7
 // #endregion
 
