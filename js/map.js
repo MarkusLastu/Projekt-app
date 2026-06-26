@@ -19,9 +19,15 @@ let observationMarkers = [];
 export function skapaKarta() {
 
    const mapCreateStatus = document.getElementById("mapCreateStatus");
-
-   // Skapar kartan och centrerar över Gävle
    skapaLoggar("Laddar kartan...", mapCreateStatus);
+   // Skapar kartan och centrerar över Gävle
+
+   const mapContainer = document.getElementById("map");
+
+   if (!mapContainer) {
+      console.warn("Ingen karta på denna sida");
+      return;
+   }
 
    map = L.map('map').setView([61.5, 16.5], 8);
 
@@ -52,6 +58,13 @@ export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
    skapaLoggar('Klickfunktion på kartan körs.', mapAddClickStatus);
 
+   const mapContainer = document.getElementById("map");
+
+   if (!mapContainer) {
+      console.warn("Ingen karta på denna sida");
+      return;
+   }
+   
    map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
       const lon = e.latlng.lng.toFixed(6);
@@ -71,9 +84,9 @@ export function laggTillKlickFunktion() {
 
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
-   
 
-function addObservationMarker(lat, lon, artNamn, antal, datum) {   
+
+function addObservationMarker(lat, lon, artNamn, antal, datum) {
    const popupContent = `
         <strong>${artNamn}</strong><br>
         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>

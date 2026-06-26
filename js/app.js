@@ -4,6 +4,7 @@
 const kommunStatus = document.getElementById("kommunStatus");
 const observationStatus = document.getElementById('observationStatus');
 const kartaStatus = document.getElementById('kartaStatus');
+
 // -------------------------------------------------------
 // #endregion
 
@@ -53,9 +54,13 @@ import * as ui from "./ui.js";
 import * as database from "./database.js";
 import * as map from "./map.js";
 import * as api from "./api.js";
+import * as components from "./components.js";
 
 document.addEventListener('DOMContentLoaded', function () {
    ui.skapaLoggar('🚀 Appen startar...');
+
+   document.getElementById("nav").innerHTML = components.nav;
+   document.getElementById("footer").innerHTML = components.footer;
 
    // 1. Skapa kartan med OSM-bakgrund
    map.skapaKarta();
@@ -71,6 +76,11 @@ document.addEventListener('DOMContentLoaded', function () {
    // 4. Event listeners
    // document.getElementById('sparaBtn').addEventListener('click', sparaObservation);
 });
+
+
+
+
+
 
 // #endregion
 

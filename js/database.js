@@ -9,6 +9,7 @@ import { skapaLoggar } from "./ui.js";
 
 
 // === ANSLUT TILL SUPABASECLIENT ===
+const dbStatus = document.getElementById("dbStatus");
 skapaLoggar('Ansluter till mySupabaseClient', dbStatus);
 
 const mySupabaseClient = window.supabase.createClient(

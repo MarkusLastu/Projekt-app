@@ -5,13 +5,18 @@
     <meta charset="UTF-8">
     <title>Världens bästa hemsida</title>
 
-    <!-- <link rel="stylesheet" href="css/root.css"> -->
     <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Databas JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 </head>
 
 <body>
-    
+
     <div class="page">
 
         <header>
@@ -20,9 +25,9 @@
         </header>
 
         <nav>
-            <a href="index.html">Hem</a>
-            <a href="projektinfo.html">Info om projektet</a>
-            <a href="statusar.html">Statusar för anrop</a>
+
+            <div id="nav"></div>
+
         </nav>
 
         <main>
@@ -46,15 +51,12 @@
         </main>
 
         <footer>
-        Marcus Berggren&trade; | Markus Lasumäki&trade; | Nicklas Larsson&trade; | 2026
+
+            <div id="footer"></div>
 
         </footer>
 
-        <script src="js/api.js"></script>
-        <script src="js/database.js"></script>
-        <script src="js/map.js"></script>        
-        <script src="js/ui.js"></script>
-        <script src="js/app.js"></script>
+        <script type="module" src="js/app.js"></script>
 
     </div>
 
