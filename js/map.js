@@ -1,0 +1,84 @@
+// -------------------------------------------------------
+
+
+// === SKAPA KARTAN ===
+
+function skapaKarta() {
+   // Skapar kartan och centrerar över Gävle
+   skapaLoggar("Laddar kartan...", kartaStatus);
+
+   map = L.map('map').setView([61.5, 16.5], 8);
+
+   // Lägg till OpenStreeMap-bakgrund
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>contributors',
+      maxZoom: 19,
+   }).addTo(map);
+
+   // Lägg till zoom-kontroller
+   L.control.zoom({ position: 'topleft' }).addTo(map);
+
+   // Lägg till skala
+   L.control.scale({ position: 'bottomright' }).addTo(map);
+
+   skapaLoggar('🗺️ Zoom och skala tillagd på kartan');
+
+   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', kartaStatus);
+
+   return map;
+}
+// -------------------------------------------------------
+
+
+// === LÄGGER TILL KLICK-FUNKTION PÅ KARTAN ===
+// === När användaren klickar fylls koordinaterna i formuläret ===
+function laggTillKlickFunktion() {
+   skapaLoggar('Klickfunktion på kartan körs.');
+   map.on('click', function (e) {
+      const lat = e.latlng.lat.toFixed(6);
+      const lon = e.latlng.lng.toFixed(6);
+
+      document.getElementById('latInput').value = lat;
+      document.getElementById('lonInput').value = lon;
+      // Sätt eller flytta markör
+      if (marker) {
+         marker.setLatLng(e.latlng);
+      } else {
+         marker = L.marker(e.latlng).addTo(map);
+      }
+      skapaLoggar(`📍 Klickade på: ${lat}, ${lon}`);
+   });
+}
+// -------------------------------------------------------
+
+
+// === LÄGGER TILL MARKERING PÅ KARTAN ===
+function addObservationMarker(lat, lon, kommunnamn, antal, datum) {
+   const popupContent = `
+<strong>${kommunnamn}</strong><br>
+🐺 ${antal} varg${antal > 1 ? 'ar' : ''}<br>
+📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+📍 ${lat}, ${lon}
+`;
+   const marker = L.marker([lat, lon])
+      .addTo(map)
+      .bindPopup(popupContent);
+   observationMarkers.push(marker);
+}
+// -------------------------------------------------------
+
+
+// === TAR BORT MARKERING PÅ KARTAN ===
+function clearObservationMarkers() {
+   observationMarkers.forEach(m => map.removeLayer(m));
+   observationMarkers = [];
+}
+
+// Ta bort tillfällig markör från kartan
+if (marker) {
+   map.removeLayer(marker);
+   marker = null;
+}
+// -------------------------------------------------------
+
+
