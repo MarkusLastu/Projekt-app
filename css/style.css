@@ -6,12 +6,12 @@
     */
 
     /* ===== COLORS ===== */
-
-    --bg-header: lightblue;
-    --bg-nav: rgb(189, 233, 189);
-    --bg-footer: lightgrey;
-    --bg-section: white;
-    --bg-aside: rgb(240, 240, 230);
+    --bg-main: #e6ebe3;
+    --bg-header: #2f4f3e;
+    --bg-nav: #5f7f5a; 
+    --bg-footer: #3b2f2f;
+    --bg-section:  #f4f1ea;
+    --bg-aside: #d9d2c3;
 
     /* Används ej för närvarande */
     --bg-page: #f7f9fc;
@@ -24,6 +24,9 @@
     --color-error: black;
     --color-success: black;
 
+    /* ===== TEXTCOLORS =====  */
+    --text-light: #f5f5f5;
+    --text-dark: #1f1f1f; 
     
     /* ===== STATUS ===== */
 
@@ -167,6 +170,12 @@
 
 }
 
+html, body {
+    margin: 0;
+    height: 100%;
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+    overflow-x: hidden;
+}
 
 .page {
     display: grid;
@@ -179,13 +188,16 @@
     gap: var(--spacing-md);
     max-width: var(--page-maxwidth);
     margin: 0 auto;
-
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+    
 }
 
 header {
     grid-area: header;
     background-color: var(--bg-header);
     padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
 
 }
 
@@ -193,6 +205,12 @@ nav {
     grid-area: nav;
     background-color: var(--bg-nav);
     padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
+}
+
+a {
+    color: var(--text-light);
 }
 
 main {
@@ -208,6 +226,8 @@ footer {
     grid-area: footer;
     background-color: var(--bg-footer);
     padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
 }
 
 section {
