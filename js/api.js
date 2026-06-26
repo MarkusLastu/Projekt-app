@@ -37,7 +37,8 @@ export async function hamtaBakgrundsbild(sokord) {
     const unsplashStatus = document.getElementById("unsplashStatus");
     skapaLoggar('Läser från Unsplash...', unsplashStatus);
 
-    const accessKey = 'KLISTRA_IN_DIN_UNSPLASH_ACCESS_KEY_HÄR';
+    const accessKey = 'z3_YcJGOVhxQf56FRurRqQCy0z35MDLvLI3tXq_4yKI';
+
     try {
         const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(sokord)}&client_id=${accessKey}&per_page=1`;
         const response = await fetch(url);
