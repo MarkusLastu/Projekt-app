@@ -53,13 +53,12 @@ function laggTillKlickFunktion() {
 
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
-function addObservationMarker(lat, lon, kommunnamn, antal, datum) {
+function addObservationMarker(lat, lon, artNamn, antal, datum) {
    const popupContent = `
-<strong>${kommunnamn}</strong><br>
-🐺 ${antal} varg${antal > 1 ? 'ar' : ''}<br>
-📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
-📍 ${lat}, ${lon}
-`;
+        <strong>${artNamn}</strong><br>
+        📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+        📍 ${lat}, ${lon}
+    `;
    const marker = L.marker([lat, lon])
       .addTo(map)
       .bindPopup(popupContent);
