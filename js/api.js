@@ -1,6 +1,7 @@
 // -------------------------------------------------------
 
 // === KOPPLAR TILL ANDRA JS-FILER ===
+import * as ui from "./ui.js";
 import { skapaLoggar } from "./ui.js";
 
 // -------------------------------------------------------
@@ -19,12 +20,13 @@ export async function hamtaWikiSammanfattning(sokord) {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Hittade ingen Wikipedia-artikel');
         const data = await response.json();
+
+        skapaLoggar('✅ Wikipedia inläst', wikiStatus);
         return {
             titel: data.title,
             text: data.extract,
             bildUrl: data.thumbnail ? data.thumbnail.source : null
         };
-        skapaLoggar('✅ Wikipedia inläst', wikiStatus);
 
     } catch (error) {
         console.error('Wikipedia-fel:', error);
@@ -45,11 +47,13 @@ export async function hamtaBakgrundsbild(sokord) {
         if (!response.ok) throw new Error('Kunde inte hämta bild från Unsplash');
         const data = await response.json();
         if (data.results.length === 0) return null;
+
+        skapaLoggar('✅ Unsplash inläst', unsplashStatus);
         return {
             url: data.results[0].urls.regular,
             altText: data.results[0].alt_description
         };
-        skapaLoggar('✅ nsplash inläst', unsplashStatus);
+
     } catch (error) {
         console.error('Unsplash-fel:', error);
         return null;
@@ -58,23 +62,39 @@ export async function hamtaBakgrundsbild(sokord) {
 
 // Väder (Open-Meteo)
 export async function hamtaVader(lat, lon) {
-    const weatherStatus = document.getElementById("weatherStatus");
-    skapaLoggar('Hämtar väderuppgifter...', weatherStatus);
+    const weatherStatusElem = document.getElementById("weatherStatus");
+
+    if (weatherStatusElem) {
+        ui.skapaLoggar("⏳ Hämtar väderdata...", weatherStatusElem);
+    }
 
     try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
         const response = await fetch(url);
+
         if (!response.ok) throw new Error('Kunde inte hämta väderdata');
+
         const data = await response.json();
+
+        // Använd din hjälpfunktion för att tolka koden!
         const vaderInfo = tolkaVaderKod(data.current.weather_code);
+
+        if (weatherStatusElem) {
+            ui.skapaLoggar(`✅ Väder hämtat: ${data.current.temperature_2m}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
+        }
+
         return {
             temp: data.current.temperature_2m,
             beskrivning: vaderInfo.text,
             emoji: vaderInfo.emoji
         };
-        skapaLoggar('✅ Väderuppgifter inläst', weatherStatus);
+
     } catch (error) {
-        console.error('Open-Meteo fel:', error);
+        console.error("Väderfel:", error);
+
+        if (weatherStatusElem) {
+            ui.skapaLoggar("❌ Misslyckades att hämta väder", weatherStatusElem);
+        }
         return null;
     }
 }

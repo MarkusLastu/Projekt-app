@@ -8,11 +8,6 @@
     <link rel="stylesheet" href="css/style.css">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Databas JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
 
 </head>
 
@@ -34,11 +29,11 @@
         <main>
 
             <section>
+
                 <h2>Databas anrop</h2>
-                <p id="dbStatus">... koppla upp ...</p>
-                <p id="dbKommunStatus">... ladda kommun ...</p>
-                <p id="dbObservationStatus">... ladda observation ...</p>
-                <p id="dbSaveObservationStatus">... spara observation ...</p>
+                <p id="dbStatus">... kopplar upp ...</p>
+                <p id="dbLanStatus">... laddar län ...</p>
+                <p id="dbObservationStatus">... laddar observationer ...</p>
 
                 <h2>Wiki API</h2>
                 <p id="wikiStatus">...</p>
@@ -50,22 +45,26 @@
                 <p id="unsplashStatus">...</p>
 
                 <h2>Map API</h2>
-                <p id=mapCreateStatus>... karta skapas...</p>
-                <p id=mapAddClickStatus>... Klickfunktion ...</p>
-                <p id=mapCreateStatus>... karta ...</p>
-                <p id=mapCreateStatus>... karta ...</p>
+                <p id="dbKartaStatus">... laddar karta ...</p>
+                <p id="mapCreateStatus">... karta skapas...</p>
+                <p id="mapAddClickStatus">... laddar klickfunktion ...</p>
 
+                <h2>Graf</h2>
+                <p id="uppdateraGraf">... laddar graf ...</p>
 
             </section>
+
             <aside>
                 <div class="map-section">
                     <h2>🗺️ Karta</h2>
                     <div id="map"></div>
                     <p class="hint">💡 Klicka på kartan för att fylla i koordinater</p>
                 </div>
+
             </aside>
 
         </main>
+
 
         <footer>
 
@@ -73,7 +72,11 @@
 
         </footer>
 
-
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <!-- Leaflet JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <!-- Databas JS -->
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
         <script type="module" src="js/app.js"></script>
 
     </div>

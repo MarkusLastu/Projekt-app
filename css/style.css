@@ -1,243 +1,286 @@
 :root {
-
-    /* 
-    Varje block under root har ett antal förslag på variabler som jag har fått från ChatGPT. 
-    Dom kan ni använda om ni vill styla något. Annars snyggar vi till det senare i veckan med AI.
-    */
-
-    /* ===== COLORS ===== */
-    --bg-main: #e6ebe3;
-    --bg-header: #2f4f3e;
-    --bg-nav: #5f7f5a; 
-    --bg-footer: #3b2f2f;
-    --bg-section:  #f4f1ea;
-    --bg-aside: #d9d2c3;
-
-    /* Används ej för närvarande */
-    --bg-page: #f7f9fc;
-    --bg-card: white;
-    --bg-modal: white;
-    --bg-overlay: rgba(0, 0, 0, .5);
-
-    --color-primary: black;
-    --color-secondary: black;
-    --color-error: black;
-    --color-success: black;
-
-    /* ===== TEXTCOLORS =====  */
-    --text-light: #f5f5f5;
-    --text-dark: #1f1f1f; 
+    /* ===== TEMA: LIGHT MODE (Standard) ===== */
+    --bg-main: #f4f7f6;
+    --bg-surface: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
     
-    /* ===== STATUS ===== */
+    --accent-color: #4CAF50;
+    --accent-hover: #45a049;
+    --border-color: #e2e8f0;
 
+    --status-bg: #eef;
+    --status-border: #0056b3;
 
-    /* Används ej för närvarande */
-    --status-success: #3cb371;
-    --status-warning: #ffb703;
-    --status-error: #e63946;
-    --status-info: #219ebc;
-
-    /* ===== TYPOGRAPHY ===== */
-
-    
-    /* Används ej för närvarande */    
-    --font-family: Arial;
-    --font-size-small: 14px;
-    --font-size-normal: 16px;
-    --font-size-large: 20px;
-    --font-size-heading: 32px;
-
-    /* ===== ICONS ===== */
-
-    /* Används ej för närvarande */
-    --icon-size-sm: 18px;
-    --icon-size-md: 24px;
-    --icon-size-lg: 36px;
-
-
-    /* ===== SPACING ===== */
-
-    --spacing-md: 15px;
-    --spacing-lg: 20px;
-
-    /* Används ej för närvarande */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-
-
-    /* ===== LAYOUT ===== */
-
-    --page-maxwidth: 1000px;
-
-    /* Används ej för närvarande */
-    --page-width: 0px;
-    --sidebar-width: 0px;
-    --header-height: 0px;
-
-
-    /* ===== SIZING ===== */
-
-    /* Används ej för närvarande */
-    --container-sm: 700px;
-    --container-md: 1000px;
-    --container-lg: 1400px;
-
-
-    /* ===== BORDERS & RADIUS ===== */
-
-
-    /* Används ej för närvarande */
-    --border-radius-sm: 4px;
-    --border-radius-md: 8px;
+    /* ===== SHADOWS & BORDERS ===== */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --border-radius-lg: 12px;
-    --border-radius-xl: 20px;
-
-
-    /* ===== SHADOWS ===== */
-
-
-    /* Används ej för närvarande */
-    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.18);
-
-
-    /* ===== ANIMATIONS ===== */
-
-
-    /* Används ej för närvarande */
-    --transition-fast: .2s;
-    --transition-normal: .35s;
-    --transition-slow: .6s;
-
-    --animation-bounce: cubic-bezier(.34, 1.56, .64, 1);
-
-    --hover-opacity: .9;
-    --hover-scale: 1.02;
-    --hover-translate: -3px;
-
-
-    /* ===== FORMS ===== */
-
-
-    /* Används ej för närvarande */
-    --form-bg: #16384d;
-    --form-maxwidth: 300px;
-
-    --label-color: #eaf4ff;
-    --label-fontweight: bold;
-    --label-font-size: 0px;
-
-    --input-bg: 0px;
-    --input-width: 0px;
-    --input-height: 0px;
-    --input-padding: 0px;
-    --input-border-width: 0px;
-    --input-fontsize: 16px;
-
-    --checkbox-size: 0px;
-    --radio-size: 0px;
-
-    --button-bg: #407fdf;
-    --button-padding: 10px 20px;
-    --button-radius: 6px;
-    --button-width: 0px;
-    --button-color: #0b1c2c;
-    --button-hover-color: #ffa124;
-    --button-disabled-color: gray;
-
-    --card-padding: 20px;
-    --card-gap: 20px;
-    --card-radius: 12px;
-    --card-width: 0px;
-
-
-    /* ===== IMAGES ===== */
-
-    /* Används ej för närvarande */
-    --image-radius: 12px;
-    --image-height: 220px;
-
-    /* ===== MAP ===== */
-
-    /* Används ej för närvarande */
-    --map-height: 500px;
-    --map-radius: 12px;
-    --z-dropdown: 10;
-    --z-header: 20;
-    --z-modal: 100;
-    --z-toast: 500;
-
+    --border-radius-md: 8px;
 }
 
-html, body {
-    margin: 0;
-    height: 100%;
-    background: linear-gradient(to bottom, #638f63, #3f7a3f);
-    overflow-x: hidden;
-}
-
-.page {
-    display: grid;
-    grid-template-areas:
-        "header header"
-        "nav nav"
-        "main main"
-        "footer footer";
-    grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-md);
-    max-width: var(--page-maxwidth);
-    margin: 0 auto;
-    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+/* ===== TEMA: DARK MODE ===== */
+body.dark-theme {
+    --bg-main: #1a202c;
+    --bg-surface: #2d3748;
+    --text-primary: #f7fafc;
+    --text-secondary: #a0aec0;
     
+    --border-color: #4a5568;
+    --status-bg: #2b6cb0;
+    --status-border: #63b3ed;
 }
 
-header {
-    grid-area: header;
-    background-color: var(--bg-header);
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-xl);
-    color: var(--text-light);
-
+/* ===== GRUNDINSTÄLLNINGAR ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-nav {
-    grid-area: nav;
-    background-color: var(--bg-nav);
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-xl);
-    color: var(--text-light);
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    transition: background-color 0.3s, color 0.3s;
+    height: 100vh;
+    overflow: hidden; /* Förhindrar sidscroll, ger en app-känsla */
 }
 
-a {
-    color: var(--text-light);
+/* ===== LAYOUT: DASHBOARD ===== */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-main {
-    grid-area: main;
-    display: grid;
-    grid-template-areas:
-        "section aside";
-    grid-template-columns: 1fr 1fr;
+/* HEADER */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-surface);
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    z-index: 10;
 }
 
-
-footer {
-    grid-area: footer;
-    background-color: var(--bg-footer);
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-xl);
-    color: var(--text-light);
+.logo h1 {
+    font-size: 20px;
+    margin: 0;
 }
 
-section {
-    grid-area: section;
-    background-color: var(--bg-section);
-    padding: var(--spacing-lg);
+.topbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-aside {
-    grid-area: aside;
-    background-color: var(--bg-aside);
-    padding: var(--spacing-lg);
+.weather-widget {
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.theme-btn {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.theme-btn:hover {
+    background: var(--border-color);
+}
+
+/* HUVUDINNEHÅLL (MAIN) */
+.main-layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* SIDOFÄLT (SIDEBAR) */
+.sidebar {
+    width: 320px;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.sidebar h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+/* FILTER & CHECKBOXAR */
+.filter-group {
+    background: var(--bg-main);
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.filter-title {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.custom-checkbox span {
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+}
+
+/* SYSTEM STATUS */
+.status-log {
+    padding: 8px 12px;
+    background: var(--status-bg);
+    border-left: 4px solid var(--status-border);
+    margin-bottom: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 10px 0;
+}
+
+/* MAP SECTION */
+.map-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+.map-container {
+    flex: 1;
+    border-radius: var(--border-radius-lg);
+    border: 2px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    z-index: 1; /* Håller kartan under header */
+}
+
+/* ===== GRAF-CONTAINER ===== */
+.chart-container {
+    background-color: var(--bg-surface);
+    padding: 15px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    height: 200px; /* Perfekt höjd för att inte ta över hela skärmen */
+    position: relative;
+}
+
+/* TIMELINE / SLIDER */
+.timeline-container {
+    background-color: var(--bg-surface);
+    padding: 20px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.timeline-header {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.styled-slider {
+    width: 100%;
+    cursor: pointer;
+    accent-color: var(--accent-color); /* Modern HTML5 accent färg för sliders */
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+/* ===== RANGE SLIDER (DUBBEL) ===== */
+.range-slider-wrapper {
+    position: relative;
+    height: 30px;
+    margin: 15px 0;
+}
+
+.range-slider-wrapper input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: none; /* Döljer standardskenan så de inte krockar */
+    pointer-events: none; /* Gör skenan "genomskinlig" för musklick */
+    -webkit-appearance: none;
+    appearance: none;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Skenan på den undre slidern får agera bakgrund */
+.range-slider-wrapper input[type="range"]:first-child {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+/* Styla själva runda knapparna (Thumbs) för Webkit (Chrome, Safari, Edge) */
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    pointer-events: auto; /* Aktiverar klick/drag på enbart runda knappen! */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Samma sak för Firefox */
+.range-slider-wrapper input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }

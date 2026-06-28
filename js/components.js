@@ -13,6 +13,3 @@ export const footer = `
         <p>Marcus Berggren&trade; | Markus Lasumäki&trade; | Nicklas Larsson&trade; | 2026</p>  
     </footer>
 `;
-
-
-

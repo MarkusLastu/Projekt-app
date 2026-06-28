@@ -1,9 +1,19 @@
 // -------------------------------------------------------
 
+import * as ui from "./ui.js";
+import * as database from "./database.js";
+import * as mapModul from "./map.js";
+import * as api from "./api.js";
+import * as components from "./components.js";
+
+
 // #region === KOPPLA ELEMENT I HTML ===
-const kommunStatus = document.getElementById("kommunStatus");
-const observationStatus = document.getElementById('observationStatus');
-const kartaStatus = document.getElementById('kartaStatus');
+const lanStatus = document.getElementById("dbLanStatus");
+const observationStatus = document.getElementById('dbObservationStatus');
+const kartaStatus = document.getElementById('dbKartaStatus');
+const sliderMin = document.getElementById('timeSliderMin');
+const sliderMax = document.getElementById('timeSliderMax');
+const periodText = document.getElementById('periodText');
 
 // -------------------------------------------------------
 // #endregion
@@ -11,8 +21,7 @@ const kartaStatus = document.getElementById('kartaStatus');
 
 // #region === STATE - GLOBALA VARIABLER ===
 /* Vilken information behöver programmet komma ihåg? */
-
-
+let trendsChart = null;
 // -------------------------------------------------------
 // #endregion
 
@@ -21,6 +30,166 @@ const kartaStatus = document.getElementById('kartaStatus');
 
 // #region FUNCTIONS
 /* Här ligger all logik. */
+
+// Hjälpfunktion: Översätter ett index (0-20) till en läsbar text
+function indexTillText(index) {
+   const startAr = 2016;
+   const totaltAntalHalvar = parseInt(index);
+   const ar = startAr + Math.floor(totaltAntalHalvar / 2);
+   const ärAndraHalvåret = totaltAntalHalvar % 2 !== 0;
+   return `${ar} ${ärAndraHalvåret ? "H2" : "H1"}`;
+}
+
+// Hjälpfunktion: Räknar ut vilket index (0-20) ett specifikt datum har
+function hamtaIndexFranDatum(datumStr) {
+   const d = new Date(datumStr);
+   const ar = d.getFullYear();
+   const isH2 = d.getMonth() >= 6; // juli-december
+   return (ar - 2016) * 2 + (isH2 ? 1 : 0);
+}
+
+// Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
+function uppdateraGraf(valdaArtIds) {
+   // Berätta för statussidan att graf-logiken fungerar!
+   const grafStatus = document.getElementById("uppdateraGraf");
+   if (grafStatus) {
+      ui.skapaLoggar("✅ Graf-data beräknad och redo!", grafStatus);
+   }
+
+   // Leta efter själva ritytan (canvasen)
+   const canvas = document.getElementById('trendsChart');
+   if (!canvas) {
+      // Om canvas saknas (som på statussidan), avbryt här så det inte kraschar!
+      return; 
+   }
+
+   const ctx = canvas.getContext('2d');
+   const tidsEtiketter = [];
+   const perioderIndex = [];
+
+   // Fyll på tidsaxeln (0 till 20 halvvår)
+   for (let i = 0; i <= 20; i++) {
+      perioderIndex.push(i);
+      tidsEtiketter.push(indexTillText(i));
+   }
+
+   const artInställningar = {
+      1: { label: "Björn 🐻", färg: "#d97706" },
+      2: { label: "Varg 🐺", färg: "#4b5563" },
+      3: { label: "Lodjur 🐱", färg: "#2563eb" }
+   };
+
+   const nyaDatasets = valdaArtIds.map(artId => {
+      const info = artInställningar[artId] || { label: `Art ${artId}`, färg: "#666" };
+
+      const punkterData = perioderIndex.map(pIndex => {
+         return database.allaObservationer.filter(obs => {
+            if (obs.Art_id !== artId) return false;
+            return hamtaIndexFranDatum(obs.Datum) === pIndex;
+         }).length;
+      });
+
+      return {
+         label: info.label,
+         data: punkterData,
+         borderColor: info.färg,
+         backgroundColor: info.färg + "22",
+         tension: 0.3,
+         borderWidth: 3
+      };
+   });
+
+   if (!trendsChart) {
+      trendsChart = new Chart(ctx, {
+         type: 'line',
+         data: { labels: tidsEtiketter, datasets: nyaDatasets },
+         options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+               x: { grid: { display: false } },
+               y: { beginAtZero: true, ticks: { precision: 0 } }
+            }
+         }
+      });
+   } else {
+      trendsChart.data.datasets = nyaDatasets;
+      trendsChart.update();
+   }
+}
+
+// Den här funktionen körs så fort man drar i NÅGON av knapparna
+export function uppdateraKartaEfterFilter() {
+   // Sätt standardvärden om reglagen saknas (som på statussidan)
+   let minVal = 0;
+   let maxVal = 20;
+
+   if (sliderMin && sliderMax) {
+      minVal = parseInt(sliderMin.value);
+      maxVal = parseInt(sliderMax.value);
+
+      // Säkerhetsåtgärd för att knapparna inte ska gå omlott
+      if (minVal > maxVal) {
+         if (this === sliderMin) {
+            sliderMax.value = minVal;
+            maxVal = minVal;
+         } else {
+            sliderMin.value = maxVal;
+            minVal = maxVal;
+         }
+      }
+
+      if (periodText) {
+         periodText.textContent = `${indexTillText(minVal)} till ${indexTillText(maxVal)}`;
+      }
+   }
+
+   // Hämta vilka arter som är ikryssade (eller ta alla [1,2,3] som test om inga boxar finns)
+   const ikryssadeCheckboxar = document.querySelectorAll('.checkbox-group input:checked');
+   const valdaArtIds = ikryssadeCheckboxar.length > 0
+      ? Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value))
+      : [1, 2, 3];
+
+   // Uppdatera grafen
+   uppdateraGraf(valdaArtIds);
+
+   // UPPDATERA STATUS FÖR GRAFEN:
+   const grafStatus = document.getElementById("uppdateraGraf");
+   if (grafStatus) {
+      ui.skapaLoggar("✅ Grafen är uppdaterad och laddad!", grafStatus);
+   }
+
+   // Rensa gamla markörer från kartan
+   mapModul.clearObservationMarkers();
+
+   // Filtrera datan baserat på det nya UTDRAGNA intervallet!
+   const filtreradData = database.allaObservationer.filter(obs => {
+      const artMatch = valdaArtIds.includes(obs.Art_id);
+
+      // Räkna ut observationens tidsindex
+      const obsIndex = hamtaIndexFranDatum(obs.Datum);
+
+      // Kolla om den ligger INNANFÖR start- och slutknappen
+      const tidsMatch = (obsIndex >= minVal && obsIndex <= maxVal);
+
+      return artMatch && tidsMatch;
+   });
+
+   // Rita ut markörerna på kartan
+   filtreradData.forEach(obs => {
+      if (obs.Latitude && obs.Longitude) {
+         const latNum = parseFloat(obs.Latitude);
+         const lonNum = parseFloat(obs.Longitude);
+         const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur';
+
+         if (!isNaN(latNum) && !isNaN(lonNum)) {
+            mapModul.addObservationMarker(latNum, lonNum, artNamn, 1, obs.Datum);
+         }
+      }
+   });
+
+   ui.skapaLoggar(`🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
+}
 
 async function uppdateraDashboard(lanNamn) {
    // Kör alla tre samtidigt!
@@ -50,37 +219,59 @@ async function visaVaderForObservation(lat, lon) {
 // #region STARTUP
 /* Kod som ska köras när sidan laddas. */
 
-import * as ui from "./ui.js";
-import * as database from "./database.js";
-import * as map from "./map.js";
-import * as api from "./api.js";
-import * as components from "./components.js";
-
 document.addEventListener('DOMContentLoaded', function () {
    ui.skapaLoggar('🚀 Appen startar...');
 
-   document.getElementById("nav").innerHTML = components.nav;
-   document.getElementById("footer").innerHTML = components.footer;
+   // Lyssna på båda slider-knapparna samtidigt!
+
+   if (sliderMin && sliderMax) {
+      sliderMin.addEventListener('input', uppdateraKartaEfterFilter);
+      sliderMax.addEventListener('input', uppdateraKartaEfterFilter);
+   }
+
+   // Lyssna på kryssrutorna
+   document.querySelectorAll('.checkbox-group input').forEach(checkbox => {
+      checkbox.addEventListener('change', uppdateraKartaEfterFilter);
+   });
+
+   const navContainer = document.getElementById("nav");
+   if (navContainer) {
+      navContainer.innerHTML = components.nav;
+   }
+
+   const footerContainer = document.getElementById("footer");
+   if (footerContainer) {
+      footerContainer.innerHTML = components.footer;
+   }
 
    // 1. Skapa kartan med OSM-bakgrund
-   map.skapaKarta();
+   mapModul.skapaKarta();
 
    // 2. Lägg till klick-funktionalitet
-   map.laggTillKlickFunktion();
+   mapModul.laggTillKlickFunktion();
+   const dbKartaStatus = document.getElementById("dbKartaStatus");
+   if (dbKartaStatus) {
+      ui.skapaLoggar("✅ Kartmodulen är helt redo och aktiv!", dbKartaStatus);
+   }
 
    // 3. Ladda data från Supsabase
 
-   database.laddaKommuner();
+   database.laddaLan();
    database.laddaObservationer();
 
-   // 4. Event listeners
-   // document.getElementById('sparaBtn').addEventListener('click', sparaObservation);
+   // --- TESTKÖRNING FÖR STATUSSIDAN ---
+   // Kollar om vi är på statusar.html (genom att se om wikiStatus-elementet finns)
+   if (document.getElementById("wikiStatus")) {
+      ui.skapaLoggar('Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));
+
+      // Testar Wikipedia och Unsplash med "Gävle" som sökord
+      api.hamtaWikiSammanfattning("Gävle");
+      api.hamtaBakgrundsbild("Gävle");
+
+      // Testar vädret med Gävles koordinater
+      api.hamtaVader(60.6745, 17.1417);
+   }
 });
 
 
-
-
-
-
 // #endregion
-

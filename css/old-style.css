@@ -1,0 +1,243 @@
+:root {
+
+    /* 
+    Varje block under root har ett antal förslag på variabler som jag har fått från ChatGPT. 
+    Dom kan ni använda om ni vill styla något. Annars snyggar vi till det senare i veckan med AI.
+    */
+
+    /* ===== COLORS ===== */
+    --bg-main: #e6ebe3;
+    --bg-header: #2f4f3e;
+    --bg-nav: #5f7f5a; 
+    --bg-footer: #3b2f2f;
+    --bg-section:  #f4f1ea;
+    --bg-aside: #d9d2c3;
+
+    /* Används ej för närvarande */
+    --bg-page: #f7f9fc;
+    --bg-card: white;
+    --bg-modal: white;
+    --bg-overlay: rgba(0, 0, 0, .5);
+
+    --color-primary: black;
+    --color-secondary: black;
+    --color-error: black;
+    --color-success: black;
+
+    /* ===== TEXTCOLORS =====  */
+    --text-light: #f5f5f5;
+    --text-dark: #1f1f1f; 
+    
+    /* ===== STATUS ===== */
+
+
+    /* Används ej för närvarande */
+    --status-success: #3cb371;
+    --status-warning: #ffb703;
+    --status-error: #e63946;
+    --status-info: #219ebc;
+
+    /* ===== TYPOGRAPHY ===== */
+
+    
+    /* Används ej för närvarande */    
+    --font-family: Arial;
+    --font-size-small: 14px;
+    --font-size-normal: 16px;
+    --font-size-large: 20px;
+    --font-size-heading: 32px;
+
+    /* ===== ICONS ===== */
+
+    /* Används ej för närvarande */
+    --icon-size-sm: 18px;
+    --icon-size-md: 24px;
+    --icon-size-lg: 36px;
+
+
+    /* ===== SPACING ===== */
+
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+
+    /* Används ej för närvarande */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+
+
+    /* ===== LAYOUT ===== */
+
+    --page-maxwidth: 1000px;
+
+    /* Används ej för närvarande */
+    --page-width: 0px;
+    --sidebar-width: 0px;
+    --header-height: 0px;
+
+
+    /* ===== SIZING ===== */
+
+    /* Används ej för närvarande */
+    --container-sm: 700px;
+    --container-md: 1000px;
+    --container-lg: 1400px;
+
+
+    /* ===== BORDERS & RADIUS ===== */
+
+
+    /* Används ej för närvarande */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 20px;
+
+
+    /* ===== SHADOWS ===== */
+
+
+    /* Används ej för närvarande */
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.18);
+
+
+    /* ===== ANIMATIONS ===== */
+
+
+    /* Används ej för närvarande */
+    --transition-fast: .2s;
+    --transition-normal: .35s;
+    --transition-slow: .6s;
+
+    --animation-bounce: cubic-bezier(.34, 1.56, .64, 1);
+
+    --hover-opacity: .9;
+    --hover-scale: 1.02;
+    --hover-translate: -3px;
+
+
+    /* ===== FORMS ===== */
+
+
+    /* Används ej för närvarande */
+    --form-bg: #16384d;
+    --form-maxwidth: 300px;
+
+    --label-color: #eaf4ff;
+    --label-fontweight: bold;
+    --label-font-size: 0px;
+
+    --input-bg: 0px;
+    --input-width: 0px;
+    --input-height: 0px;
+    --input-padding: 0px;
+    --input-border-width: 0px;
+    --input-fontsize: 16px;
+
+    --checkbox-size: 0px;
+    --radio-size: 0px;
+
+    --button-bg: #407fdf;
+    --button-padding: 10px 20px;
+    --button-radius: 6px;
+    --button-width: 0px;
+    --button-color: #0b1c2c;
+    --button-hover-color: #ffa124;
+    --button-disabled-color: gray;
+
+    --card-padding: 20px;
+    --card-gap: 20px;
+    --card-radius: 12px;
+    --card-width: 0px;
+
+
+    /* ===== IMAGES ===== */
+
+    /* Används ej för närvarande */
+    --image-radius: 12px;
+    --image-height: 220px;
+
+    /* ===== MAP ===== */
+
+    /* Används ej för närvarande */
+    --map-height: 500px;
+    --map-radius: 12px;
+    --z-dropdown: 10;
+    --z-header: 20;
+    --z-modal: 100;
+    --z-toast: 500;
+
+}
+
+html, body {
+    margin: 0;
+    height: 100%;
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+    overflow-x: hidden;
+}
+
+.page {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "nav nav"
+        "main main"
+        "footer footer";
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    max-width: var(--page-maxwidth);
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+    
+}
+
+header {
+    grid-area: header;
+    background-color: var(--bg-header);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
+
+}
+
+nav {
+    grid-area: nav;
+    background-color: var(--bg-nav);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
+}
+
+a {
+    color: var(--text-light);
+}
+
+main {
+    grid-area: main;
+    display: grid;
+    grid-template-areas:
+        "section aside";
+    grid-template-columns: 1fr 1fr;
+}
+
+
+footer {
+    grid-area: footer;
+    background-color: var(--bg-footer);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
+    color: var(--text-light);
+}
+
+section {
+    grid-area: section;
+    background-color: var(--bg-section);
+    padding: var(--spacing-lg);
+}
+
+aside {
+    grid-area: aside;
+    background-color: var(--bg-aside);
+    padding: var(--spacing-lg);
+}

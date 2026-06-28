@@ -64,14 +64,22 @@ export function laggTillKlickFunktion() {
       console.warn("Ingen karta på denna sida");
       return;
    }
-   
+
    map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
       const lon = e.latlng.lng.toFixed(6);
 
-      document.getElementById('latInput').value = lat;
-      document.getElementById('lonInput').value = lon;
-      // Sätt eller flytta markör
+      // Hämta elementen först
+      const latInput = document.getElementById('latInput');
+      const lonInput = document.getElementById('lonInput');
+
+      // SÄKERHETSKOLL: Fyll bara i om fälten faktiskt existerar på sidan!
+      if (latInput && lonInput) {
+         latInput.value = lat;
+         lonInput.value = lon;
+      }
+
+      // Sätt eller flytta markör (detta vill vi göra oavsett sida!)
       if (marker) {
          marker.setLatLng(e.latlng);
       } else {
@@ -86,7 +94,7 @@ export function laggTillKlickFunktion() {
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
 
 
-function addObservationMarker(lat, lon, artNamn, antal, datum) {
+export function addObservationMarker(lat, lon, artNamn, antal, datum) {
    const popupContent = `
         <strong>${artNamn}</strong><br>
         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
@@ -101,16 +109,15 @@ function addObservationMarker(lat, lon, artNamn, antal, datum) {
 
 
 // === TAR BORT MARKERING PÅ KARTAN ===
-function clearObservationMarkers() {
+export function clearObservationMarkers() {
    observationMarkers.forEach(m => map.removeLayer(m));
    observationMarkers = [];
+
+   // Flytta in den tillfälliga klick-markören här så den rensas på rätt ställe!
+   if (marker) {
+      map.removeLayer(marker);
+      marker = null;
+   }
 }
 
-// Ta bort tillfällig markör från kartan
-if (marker) {
-   map.removeLayer(marker);
-   marker = null;
-}
 // -------------------------------------------------------
-
-
