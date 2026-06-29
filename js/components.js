@@ -12,22 +12,18 @@ export const footer = `
 
 export const themeToggle = document.getElementById("themeToggle");
 
-function updateThemeButton() {
+export function updateThemeButton() {
+        const html = document.documentElement
         if (document.body.classList.contains("dark-mode")) {
                 themeToggle.textContent = "☀️ Ljust tema";
                 themeToggle.classList.add("light-btn");
                 themeToggle.classList.remove("dark-btn");
+                html.dataset.theme = "dark";
         } else {
                 themeToggle.textContent = "🌙 Mörkt tema";
                 themeToggle.classList.add("dark-btn");
                 themeToggle.classList.remove("light-btn");
+                html.dataset.theme = "light";
         }
 }
 
-themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
-    updateThemeButton();
-});
-
-// Körs när sidan laddas
-updateThemeButton();
