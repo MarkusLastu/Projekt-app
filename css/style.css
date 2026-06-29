@@ -4,31 +4,74 @@
     --bg-surface: #ffffff;
     --text-primary: #2d3748;
     --text-secondary: #718096;
-    
+
     --accent-color: #4CAF50;
     --accent-hover: #45a049;
     --border-color: #e2e8f0;
 
+    --border-color: ;
     --status-bg: #eef;
     --status-border: #0056b3;
 
+    /* ===== LAYOUT ===== */
+
+    --page-maxwidth: 1000px;
+
+    /* ===== TYPOGRAPHY ===== */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-small: 14px;
+    --font-size-normal: 16px;
+    --font-size-large: 20px;
+    --font-size-heading: 20px;
+
+
+     /* ===== SPACING ===== */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
     /* ===== SHADOWS & BORDERS ===== */
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --border-radius-lg: 12px;
     --border-radius-md: 8px;
 }
 
+/* ===== GRUNDSTRUKTUR FÖR SIDAN ===== */
+.page {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "nav"
+        "main"
+        "footer";
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    max-width: var(--page-maxwidth);
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+
+}
+
 /* ===== TEMA: DARK MODE ===== */
-body.dark-theme {
+[data-theme="dark"] {
     --bg-main: #1a202c;
     --bg-surface: #2d3748;
     --text-primary: #f7fafc;
     --text-secondary: #a0aec0;
-    
+
+    --accent-color: ;
+    --accent-hover: ;
+    --border-color: ;
+
     --border-color: #4a5568;
     --status-bg: #2b6cb0;
     --status-border: #63b3ed;
 }
+
+
 
 /* ===== GRUNDINSTÄLLNINGAR ===== */
 * {
@@ -38,20 +81,17 @@ body.dark-theme {
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    font-family: var(--font-family);
     background-color: var(--bg-main);
     color: var(--text-primary);
     transition: background-color 0.3s, color 0.3s;
-    height: 100vh;
-    overflow: hidden; /* Förhindrar sidscroll, ger en app-känsla */
+    
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* Förhindrar sidscroll, ger en app-känsla */
 }
 
-/* ===== LAYOUT: DASHBOARD ===== */
-.dashboard {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-}
 
 /* HEADER */
 .topbar {
@@ -59,26 +99,26 @@ body {
     justify-content: space-between;
     align-items: center;
     background-color: var(--bg-surface);
-    padding: 15px 20px;
+    padding: var(--spacing-md) var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
     z-index: 10;
 }
 
 .logo h1 {
-    font-size: 20px;
+    font-size: var(--font-size-heading);
     margin: 0;
 }
 
 .topbar-controls {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: var(--spacing-lg);
 }
 
 .weather-widget {
     font-weight: 500;
-    font-size: 14px;
+    font-size: var(--font-size-small);    
 }
 
 .theme-btn {
@@ -96,37 +136,86 @@ body {
     background: var(--border-color);
 }
 
-/* HUVUDINNEHÅLL (MAIN) */
-.main-layout {
+nav {
     display: flex;
-    flex: 1;
+    gap: var(--spacing-lg);
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg);
+
+    background-color: var(--bg-surface);
+    padding: var(--spacing-md) var(--spacing-lg);
+
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+
+/* Länkar i nav (viktigt för snygg känsla) */
+nav a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: var(--font-size-small);
+
+    padding: 6px 10px;
+    border-radius: var(--border-radius-md);
+
+    transition: 0.2s ease;
+}
+
+nav a:hover {
+    background-color: var(--bg-main);
+    color: var(--accent-color);
+}
+
+
+/* HUVUDINNEHÅLL (MAIN) */
+.main-layout {    
+    display: grid;
+    grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
+    
+    grid-template-areas:
+        "aside section";     
+    height: calc(100vh - 180px);
     overflow: hidden;
 }
 
+
 /* SIDOFÄLT (SIDEBAR) */
 .sidebar {
-    width: 320px;
+    grid-area: aside;
+    width: 100%;
     background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
-    padding: 20px;
+    padding: var(--spacing-lg);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: var(--spacing-lg);
 }
 
 .sidebar h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: var(--font-size-normal);    
+    margin-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 5px;
+    padding-bottom: var(--spacing-xs);
     display: inline-block;
 }
+
 
 /* FILTER & CHECKBOXAR */
 .filter-group {
     background: var(--bg-main);
-    padding: 15px;
+    padding: var(--spacing-md);
     border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
 }
@@ -134,8 +223,8 @@ body {
 .filter-title {
     display: block;
     font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 14px;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-small);
 }
 
 .checkbox-group {
@@ -145,14 +234,14 @@ body {
 }
 
 .custom-checkbox span {
-    font-size: 15px;
+    font-size: var(--font-size-normal);
     cursor: pointer;
 }
 
 .radio-group {
     display: flex;
-    gap: 15px;
-    font-size: 14px;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-small);
 }
 
 /* SYSTEM STATUS */
@@ -169,41 +258,47 @@ body {
 hr {
     border: 0;
     border-top: 1px solid var(--border-color);
-    margin: 10px 0;
+    margin: var(--spacing-sm) 0;
 }
 
 /* MAP SECTION */
 .map-section {
-    flex: 1;
+    grid-area: section;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    gap: 20px;
+    flex: 1;
+    padding: var(--spacing-lg);
+    gap: var(--spacing-lg);
 }
 
-.map-container {
-    flex: 1;
+.map-container {    
+    min-height: 300px;
+    width: 100%;
+    flex: 1;    
     border-radius: var(--border-radius-lg);
     border: 2px solid var(--border-color);
     box-shadow: var(--shadow-md);
-    z-index: 1; /* Håller kartan under header */
+    z-index: 1;
+    /* Håller kartan under header */
 }
 
 /* ===== GRAF-CONTAINER ===== */
 .chart-container {
     background-color: var(--bg-surface);
-    padding: 15px;
+    padding: var(--spacing-md);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
-    height: 200px; /* Perfekt höjd för att inte ta över hela skärmen */
+    height: 200px;
+    /* Perfekt höjd för att inte ta över hela skärmen */
     position: relative;
 }
 
 /* TIMELINE / SLIDER */
 .timeline-container {
     background-color: var(--bg-surface);
-    padding: 20px;
+    padding: var(--spacing-lg);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--border-color);
@@ -211,20 +306,21 @@ hr {
 
 .timeline-header {
     text-align: center;
-    margin-bottom: 15px;
-    font-size: 16px;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-normal);
 }
 
 .styled-slider {
     width: 100%;
     cursor: pointer;
-    accent-color: var(--accent-color); /* Modern HTML5 accent färg för sliders */
+    accent-color: var(--accent-color);
+    /* Modern HTML5 accent färg för sliders */
 }
 
 .timeline-labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 5px;
+    margin-top: var(--spacing-xs);
     font-size: 12px;
     color: var(--text-secondary);
     font-weight: bold;
@@ -234,15 +330,17 @@ hr {
 .range-slider-wrapper {
     position: relative;
     height: 30px;
-    margin: 15px 0;
+    margin: var(--spacing-md) 0;
 }
 
 .range-slider-wrapper input[type="range"] {
     position: absolute;
     width: 100%;
     height: 6px;
-    background: none; /* Döljer standardskenan så de inte krockar */
-    pointer-events: none; /* Gör skenan "genomskinlig" för musklick */
+    background: none;
+    /* Döljer standardskenan så de inte krockar */
+    pointer-events: none;
+    /* Gör skenan "genomskinlig" för musklick */
     -webkit-appearance: none;
     appearance: none;
     top: 50%;
@@ -264,8 +362,9 @@ hr {
     border-radius: 50%;
     background: var(--accent-color);
     cursor: pointer;
-    pointer-events: auto; /* Aktiverar klick/drag på enbart runda knappen! */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: auto;
+    /* Aktiverar klick/drag på enbart runda knappen! */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     transition: transform 0.1s;
 }
 
@@ -282,5 +381,25 @@ hr {
     background: var(--accent-color);
     cursor: pointer;
     pointer-events: auto;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+footer {
+    position: relative;
+    padding: var(--spacing-md);
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20%;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        var(--accent-color),
+        transparent
+    );
 }
