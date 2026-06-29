@@ -167,8 +167,8 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
          // Om API:n inte svarar:
          marker.setPopupContent(`
                <strong>${artNamn}</strong><br>
-               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br
-               ❌ Kunde inte hämta väderdata>
+               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+               ❌ Kunde inte hämta väderdata
                `);
       }
    });

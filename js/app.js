@@ -14,6 +14,7 @@ const kartaStatus = document.getElementById('dbKartaStatus');
 const sliderMin = document.getElementById('timeSliderMin');
 const sliderMax = document.getElementById('timeSliderMax');
 const periodText = document.getElementById('periodText');
+const themeToggle = document.getElementById("themeToggle");
 
 // -------------------------------------------------------
 // #endregion
@@ -53,7 +54,7 @@ function uppdateraGraf(valdaArtIds) {
    // Berätta för statussidan att graf-logiken fungerar!
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
-      ui.skapaLoggar(uppdateraGraf,'ok',"Graf-data beräknad och redo!", grafStatus);
+      ui.skapaLoggar(uppdateraGraf, 'ok', "Graf-data beräknad och redo!", grafStatus);
    }
 
    // Leta efter själva ritytan (canvasen)
@@ -154,7 +155,7 @@ export function uppdateraKartaEfterFilter() {
    // UPPDATERA STATUS FÖR GRAFEN:
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
-      ui.skapaLoggar('grafStatus','ok',"Grafen är uppdaterad och laddad!", grafStatus);
+      ui.skapaLoggar('grafStatus', 'ok', "Grafen är uppdaterad och laddad!", grafStatus);
    }
 
    // Rensa gamla markörer från kartan
@@ -187,7 +188,7 @@ export function uppdateraKartaEfterFilter() {
       }
    });
 
-   ui.skapaLoggar(uppdateraKartaEfterFilter,'ok',`🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
+   ui.skapaLoggar(uppdateraKartaEfterFilter, 'ok', `🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
 }
 
 let debounceTimer;
@@ -201,9 +202,9 @@ function debouncedUppdateraKarta() {
 
 async function uppdateraDashboard(lanNamn) {
    // Kör alla tre samtidigt!
-   const wikiData = await hamtaWikiSammanfattning(lanNamn);
-   const vaderData = await hamtaVader(lanNamn);
-   const bildData = await hamtaBakgrundsbild(lanNamn);
+   const wikiData = await api.hamtaWikiSammanfattning(lanNamn);
+   const vaderData = await api.hamtaVader(lanNamn);
+   const bildData = await api.hamtaBakgrundsbild(lanNamn);
 }
 
 // Anropa väder funktion
@@ -211,8 +212,8 @@ async function visaVaderForObservation(lat, lon) {
    const vader = await hamtaVader(lat, lon);
 
    if (vader) {
-      mapModul.skapaLoggar(visaVaderForObservation,'ok',`Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`)
-      
+      mapModul.skapaLoggar(visaVaderForObservation, 'ok', `Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`)
+
       // Här kan ni skriva ut det i er statistikruta, t.ex:
       // document.getElementById('vaderRuta').innerHTML = `${vader.emoji} ${vader.temp}°C (${vader.beskrivning})`;
    }
@@ -230,7 +231,7 @@ async function visaVaderForObservation(lat, lon) {
 
 document.addEventListener('DOMContentLoaded', function () {
    ui.skapaLoggar('DOMContentLoaded', 'start', 'Appen startar...');
-   
+
 
    // Lyssna på båda slider-knapparna samtidigt!
 
@@ -286,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
    mapModul.laggTillKlickFunktion();
    const dbKartaStatus = document.getElementById("dbKartaStatus");
    if (dbKartaStatus) {
-      ui.skapaLoggar(mapModul.laggTillKlickFunktion,"ok","Kartmodulen är helt redo och aktiv!", dbKartaStatus);
+      ui.skapaLoggar(mapModul.laggTillKlickFunktion, "ok", "Kartmodulen är helt redo och aktiv!", dbKartaStatus);
    }
 
    // 3. Ladda data från Supsabase
@@ -315,25 +316,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
    laddaToppmenyVader(); // Kör funktionen direkt vid start!
 
+   // === Tema knappen ===
+   // Kolla om användaren har sparat ett tema sedan tidigare när sidan laddas
+   const sparatTema = localStorage.getItem("tema");
+   if (sparatTema === "dark") {
+      document.body.classList.add("dark-mode");
+   }
+
+   // Lyssna på klick på tema-knappen
+   themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      components.updateThemeButton();
+
+      // Spara det nya valet i webbläsarens minne
+      if (document.body.classList.contains("dark-mode")) {
+         localStorage.setItem("tema", "dark");
+      } else {
+         localStorage.setItem("tema", "light");
+      }
+
+      // Uppdatera knappens ikon/text via komponenten
+      components.updateThemeButton();
+   });
+
+   // Körs när sidan laddas för att knappen ska matcha rätt läge direkt
+   components.updateThemeButton();
+
+
    // --- TESTKÖRNING FÖR STATUSSIDAN (statusar.html) ---
    // Kollar om vi är på statusar.html (genom att se om wikiStatus-elementet finns)
    if (document.getElementById("wikiStatus")) {
-      ui.skapaLoggar('Testkörning API','start','Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));
+      ui.skapaLoggar('Testkörning API', 'start', 'Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));
 
       // Testar Wikipedia och Unsplash med "Gävle" som sökord
       api.hamtaWikiSammanfattning("Gävle");
       api.hamtaBakgrundsbild("Gävle");
 
       // Testar ett historiskt väder-anrop (t.ex. för ett år sedan) till den andra logg-raden
-      api.hamtaVader(60.6745, 17.1417, "2025-06-29", "weatherStatusObs");
+      api.hamtaVader(60.6745, 17.1417, "2025-06-06", "weatherStatusObs");
    }
-
-   themeToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark-mode");
-      components.updateThemeButton();
-   });
-   // Körs när sidan laddas
-   components.updateThemeButton();
 });
 
 // #endregion
