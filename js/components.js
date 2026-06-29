@@ -11,6 +11,24 @@ export const footer = `
         <p>Marcus Berggren&trade; | Markus Lasumäki&trade; | Nicklas Larsson&trade; | 2026</p>      
 `;
 
+export const themeToggle = document.getElementById("themeToggle");
+
+export function updateThemeButton() {
+        const html = document.documentElement
+        if (document.body.classList.contains("dark-mode")) {
+                themeToggle.textContent = "☀️ Ljust tema";
+                themeToggle.classList.add("light-btn");
+                themeToggle.classList.remove("dark-btn");
+                html.dataset.theme = "dark";
+        } else {
+                themeToggle.textContent = "🌙 Mörkt tema";
+                themeToggle.classList.add("dark-btn");
+                themeToggle.classList.remove("light-btn");
+                html.dataset.theme = "light";
+        }
+}
+
+
 
 export function renderWikiInfo(data) {
         skapaLoggar("Renderar wikiData...", wikiStatus);

@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
             markeraAllaCheckbox.checked = false;
          }
 
-         if(markeraAllaCheckbox) {
+         if (markeraAllaCheckbox) {
             const AllaArIkryssade = Array.from(artCheckboxar).every(cb => cb.checked);
             markeraAllaCheckbox.checked = AllaArIkryssade;
          }
@@ -294,6 +294,13 @@ document.addEventListener('DOMContentLoaded', function () {
       // Testar vädret med Gävles koordinater
       api.hamtaVader(60.6745, 17.1417);
    }
+
+   themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      components.updateThemeButton();
+   });
+   // Körs när sidan laddas
+   components.updateThemeButton();
 });
 
 // #endregion
