@@ -3,6 +3,7 @@
 // === KOPPLAR TILL ANDRA JS-FILER ===
 import * as ui from "./ui.js";
 import { skapaLoggar } from "./ui.js";
+import { renderWikiInfo } from "./components.js";
 
 // -------------------------------------------------------
 
@@ -12,8 +13,9 @@ import { skapaLoggar } from "./ui.js";
 // Wikipedia
 export async function hamtaWikiSammanfattning(sokord) {
     const wikiStatus = document.getElementById("wikiStatus");
-    skapaLoggar('Läser från Wikipedia...', wikiStatus);
 
+    sokord = "Varg"
+    skapaLoggar('Läser från Wikipedia...', wikiStatus);
 
     try {
         const url = `https://sv.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(sokord)}`;
@@ -22,14 +24,21 @@ export async function hamtaWikiSammanfattning(sokord) {
         const data = await response.json();
 
         skapaLoggar('✅ Wikipedia inläst', wikiStatus);
+        console.log(data);
+
+        renderWikiInfo(data);
+
         return {
             titel: data.title,
             text: data.extract,
             bildUrl: data.thumbnail ? data.thumbnail.source : null
         };
 
+
+
+
     } catch (error) {
-        console.error('Wikipedia-fel:', error);
+        skapaLoggar('Wikipedia-fel:'+ error, wikiStatus);
         return null;
     }
 }
@@ -83,7 +92,9 @@ export function tolkaVaderKod(kod) {
 
 // Väder (Open-Meteo dagens + historisk väder-data)
 export async function hamtaVader(lat, lon, datum) {
+
     const weatherStatusElem = document.getElementById("weatherStatus");
+    skapaLoggar("Hämtar väder via API...", weatherStatusElem)
 
     if (weatherStatusElem) {
         ui.skapaLoggar("⏳ Hämtar historiskt väderdata...", weatherStatusElem);

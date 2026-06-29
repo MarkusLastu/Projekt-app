@@ -4,7 +4,7 @@
 // === KOPPLAR TILL ANDRA JS-FILER ===
 
 import { skapaLoggar } from "./ui.js";
-import { hamtaVader } from "./api.js";
+import { hamtaVader, hamtaWikiSammanfattning } from "./api.js";
 
 // -------------------------------------------------------
 
@@ -111,6 +111,8 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
 
       //Anropar väder API med markörens koordinater (dock är det dagens väder den visar, annar måste vi skriva om API koden)
       const vader = await hamtaVader(lat, lon, datum);
+      //Anropar väder Wiki API med djurets namn      
+      const wikiData = await hamtaWikiSammanfattning(artNamn);
 
       if (vader) {
          marker.setPopupContent(`
