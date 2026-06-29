@@ -4,7 +4,7 @@
 // === KOPPLAR TILL ANDRA JS-FILER ===
 
 import { skapaLoggar } from "./ui.js";
-import { hamtaVader } from "./api.js";
+import { hamtaVader, hamtaWikiSammanfattning } from "./api.js";
 
 // -------------------------------------------------------
 
@@ -42,13 +42,13 @@ const radjurIcon = L.icon({
 export function skapaKarta() {
 
    const mapCreateStatus = document.getElementById("mapCreateStatus");
-   skapaLoggar("Laddar kartan...", mapCreateStatus);
+   skapaLoggar(skapaKarta, 'start', 'Laddar kartan...', mapCreateStatus);
    // Skapar kartan och centrerar över Gävle
 
    const mapContainer = document.getElementById("map");
 
    if (!mapContainer) {
-      console.warn("Ingen karta på denna sida");
+      skapaLoggar(skapaKarta, 'varna', 'Ingen karta på denna sida', mapCreateStatus);
       return;
    }
 
@@ -70,9 +70,9 @@ export function skapaKarta() {
    // Lägg till skala
    L.control.scale({ position: 'bottomright' }).addTo(map);
 
-   skapaLoggar('🗺️ Zoom och skala tillagd på kartan');
+   skapaLoggar(skapaKarta, 'info', 'Zoom och skala tillagd på kartan');
 
-   skapaLoggar('🗺️ Karta skapad med OpenStreetMap', mapCreateStatus);
+   skapaLoggar(skapaKarta, 'info', 'Karta skapad med OpenStreetMap', mapCreateStatus);
 
    return map;
 }
@@ -83,7 +83,7 @@ export function skapaKarta() {
 // === När användaren klickar fylls koordinaterna i formuläret ===
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
-   skapaLoggar('Klickfunktion på kartan körs.', mapAddClickStatus);
+   skapaLoggar(laggTillKlickFunktion, 'start', 'Klickfunktion på kartan körs.', mapAddClickStatus);
 
    const mapContainer = document.getElementById("map");
 
@@ -112,7 +112,7 @@ export function laggTillKlickFunktion() {
       } else {
          marker = L.marker(e.latlng).addTo(map);
       }
-      skapaLoggar(`📍 Klickade på: ${lat}, ${lon}`);
+      skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
 // -------------------------------------------------------
@@ -153,6 +153,8 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
 
       //Anropar historiskt väder API med markörens koordinater
       const vader = await hamtaVader(lat, lon, datum);
+      //Anropar väder Wiki API med djurets namn      
+      const wikiData = await hamtaWikiSammanfattning(artNamn);
 
       if (vader) {
          marker.setPopupContent(`

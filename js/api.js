@@ -3,6 +3,7 @@
 // === KOPPLAR TILL ANDRA JS-FILER ===
 import * as ui from "./ui.js";
 import { skapaLoggar } from "./ui.js";
+import { renderWikiInfo } from "./components.js";
 
 // -------------------------------------------------------
 
@@ -12,8 +13,13 @@ import { skapaLoggar } from "./ui.js";
 // Wikipedia
 export async function hamtaWikiSammanfattning(sokord) {
     const wikiStatus = document.getElementById("wikiStatus");
-    skapaLoggar('Läser från Wikipedia...', wikiStatus);
+    const injectWikiLabel = document.getElementById('wikiLabel');
+    const injectWikiData = document.getElementById('wikiData');
 
+    skapaLoggar(hamtaWikiSammanfattning, 'start', 'Läser från Wikipedia...', wikiStatus);    
+
+    injectWikiLabel.innerHTML = (`<label class="filter-title">Hämtar data</label>`);
+    injectWikiData.innerHTML = (`<p>Laddar information från Wikipedia...</p>`);
 
     try {
         const url = `https://sv.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(sokord)}`;
@@ -21,15 +27,23 @@ export async function hamtaWikiSammanfattning(sokord) {
         if (!response.ok) throw new Error('Hittade ingen Wikipedia-artikel');
         const data = await response.json();
 
-        skapaLoggar('✅ Wikipedia inläst', wikiStatus);
+        skapaLoggar(hamtaWikiSammanfattning, 'ok', 'Wikipedia inläst', wikiStatus);
+        console.log(data);
+
+        renderWikiInfo(data);
+
         return {
             titel: data.title,
             text: data.extract,
             bildUrl: data.thumbnail ? data.thumbnail.source : null
         };
-
     } catch (error) {
-        console.error('Wikipedia-fel:', error);
+        injectWikiLabel.innerHTML = (`<label class="filter-title">Fel vid läsning</label>`);
+        injectWikiData.innerHTML = (`
+            <p>Felmeddelande från Wikipedia: <br>
+            ${error}<br>
+            Försök igen.</p>`);
+        skapaLoggar(hamtaWikiSammanfattning, 'fel', 'Wikipedia-fel:' + error, wikiStatus);
         return null;
     }
 }
@@ -37,7 +51,7 @@ export async function hamtaWikiSammanfattning(sokord) {
 // Unsplash
 export async function hamtaBakgrundsbild(sokord) {
     const unsplashStatus = document.getElementById("unsplashStatus");
-    skapaLoggar('Läser från Unsplash...', unsplashStatus);
+    skapaLoggar(hamtaBakgrundsbild, 'start', 'Läser från Unsplash...', unsplashStatus);
 
     const accessKey = 'z3_YcJGOVhxQf56FRurRqQCy0z35MDLvLI3tXq_4yKI';
 
@@ -55,7 +69,7 @@ export async function hamtaBakgrundsbild(sokord) {
         };
 
     } catch (error) {
-        console.error('Unsplash-fel:', error);
+        skapaLoggar(hamtaBakgrundsbild, 'start', 'Unsplash fel: ' + error, unsplashStatus);
         return null;
     }
 }
@@ -83,10 +97,13 @@ export function tolkaVaderKod(kod) {
 
 // Väder (Open-Meteo dagens + historisk väder-data)
 export async function hamtaVader(lat, lon, datum, elementId) {
+
     const weatherStatusElem = document.getElementById(elementId);
+    ui.skapaLoggar(weatherStatusElem, 'start', 'Hämtar väder via API...', weatherStatusElem);
+
 
     if (weatherStatusElem) {
-        ui.skapaLoggar("⏳ Hämtar historiskt väderdata...", weatherStatusElem);
+        ui.skapaLoggar(weatherStatusElem, 'start', '⏳ Hämtar historiskt väderdata...', weatherStatusElem);
     }
 
     try {
@@ -108,8 +125,9 @@ export async function hamtaVader(lat, lon, datum, elementId) {
         // Använder hjälpfunktionen tolkaVaderKod för att tolka väderkoden till text och emoji's
         const vaderInfo = tolkaVaderKod(historiskVaderKod);
 
+
         if (weatherStatusElem) {
-            ui.skapaLoggar(`✅ Väder hämtat: ${maxTemp}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
+            ui.skapaLoggar(weatherStatusElem, 'ok', `Väder hämtat: ${maxTemp}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
         }
 
         return {
@@ -119,10 +137,10 @@ export async function hamtaVader(lat, lon, datum, elementId) {
         };
 
     } catch (error) {
-        console.error("Väderfel:", error);
-
         if (weatherStatusElem) {
-            ui.skapaLoggar("❌ Misslyckades att hämta väder", weatherStatusElem);
+            ui.skapaLoggar(weatherStatusElem, 'fel', 'Misslyckades att hämta väder', weatherStatusElem);
+        } else {
+            ui.skapaLoggar(weatherStatusElem, 'fel', 'Väderfel:', error,);
         }
         return null;
     }

@@ -25,7 +25,7 @@
     --font-size-heading: 20px;
 
 
-     /* ===== SPACING ===== */
+    /* ===== SPACING ===== */
     --spacing-xs: 5px;
     --spacing-sm: 10px;
     --spacing-md: 15px;
@@ -86,7 +86,7 @@ body {
     background-color: var(--bg-main);
     color: var(--text-primary);
     transition: background-color 0.3s, color 0.3s;
-    
+
     overflow-x: hidden;
     overflow-y: auto;
     /* Förhindrar sidscroll, ger en app-känsla */
@@ -118,7 +118,7 @@ body {
 
 .weather-widget {
     font-weight: 500;
-    font-size: var(--font-size-small);    
+    font-size: var(--font-size-small);
 }
 
 .theme-btn {
@@ -179,13 +179,17 @@ nav a:hover {
 
 
 /* HUVUDINNEHÅLL (MAIN) */
-.main-layout {    
+.main-layout {
     display: grid;
     grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
-    
+
     grid-template-areas:
         "aside section";     
     min-height: calc(100vh - 180px);
+        "aside section";
+    height: calc(100vh - 180px);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
@@ -203,7 +207,7 @@ nav a:hover {
 }
 
 .sidebar h3 {
-    font-size: var(--font-size-normal);    
+    font-size: var(--font-size-normal);
     margin-bottom: var(--spacing-sm);
     border-bottom: 2px solid var(--accent-color);
     padding-bottom: var(--spacing-xs);
@@ -261,6 +265,19 @@ hr {
     margin: var(--spacing-sm) 0;
 }
 
+#wikiData img {
+    width: 100%;
+    height: auto;
+
+    border-radius: var(--border-radius-md);
+
+    margin-bottom: var(--spacing-sm);
+
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+
+    object-fit: cover;
+}
+
 /* MAP SECTION */
 .map-section {
     grid-area: section;
@@ -272,10 +289,10 @@ hr {
     gap: var(--spacing-lg);
 }
 
-.map-container {    
+.map-container {
     min-height: 300px;
     width: 100%;
-    flex: 1;    
+    flex: 1;
     border-radius: var(--border-radius-lg);
     border: 2px solid var(--border-color);
     box-shadow: var(--shadow-md);
@@ -396,10 +413,8 @@ footer::before {
     left: 20%;
     width: 60%;
     height: 2px;
-    background: linear-gradient(
-        to right,
-        transparent,
-        var(--accent-color),
-        transparent
-    );
+    background: linear-gradient(to right,
+            transparent,
+            var(--accent-color),
+            transparent);
 }

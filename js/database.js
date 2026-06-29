@@ -13,21 +13,22 @@ export let allaObservationer = []; // Globala variabeln för att lagra alla obse
 
 // === ANSLUT TILL SUPABASECLIENT ===
 const dbStatus = document.getElementById("dbStatus");
-skapaLoggar('Ansluter till mySupabaseClient...', dbStatus);
+
+skapaLoggar('dbStatus', 'start', 'Ansluter till mySupabaseClient...', dbStatus);
 
 const mySupabaseClient = window.supabase.createClient(
    "https://tevnovztzryjomtrtkcc.supabase.co",
    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRldm5vdnp0enJ5am9tdHJ0a2NjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MzYzNjAsImV4cCI6MjA5ODAxMjM2MH0.Av5W6Xbt4oMgZcMxvkmVPrGYLxtQL9-lTYPmJQZhLRo"
 );
 
-skapaLoggar('✅ Ansluten med mySupabaseClient', dbStatus);
+skapaLoggar('dbStatus', 'ok', 'Ansluten med mySupabaseClient...', dbStatus);
 // -------------------------------------------------------
 
 
 // === LADDA LÄN ===
 export async function laddaLan() {
    const dbLanStatus = document.getElementById("dbLanStatus");
-   skapaLoggar("Laddar län...", dbLanStatus);
+   skapaLoggar(laddaLan, 'start', "Laddar län...", dbLanStatus);
 
    try {
       const { data: lan, error } = await mySupabaseClient
@@ -36,7 +37,7 @@ export async function laddaLan() {
          .order("LanNamn");
 
       if (error) {
-         if (dbLanStatus) dbLanStatus.textContent = "❌ Fel: " + error.message;
+         if (dbLanStatus) skapaLoggar(laddaLan, 'fel', 'Fel: ' + error.message);
          console.error(error);
          skapaLoggar("❌ Fel: " + error.message, dbLanStatus);
          return;
@@ -55,7 +56,13 @@ export async function laddaLan() {
 export async function laddaObservationer() {
 
    const dbObservationStatus = document.getElementById("dbObservationStatus");
-   skapaLoggar("Laddar observationer...", dbObservationStatus);
+   skapaLoggar(laddaObservationer, 'start', "Laddar observationer...", dbObservationStatus);
+
+   // Hämta ALL data från supabase (annars är max 1000 rader)
+   let allData = [];
+   let rangeStart = 0;
+   const batchSize = 1000;
+   let hasMore = true;
 
    // Hämta ALL data från supabase (annars är max 1000 rader)
    let allData = [];
@@ -122,5 +129,5 @@ mySupabaseClient
       )
       .subscribe();
 
-   skapaLoggar('Supabase har uppdaterats', dbStatus);
+skapaLoggar('Supabase', 'info', 'Supabase har uppdaterats', dbStatus);
 // -------------------------------------------------------
