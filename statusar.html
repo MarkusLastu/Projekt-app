@@ -14,61 +14,70 @@
 
 <body>
 
-        <header>
-            <h1>Status på våra anrop</h1>
-            <p></p>
-        </header>
+    <header class="topbar">
+        <div class="logo">
+            <h1>🌐 Status på våra anrop</h1>
+        </div>
 
-        <nav id="nav"></nav>
+        <div class="topbar-controls">
+            <div id="weatherWidget" class="weather-widget">
+                Hämtar lokalt väder... 🌤️
+            </div>
+            <button id="themeToggle" class="theme-btn">🌙 Byt tema</button>
+        </div>
+    </header>
 
-        <main>
 
-            <section style="margin: 100px;">
+    <nav id="nav"></nav>
 
-                <h2>Databas anrop</h2>
-                <p id="dbStatus">... kopplar upp ...</p>
-                <p id="dbLanStatus">... laddar län ...</p>
-                <p id="dbObservationStatus">... laddar observationer ...</p>
+    <main>
 
-                <h2>Wiki API</h2>
-                <p id="wikiStatus">...</p>
+        <section style="margin: 100px;">
 
-                <h2>Weather API</h2>
-                <p id="weatherStatus">...</p>
+            <h2>Databas anrop</h2>
+            <p id="dbStatus">... kopplar upp ...</p>
+            <p id="dbLanStatus">... laddar län ...</p>
+            <p id="dbObservationStatus">... laddar observationer ...</p>
 
-                <h2>Unsplash API</h2>
-                <p id="unsplashStatus">...</p>
+            <h2>Wiki API</h2>
+            <p id="wikiStatus">...</p>
 
-                <h2>Map API</h2>
-                <p id="dbKartaStatus">... laddar karta ...</p>
-                <p id="mapCreateStatus">... karta skapas...</p>
-                <p id="mapAddClickStatus">... laddar klickfunktion ...</p>
+            <h2>Weather API</h2>
+            <p id="weatherStatus">...</p>
 
-                <h2>Graf</h2>
-                <p id="uppdateraGraf">... laddar graf ...</p>
+            <h2>Unsplash API</h2>
+            <p id="unsplashStatus">...</p>
 
-            </section>
+            <h2>Map API</h2>
+            <p id="dbKartaStatus">... laddar karta ...</p>
+            <p id="mapCreateStatus">... karta skapas...</p>
+            <p id="mapAddClickStatus">... laddar klickfunktion ...</p>
 
-            <<!-- aside>
-                <div class="map-section">
-                    <h2>🗺️ Karta</h2>
-                    <div id="map"></div>
-                    <p class="hint">💡 Klicka på kartan för att fylla i koordinater</p>
-                </div>
+            <h2>Graf</h2>
+            <p id="uppdateraGraf">... laddar graf ...</p>
+
+        </section>
+
+        <<!-- aside>
+            <div class="map-section">
+                <h2>🗺️ Karta</h2>
+                <div id="map"></div>
+                <p class="hint">💡 Klicka på kartan för att fylla i koordinater</p>
+            </div>
 
             </aside> -->
 
-        </main>
+    </main>
 
 
-        <footer id="footer"></footer>
+    <footer id="footer"></footer>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <!-- Leaflet JS -->
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-        <!-- Databas JS -->
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-        <script type="module" src="js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Databas JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/app.js"></script>
 
     </div>
 </body>

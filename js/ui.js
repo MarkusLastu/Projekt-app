@@ -2,7 +2,7 @@
 
 
 // === SKAPA LOGG I CONSOLE OCH DIV-ELEMENT ===
-export function skapaLoggar(text, statusElement) {
+export function skapaLoggar(fn, status, text, statusElement) {
    // text = texten du vill skriva i loggen och på sidan
    // statusElement = (ID på elementet du vill skicka texten till) (jag har skapat flera divvar i HTML med olika Namn: lanStatus, obersvationStatus, kartaStatus)
    // -----------------------------------------------------
@@ -18,11 +18,39 @@ export function skapaLoggar(text, statusElement) {
    // -----------------------------------------------------
    // Då är det enklare att följa hur långt koden funka om det går fel nånstans.
 
-   
-   if (statusElement) {
-      console.log(`${statusElement.id}: ${text}`);
-      document.getElementById(statusElement.textContent = text)
+   let fnText = fn?.name || fn;
+   let ikon = '';
+
+   if (status === "start") {
+      ikon = '🔄 ';
+   } else if (status === "ok") {
+      ikon = '✅ ';
+   } else if (status === "fel") {
+      ikon = '❌ ';
    } else {
-      console.log(text);
+      ikon = 'ℹ️ ';
+   }
+
+   const logg = `${ikon} [${fnText}] ${text}`;
+
+   // Fler ikoner vi kan använda om vi vill
+   // 🔄 Startar / laddar
+   // ⏳ Väntar
+   // ✅ Ok
+   // ⚠️ Varning
+   // ❌ Fel
+   // ℹ️ Information
+   // 🚀 Startar appen
+   // 📡 API-anrop
+   // 💾 Databas
+   // 🗺️ Karta
+   // 🌐 Nätverk
+   // 🔍 Visar
+
+   if (statusElement) {
+      console.log(logg);
+      document.getElementById(statusElement.textContent = logg)
+   } else {
+      console.log(logg);
    }
 }

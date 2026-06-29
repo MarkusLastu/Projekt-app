@@ -1,4 +1,4 @@
-import { skapaLoggar } from "./ui";
+import { skapaLoggar } from "./ui.js";
 
 export const nav = `    
         <div><a href="index.html">Hem</a></div>
@@ -31,6 +31,18 @@ export function updateThemeButton() {
 
 
 export function renderWikiInfo(data) {
-        skapaLoggar("Renderar wikiData...", wikiStatus);
+        skapaLoggar(renderWikiInfo, 'start', 'Renderar wikiData...');
+        const injectWikiLabel = document.getElementById('wikiLabel');
+        const injectWikiData = document.getElementById('wikiData');
+        const injectWikiImg = document.getElementById('wikiImg');
+
+        injectWikiLabel.innerHTML = (`<label class="filter-title">${data.title}</label>`);
+        injectWikiData.innerHTML = (`
+                <p>${data.extract}</p>
+                <img src="${data.thumbnail?.source}"></img>
+                `);
+        skapaLoggar(renderWikiInfo, 'ok', 'wikiData klar');
+
+
 
 }

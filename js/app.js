@@ -53,7 +53,7 @@ function uppdateraGraf(valdaArtIds) {
    // Berätta för statussidan att graf-logiken fungerar!
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
-      ui.skapaLoggar("✅ Graf-data beräknad och redo!", grafStatus);
+      ui.skapaLoggar(uppdateraGraf,'ok',"Graf-data beräknad och redo!", grafStatus);
    }
 
    // Leta efter själva ritytan (canvasen)
@@ -154,7 +154,7 @@ export function uppdateraKartaEfterFilter() {
    // UPPDATERA STATUS FÖR GRAFEN:
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
-      ui.skapaLoggar("✅ Grafen är uppdaterad och laddad!", grafStatus);
+      ui.skapaLoggar('grafStatus','ok',"Grafen är uppdaterad och laddad!", grafStatus);
    }
 
    // Rensa gamla markörer från kartan
@@ -186,7 +186,7 @@ export function uppdateraKartaEfterFilter() {
       }
    });
 
-   ui.skapaLoggar(`🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
+   ui.skapaLoggar(uppdateraKartaEfterFilter,'ok',`🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
 }
 
 async function uppdateraDashboard(lanNamn) {
@@ -201,7 +201,8 @@ async function visaVaderForObservation(lat, lon) {
    const vader = await hamtaVader(lat, lon);
 
    if (vader) {
-      console.log(`Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`);
+      mapModul.skapaLoggar(visaVaderForObservation,'ok',`Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`)
+      
       // Här kan ni skriva ut det i er statistikruta, t.ex:
       // document.getElementById('vaderRuta').innerHTML = `${vader.emoji} ${vader.temp}°C (${vader.beskrivning})`;
    }
@@ -218,7 +219,8 @@ async function visaVaderForObservation(lat, lon) {
 /* Kod som ska köras när sidan laddas. */
 
 document.addEventListener('DOMContentLoaded', function () {
-   ui.skapaLoggar('🚀 Appen startar...');
+   ui.skapaLoggar('DOMContentLoaded', 'start', 'Appen startar...');
+   
 
    // Lyssna på båda slider-knapparna samtidigt!
 
@@ -274,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function () {
    mapModul.laggTillKlickFunktion();
    const dbKartaStatus = document.getElementById("dbKartaStatus");
    if (dbKartaStatus) {
-      ui.skapaLoggar("✅ Kartmodulen är helt redo och aktiv!", dbKartaStatus);
+      ui.skapaLoggar(mapModul.laggTillKlickFunktion,"ok","Kartmodulen är helt redo och aktiv!", dbKartaStatus);
    }
 
    // 3. Ladda data från Supsabase
@@ -285,7 +287,7 @@ document.addEventListener('DOMContentLoaded', function () {
    // --- TESTKÖRNING FÖR STATUSSIDAN (statusar.html) ---
    // Kollar om vi är på statusar.html (genom att se om wikiStatus-elementet finns)
    if (document.getElementById("wikiStatus")) {
-      ui.skapaLoggar('Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));
+      ui.skapaLoggar('Testkörning API','start','Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));
 
       // Testar Wikipedia och Unsplash med "Gävle" som sökord
       api.hamtaWikiSammanfattning("Gävle");
