@@ -60,44 +60,8 @@ export async function hamtaBakgrundsbild(sokord) {
     }
 }
 
-// Väder (Open-Meteo)
-export async function hamtaVader(lat, lon) {
-    const weatherStatusElem = document.getElementById("weatherStatus");
 
-    if (weatherStatusElem) {
-        ui.skapaLoggar("⏳ Hämtar väderdata...", weatherStatusElem);
-    }
-
-    try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
-        const response = await fetch(url);
-
-        if (!response.ok) throw new Error('Kunde inte hämta väderdata');
-
-        const data = await response.json();
-
-        // Använd din hjälpfunktion för att tolka koden!
-        const vaderInfo = tolkaVaderKod(data.current.weather_code);
-
-        if (weatherStatusElem) {
-            ui.skapaLoggar(`✅ Väder hämtat: ${data.current.temperature_2m}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
-        }
-
-        return {
-            temp: data.current.temperature_2m,
-            beskrivning: vaderInfo.text,
-            emoji: vaderInfo.emoji
-        };
-
-    } catch (error) {
-        console.error("Väderfel:", error);
-
-        if (weatherStatusElem) {
-            ui.skapaLoggar("❌ Misslyckades att hämta väder", weatherStatusElem);
-        }
-        return null;
-    }
-}
+//VÄDER ----------------------------------------------------------
 
 // Hjälpfunktion för väder
 export function tolkaVaderKod(kod) {
@@ -116,3 +80,53 @@ export function tolkaVaderKod(kod) {
     };
     return koder[kod] || { text: "Okänt väder", emoji: "🤷" };
 }
+
+// Väder (Open-Meteo dagens + historisk väder-data)
+export async function hamtaVader(lat, lon, datum) {
+    const weatherStatusElem = document.getElementById("weatherStatus");
+
+    if (weatherStatusElem) {
+        ui.skapaLoggar("⏳ Hämtar historiskt väderdata...", weatherStatusElem);
+    }
+
+    try {
+        //Formaterar datumet till YYYY-MM-DD pga API:n kräver det
+        const d = new Date(datum);
+        const aaaa = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const formateratDatum = `${aaaa}-${mm}-${dd}`;
+
+        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${formateratDatum}&end_date=${formateratDatum}&daily=temperature_2m_max,weather_code&timezone=auto`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Kunde inte hämta väderdata');
+
+        const data = await response.json();
+
+        const historiskVaderKod = data.daily.weather_code[0];
+        const maxTemp = data.daily.temperature_2m_max[0];
+
+        // Använder hjälpfunktionen tolkaVaderKod för att tolka väderkoden till text och emoji's
+        const vaderInfo = tolkaVaderKod(historiskVaderKod);
+
+        if (weatherStatusElem) {
+            ui.skapaLoggar(`✅ Väder hämtat: ${maxTemp}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
+        }
+
+        return {
+            temp: maxTemp,
+            beskrivning: vaderInfo.text,
+            emoji: vaderInfo.emoji
+        };
+
+    } catch (error) {
+        console.error("Väderfel:", error);
+
+        if (weatherStatusElem) {
+            ui.skapaLoggar("❌ Misslyckades att hämta väder", weatherStatusElem);
+        }
+        return null;
+    }
+}
+
+// -----------------------------------------------------------------------------

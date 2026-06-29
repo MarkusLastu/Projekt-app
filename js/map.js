@@ -2,8 +2,9 @@
 
 
 // === KOPPLAR TILL ANDRA JS-FILER ===
-import { skapaLoggar } from "./ui.js";
 
+import { skapaLoggar } from "./ui.js";
+import { hamtaVader } from "./api.js";
 
 // -------------------------------------------------------
 
@@ -92,19 +93,45 @@ export function laggTillKlickFunktion() {
 
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
-
-
 export function addObservationMarker(lat, lon, artNamn, antal, datum) {
    const popupContent = `
         <strong>${artNamn}</strong><br>
         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
-        📍 ${lat}, ${lon}
+        ⏳ <em>Hämtar historiskt väderdata...</em>
     `;
+
    const marker = L.marker([lat, lon])
       .addTo(map)
       .bindPopup(popupContent);
+
+   marker.on('popupopen', async function () {
+      //Om vädret redan blivit laddad för just dennna markör -> gör inget mer
+      if (marker.vaderLaddat)
+         return;
+
+      //Anropar väder API med markörens koordinater (dock är det dagens väder den visar, annar måste vi skriva om API koden)
+      const vader = await hamtaVader(lat, lon, datum);
+
+      if (vader) {
+         marker.setPopupContent(`
+               <strong>${artNamn}</strong><br>
+               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+               <hr style="margin: 5px 0; border: 0; border-top: 1px solid #eee;">
+               ${vader.emoji} ${vader.temp}°C, ${vader.beskrivning}
+               `);
+      } else {
+         // Om API:n inte svarar:
+         marker.setPopupContent(`
+               <strong>${artNamn}</strong><br>
+               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br
+               ❌ Kunde inte hämta väderdata>
+               `);
+      }
+   });
+
    observationMarkers.push(marker);
 }
+
 // -------------------------------------------------------
 
 
