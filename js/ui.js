@@ -18,8 +18,11 @@ export function skapaLoggar(text, statusElement) {
    // -----------------------------------------------------
    // Då är det enklare att följa hur långt koden funka om det går fel nånstans.
 
-   console.log(text);
+   
    if (statusElement) {
+      console.log(statusElement.id + ": " + text);
       document.getElementById(statusElement.textContent = text)
+   } else {
+      console.log(text);
    }
 }
