@@ -233,7 +233,7 @@ nav a:hover {
     gap: 8px;
 }
 
-.custom-checkbox span {
+.art-checkbox span {
     font-size: var(--font-size-normal);
     cursor: pointer;
 }

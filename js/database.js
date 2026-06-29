@@ -77,7 +77,7 @@ export async function laddaObservationer() {
       const { data: observationer, error } = await mySupabaseClient
          .from('observationer')
          .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
-         .order('Datum', { ascending: false });
+         .order('Datum', { ascending: false })
          .range(0, 50000);
 
       if (error) {

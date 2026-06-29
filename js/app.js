@@ -74,9 +74,9 @@ function uppdateraGraf(valdaArtIds) {
    }
 
    const artInställningar = {
-      1: { label: "Björn 🐻", färg: "#d97706" },
-      2: { label: "Varg 🐺", färg: "#4b5563" },
-      3: { label: "Lodjur 🐱", färg: "#2563eb" }
+      1: { label: "Varg 🐺", färg: "#4b5563" },
+      2: { label: "Älg 🦌", färg: "#d97706" },
+      3: { label: "Rådjur 🦌", färg: "#2563eb" }
    };
 
    const nyaDatasets = valdaArtIds.map(artId => {
@@ -145,7 +145,7 @@ export function uppdateraKartaEfterFilter() {
    }
 
    // Hämta vilka arter som är ikryssade (eller ta alla [1,2,3] som test om inga boxar finns)
-   const ikryssadeCheckboxar = document.querySelectorAll('.checkbox-group:unchecked');
+   const ikryssadeCheckboxar = document.querySelectorAll('.art-checkbox:checked');
    const valdaArtIds = Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value));
 
    // Uppdatera grafen
@@ -228,9 +228,34 @@ document.addEventListener('DOMContentLoaded', function () {
    }
 
    // Lyssna på kryssrutorna
-   document.querySelectorAll('.checkbox-group input').forEach(checkbox => {
-      checkbox.addEventListener('change', uppdateraKartaEfterFilter);
-   });
+   const markeraAllaCheckbox = document.getElementById("markeraAlla");
+   const artCheckboxar = document.querySelectorAll(".art-checkbox");
+
+   if (markeraAllaCheckbox) {
+      markeraAllaCheckbox.addEventListener("change", function () {
+         artCheckboxar.forEach(cb => {
+            cb.checked = markeraAllaCheckbox.checked;
+         });
+
+         uppdateraKartaEfterFilter();
+      });
+   }
+
+   artCheckboxar.forEach(checkbox => {
+      checkbox.addEventListener('change', function () {
+         // Om markera-alla är ikryssat -> bockar ur den när man kryssar i ett annat val
+         if (!this.checked && markeraAllaCheckbox) {
+            markeraAllaCheckbox.checked = false;
+         }
+
+         if(markeraAllaCheckbox) {
+            const AllaArIkryssade = Array.from(artCheckboxar).every(cb => cb.checked);
+            markeraAllaCheckbox.checked = AllaArIkryssade;
+         }
+
+         uppdateraKartaEfterFilter();
+      })
+   })
 
    const navContainer = document.getElementById("nav");
    if (navContainer) {
@@ -270,6 +295,5 @@ document.addEventListener('DOMContentLoaded', function () {
       api.hamtaVader(60.6745, 17.1417);
    }
 });
-
 
 // #endregion
