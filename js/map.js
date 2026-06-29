@@ -83,7 +83,7 @@ export function skapaKarta() {
 // === När användaren klickar fylls koordinaterna i formuläret ===
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
-   skapaLoggar(laggTillKlickFunktion, 'start', 'Klickfunktion på kartan körs.', mapAddClickStatus);
+   skapaLoggar(laggTillKlickFunktion, 'info', 'Klickfunktion på kartan körs.', mapAddClickStatus);
 
    const mapContainer = document.getElementById("map");
 
