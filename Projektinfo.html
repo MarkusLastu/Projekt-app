@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Världens bästa hemsida</title>
+    <title>Projektinfo</title>
 
     <link rel="stylesheet" href="css/style.css">
 
@@ -17,21 +17,26 @@
 
 <body>
 
-    <!-- <div class="page"> -->
 
-    <header>
-        <h1>Nu kör vi!</h1>
+    <header class="topbar">
+        <div class="logo">
+            <h1>🐾 Nu kör vi!</h1>
+        </div>
+
+        <div class="topbar-controls">
+            <div id="weatherWidget" class="weather-widget">
+                Hämtar lokalt väder... 🌤️
+            </div>
+            <button id="themeToggle" class="theme-btn">🌙 Byt tema</button>
+        </div>
     </header>
 
-    <nav>
 
-        <div id="nav"></div>
-
-    </nav>
+    <nav id="nav"></nav>
 
 
     <main>
-        <section>
+        <section style="margin: 100px;">
             <h1>Projekt i kursen HTML, CSS och Javascript</h1>
 
             <p>
@@ -54,12 +59,19 @@
                 intressant att jobba med.
 
             </p>
+            <h3>Tips</h3>
+            <ul>
+                <li>Återanvänd koden från övningarna</li>
+                <li>Ta små steg framåt, se till att design på sidan är tillfredställande och sedan börja</li>
+                <li>att fylla i den med innehållet. Inte tvärtom. </li>
+
+            </ul>
+
+
             <h2>Status</h2>
 
 
             <ul>
-
-
                 <li>🟢 Klar</li>
                 <li>🟡 Pågående</li>
                 <li>🔴 Ej påbörjad</li>
@@ -100,28 +112,16 @@
                 <li>🟡 Y</li>
                 <li>🔴 Z</li>
             </ul>
-
-
-            <h3>Tips</h3>
-            <ul>
-                <li>Återanvänd koden från övningarna</li>
-                <li>Ta små steg framåt, se till att design på sidan är tillfredställande och sedan börja</li>
-                <li>att fylla i den med innehållet. Inte tvärtom. </li>
-
-            </ul>
         </section>
+
     </main>
 
-    <footer>
-
-        <div id="footer"></div>
-
-    </footer>
+    <footer id="footer"></footer>
 
 
     <script type="module" src="js/app.js"></script>
 
-    <!-- </div> -->
+    </div>
 
 </body>
 
