@@ -185,8 +185,7 @@ nav a:hover {
     
     grid-template-areas:
         "aside section";     
-    height: calc(100vh - 180px);
-    overflow: hidden;
+    min-height: calc(100vh - 180px);
 }
 
 
@@ -238,10 +237,11 @@ nav a:hover {
     cursor: pointer;
 }
 
-.radio-group {
-    display: flex;
-    gap: var(--spacing-md);
-    font-size: var(--font-size-small);
+.icon-small { /* Styling för SVG-ikoner i menyn */
+    width: 1.25em;    /* 1.25 * 16px (normal text) = 20px */
+    height: 1.25em;
+    margin-right: 8px;
+    vertical-align: middle;
 }
 
 /* SYSTEM STATUS */

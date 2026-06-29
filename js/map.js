@@ -11,7 +11,29 @@ import { hamtaVader } from "./api.js";
 // === KONSTANTER OCH VARIABLER ===
 let map;
 let marker = null;
-let observationMarkers = [];
+let markerClusterGroup;
+
+// Markörerna på kartan 
+const vargIcon = L.icon({
+   iconUrl: 'images/svg/varg.svg',
+   iconSize: [36, 36],       // Storlek i pixlar [bredd, höjd]
+   iconAnchor: [18, 36],     // Vilken punkt i bilden som ska stå på koordinaten (mitten längst ner)
+   popupAnchor: [0, -36]     // Var popup-rutan ska ploppa upp i förhållande till ikonen
+});
+
+const algIcon = L.icon({
+   iconUrl: 'images/svg/alg.svg', // Ändra till exakt vad din fil heter
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const radjurIcon = L.icon({
+   iconUrl: 'images/svg/radjur.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
 
 // -------------------------------------------------------
 
@@ -30,7 +52,11 @@ export function skapaKarta() {
       return;
    }
 
-   map = L.map('map').setView([61.5, 16.5], 8);
+   map = L.map('map', { maxZoom: 19 }).setView([62.0, 15.0], 5);
+
+   // Initiera klustret (så att markörer nära varandra blir en markör)
+   markerClusterGroup = L.markerClusterGroup();
+   map.addLayer(markerClusterGroup);
 
    // Lägg till OpenStreeMap-bakgrund
    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -38,8 +64,8 @@ export function skapaKarta() {
       maxZoom: 19,
    }).addTo(map);
 
-   // Lägg till zoom-kontroller
-   L.control.zoom({ position: 'topleft' }).addTo(map);
+   // Lägg till zoom-kontroller (inte nödvändigt på denna karta - finns standard-zoom knappar)
+   /* L.control.zoom({ position: 'topleft' }).addTo(map); */
 
    // Lägg till skala
    L.control.scale({ position: 'bottomright' }).addTo(map);
@@ -94,22 +120,38 @@ export function laggTillKlickFunktion() {
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
 export function addObservationMarker(lat, lon, artNamn, antal, datum) {
+   // Förhindrar krasch om kartan inte finns på sidan
+   if (!markerClusterGroup) {
+      return;
+   }
+
    const popupContent = `
         <strong>${artNamn}</strong><br>
         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
         ⏳ <em>Hämtar historiskt väderdata...</em>
     `;
 
-   const marker = L.marker([lat, lon])
-      .addTo(map)
+   // Bestämmer vilken ikon som ska användas beroende på artNamn
+   let valdIkon = L.Icon.Defaults; //Om något går fel används den blå standard-markören)
+
+   if (artNamn.includes('Varg')) {
+      valdIkon = vargIcon;
+   } else if (artNamn.includes('Älg')) {
+      valdIkon = algIcon;
+   } else if (artNamn.includes('Rådjur')) {
+      valdIkon = radjurIcon;
+   }
+
+   const marker = L.marker([lat, lon], { icon: valdIkon })
       .bindPopup(popupContent);
+   markerClusterGroup.addLayer(marker);
 
    marker.on('popupopen', async function () {
       //Om vädret redan blivit laddad för just dennna markör -> gör inget mer
       if (marker.vaderLaddat)
          return;
 
-      //Anropar väder API med markörens koordinater (dock är det dagens väder den visar, annar måste vi skriva om API koden)
+      //Anropar historiskt väder API med markörens koordinater
       const vader = await hamtaVader(lat, lon, datum);
 
       if (vader) {
@@ -129,7 +171,7 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
       }
    });
 
-   observationMarkers.push(marker);
+   /*    observationMarkers.push(marker); */
 }
 
 // -------------------------------------------------------
@@ -137,8 +179,12 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
 
 // === TAR BORT MARKERING PÅ KARTAN ===
 export function clearObservationMarkers() {
-   observationMarkers.forEach(m => map.removeLayer(m));
-   observationMarkers = [];
+   // Förhindrar krasch om kartan saknas!
+   if (!markerClusterGroup) {
+      return; // Avbryt funktionen direkt, det finns inget att rensa
+   }
+
+   markerClusterGroup.clearLayers();
 
    // Flytta in den tillfälliga klick-markören här så den rensas på rätt ställe!
    if (marker) {

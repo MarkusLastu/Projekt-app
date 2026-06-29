@@ -21,7 +21,7 @@ export function skapaLoggar(text, statusElement) {
    
    if (statusElement) {
       console.log(`${statusElement.id}: ${text}`);
-      document.getElementById(statusElement.textContent = text)
+      statusElement.textContent = text;
    } else {
       console.log(text);
    }

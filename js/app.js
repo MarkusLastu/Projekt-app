@@ -178,15 +178,25 @@ export function uppdateraKartaEfterFilter() {
       if (obs.Latitude && obs.Longitude) {
          const latNum = parseFloat(obs.Latitude);
          const lonNum = parseFloat(obs.Longitude);
-         const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur';
+         const artNamn = obs.arter ? obs.arter.ArtNamn : 'Okänt djur';
 
          if (!isNaN(latNum) && !isNaN(lonNum)) {
+
             mapModul.addObservationMarker(latNum, lonNum, artNamn, 1, obs.Datum);
          }
       }
    });
 
    ui.skapaLoggar(`🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
+}
+
+let debounceTimer;
+
+function debouncedUppdateraKarta() {
+   clearTimeout(debounceTimer);
+   debounceTimer = setTimeout(() => {
+      uppdateraKartaEfterFilter();
+   }, 200); // Väntar 200ms efter att användaren slutat dra i slidern
 }
 
 async function uppdateraDashboard(lanNamn) {
@@ -223,8 +233,8 @@ document.addEventListener('DOMContentLoaded', function () {
    // Lyssna på båda slider-knapparna samtidigt!
 
    if (sliderMin && sliderMax) {
-      sliderMin.addEventListener('input', uppdateraKartaEfterFilter);
-      sliderMax.addEventListener('input', uppdateraKartaEfterFilter);
+      sliderMin.addEventListener('input', debouncedUppdateraKarta);
+      sliderMax.addEventListener('input', debouncedUppdateraKarta);
    }
 
    // Lyssna på kryssrutorna
@@ -248,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
             markeraAllaCheckbox.checked = false;
          }
 
-         if(markeraAllaCheckbox) {
+         if (markeraAllaCheckbox) {
             const AllaArIkryssade = Array.from(artCheckboxar).every(cb => cb.checked);
             markeraAllaCheckbox.checked = AllaArIkryssade;
          }
@@ -282,6 +292,27 @@ document.addEventListener('DOMContentLoaded', function () {
    database.laddaLan();
    database.laddaObservationer();
 
+   async function laddaToppmenyVader() {
+      const widget = document.getElementById("weatherWidget");
+      if (!widget) return; // Avbryt om komponenten inte finns på sidan
+
+      const gavleLat = 60.6745;
+      const gavleLon = 17.1417;
+
+      // Skapa dagens datum i formatet YYYY-MM-DD
+      const idag = new Date().toISOString().split('T')[0];
+
+      // Vi återanvänder hamtaVader och skickar med "weatherStatusTopp" som logg-id
+      const vader = await api.hamtaVader(gavleLat, gavleLon, idag, "weatherStatusTopp");
+      if (vader) {
+         widget.innerHTML = `Gävle: ${vader.emoji} ${vader.temp}°C (${vader.beskrivning})`;
+      } else {
+         widget.innerHTML = "Väder ej tillgängligt 🌤️";
+      }
+   }
+
+   laddaToppmenyVader(); // Kör funktionen direkt vid start!
+
    // --- TESTKÖRNING FÖR STATUSSIDAN (statusar.html) ---
    // Kollar om vi är på statusar.html (genom att se om wikiStatus-elementet finns)
    if (document.getElementById("wikiStatus")) {
@@ -291,8 +322,8 @@ document.addEventListener('DOMContentLoaded', function () {
       api.hamtaWikiSammanfattning("Gävle");
       api.hamtaBakgrundsbild("Gävle");
 
-      // Testar vädret med Gävles koordinater
-      api.hamtaVader(60.6745, 17.1417);
+      // Testar ett historiskt väder-anrop (t.ex. för ett år sedan) till den andra logg-raden
+      api.hamtaVader(60.6745, 17.1417, "2025-06-29", "weatherStatusObs");
    }
 });
 

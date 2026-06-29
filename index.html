@@ -9,6 +9,9 @@
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
 </head>
 
 <body>
@@ -34,8 +37,8 @@
             <!-- // Kan förmodligen tas bort -->
             <!-- <div class="dashboard"> -->
             <!-- // ---------------- -->
-                <aside class="sidebar">
-                    <h3>Filtrera observationer</h3>
+            <aside class="sidebar">
+                <h3>Filtrera observationer</h3>
 
                 <div class="filter-group">
                     <label class="filter-title">Välj arter:</label>
@@ -45,62 +48,53 @@
                             <span>🌟 Markera alla</span>
                         </label>
                         <label>
-                            <input type="checkbox" class="art-checkbox" value="1" checked>
-                            <span>🐺 Varg</span>
+                            <input type="checkbox" class="art-checkbox" value="1">
+                            <img src="images/svg/varg.svg" alt="Varg" class="icon-small">
+                            <span>Varg</span>
                         </label>
                         <label>
-                            <input type="checkbox" class="art-checkbox" value="2" checked>
-                            <span>🦌 Älg</span>
+                            <input type="checkbox" class="art-checkbox" value="2">
+                            <img src="images/svg/alg.svg" alt="Älg" class="icon-small">
+                            <span>Älg</span>
                         </label>
                         <label>
-                            <input type="checkbox" class="art-checkbox" value="3" checked>
-                            <span>🦌 Rådjur</span>
+                            <input type="checkbox" class="art-checkbox" value="3">
+                            <img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small">
+                            <span>Rådjur</span>
                         </label>
                     </div>
                 </div>
 
-                    <div class="filter-group">
-                        <label class="filter-title">Tidsintervall:</label>
-                        <div class="radio-group">
-                            <label>
-                                <input type="radio" name="timeStep" value="halv" checked> Halvårsvis
-                            </label>
-                            <label>
-                                <input type="radio" name="timeStep" value="hel"> Helår
-                            </label>
-                        </div>
+                <hr>
+            </aside>
+
+            <section class="map-section">
+                <div id="map" class="map-container"></div>
+
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <span id="currentTimelineDate">Visar tidsperiod: <strong id="periodText">2016 H1 till
+                                2026
+                                H1</strong></span>
                     </div>
 
-                    <hr>
-                </aside>
-
-                <section class="map-section">
-                    <div id="map" class="map-container"></div>
-
-                    <div class="timeline-container">
-                        <div class="timeline-header">
-                            <span id="currentTimelineDate">Visar tidsperiod: <strong id="periodText">2016 H1 till
-                                    2026
-                                    H1</strong></span>
-                        </div>
-
-                        <div class="range-slider-wrapper">
-                            <input type="range" id="timeSliderMin" min="0" max="20" value="0" step="1">
-                            <input type="range" id="timeSliderMax" min="0" max="20" value="20" step="1">
-                        </div>
-
-                        <div class="timeline-labels">
-                            <span>2016</span>
-                            <span>2021</span>
-                            <span>2026</span>
-                        </div>
+                    <div class="range-slider-wrapper">
+                        <input type="range" id="timeSliderMin" min="0" max="20" value="20" step="1">
+                        <input type="range" id="timeSliderMax" min="0" max="20" value="20" step="1">
                     </div>
 
-                    <div class="chart-container">
-                        <canvas id="trendsChart"></canvas>
+                    <div class="timeline-labels">
+                        <span>2016</span>
+                        <span>2021</span>
+                        <span>2026</span>
                     </div>
+                </div>
 
-                </section>
+                <div class="chart-container">
+                    <canvas id="trendsChart"></canvas>
+                </div>
+
+            </section>
             <!-- </div> -->
 
         </main>
@@ -108,12 +102,14 @@
 
         <footer id="footer"></footer>
 
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
         <script type=module src="js/app.js"></script>
-        </div>
+
+    </div>
 </body>
 
 </html>

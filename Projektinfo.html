@@ -3,127 +3,125 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Projektinfo</title>
+    <title>Projektinformation</title>
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Databas JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
 </head>
 
 <body>
 
+    <div id="page">
 
-    <header class="topbar">
-        <div class="logo">
-            <h1>🐾 Nu kör vi!</h1>
-        </div>
-
-        <div class="topbar-controls">
-            <div id="weatherWidget" class="weather-widget">
-                Hämtar lokalt väder... 🌤️
+        <header class="topbar">
+            <div class="logo">
+                <h1>📋 Projektinfo</h1>
             </div>
-            <button id="themeToggle" class="theme-btn">🌙 Byt tema</button>
-        </div>
-    </header>
 
+            <div class="topbar-controls">
+                <div id="weatherWidget" class="weather-widget">
+                    Hämtar lokalt väder... 🌤️
+                </div>
+                <button id="themeToggle" class="theme-btn">🌙 Byt tema</button>
+            </div>
+        </header>
 
-    <nav id="nav"></nav>
+        <nav id="nav"></nav>
 
+        <main class="main-layout">
 
-    <main>
-        <section style="margin: 100px;">
-            <h1>Projekt i kursen HTML, CSS och Javascript</h1>
+            <aside class="sidebar">
+                <h3>Kursinformation</h3>
+                <p style="font-size: var(--font-size-small); color: var(--text-secondary); line-height: 1.4;">
+                    <strong>Kurs:</strong> HTML, CSS och Javascript<br>
+                    <strong>Redovisning:</strong> Fredag 3 juli kl. 9-12.<br><br>
+                    Ingen PowerPoint behövs – visa bara upp webbplatsen, din kod och berätta om din lösning.
+                </p>
+                
+                <hr>
 
-            <p>
-                Projekt i kursen HTML, CSS och Javascript
-                Ni kan jobba i grupp eller individuellt. Presentation av projekten sker nästa fredag 3 juni
-                9-12. Ni behöver inte skapa något power point presentation, det räcker att visa upp
-                webbsiten och kod och prata om lösningen. Ni som känner att ni inte vill/kan redovisa för
-                klassen, skicka hela lösningen inzippat till mig via chatten.
-            </p>
-            <h2>Uppgift</h2>
-            <p>
-                Skapa en webbsite som visualiserar förhållandet mellan olika observationer av en eller
-                flera djurarter i något län i Sverige. Det kan t ex vara visualiseringen av älg och varg
-                observationer eller rovfåglar och kaniner. Det är en grundidé som ni själva kan utveckla
-                eller ändra. Ni kanske vill helt enkelt visualisera ned - eller uppgången av en viss art
-                under vissa tidsperioder. Det går också att visualisera observationer i närheten av ett
-                visst objekt, t ex någon fågelobservation i närheten av en flygplats. I så fall bör man
-                skapa en statisk markör för flygplatsen. Sätt igång med projektet med ett
-                brainstormingsmöte. Antingen gruppvis eller allihop. Tänk på vad som kan vara
-                intressant att jobba med.
+                <h3>Arbetstips</h3>
+                <ul style="font-size: var(--font-size-small); color: var(--text-secondary); padding-left: var(--spacing-md); display: flex; flex-direction: column; gap: var(--spacing-xs);">
+                    <li>Återanvänd koden från övningarna.</li>
+                    <li>Ta små steg framåt. Se till att designen fungerar innan du fyller på med avancerat innehåll.</li>
+                </ul>
 
-            </p>
-            <h3>Tips</h3>
-            <ul>
-                <li>Återanvänd koden från övningarna</li>
-                <li>Ta små steg framåt, se till att design på sidan är tillfredställande och sedan börja</li>
-                <li>att fylla i den med innehållet. Inte tvärtom. </li>
+                <hr>
 
-            </ul>
+                <div style="font-size: var(--font-size-small); color: var(--text-secondary);">
+                    <strong>Statusförklaring:</strong><br>
+                    🟢 Klar | 🟡 Pågående | 🔴 Ej påbörjad
+                </div>
+            </aside>
 
+            <section class="map-section" style="overflow-y: auto;">
+                
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <strong>Projektuppgift: Djurvisualisering</strong>
+                    </div>
+                    
+                    <div class="filter-group" style="margin-bottom: var(--spacing-md);">
+                        <span class="filter-title">💡 Beskrivning</span>
+                        <p style="font-size: var(--font-size-normal); color: var(--text-primary); line-height: 1.5; padding: var(--spacing-xs) 0;">
+                            Skapa en webbplats som visualiserar förhållandet mellan olika observationer av en eller flera djurarter i något län i Sverige. Det kan till exempel vara visualisering av älg- och vargobservationer eller rovfåglar och kaniner.
+                        </p>
+                    </div>
 
-            <h2>Status</h2>
+                    <div class="filter-group">
+                        <span class="filter-title">📌 Obligatoriska Krav</span>
+                        
+                        <p class="status-log">🟡 Supabase med två eller flera tabeller</p>
+                        <p class="status-log">🟡 PK/FK med de nya tabellerna</p>
+                        <p class="status-log">🟡 SQL-satser testade på Servern</p>
+                        <p class="status-log">🟡 Webbdesign enligt designprinciperna</p>
+                        <p class="status-log">🔴 Webbsidan innehåller länkar till beskrivningar av vald art</p>
+                        <p class="status-log">🟡 Data API så som Unsplash, Wikipedia mm.</p>
+                        <p class="status-log">🔴 Skicka informationen om vädret under observationsdatumet</p>
+                        <p class="status-log">🔴 Design av sidan med semantiska taggar</p>
+                        <p class="status-log">🟡 CSS-filen med alla element stylade (minst en klass och ett ID)</p>
+                        <p class="status-log">🟡 Leaflet med markörer som representerar djurarten</p>
+                    </div>
 
+                    <div class="filter-group" style="margin-top: var(--spacing-md);">
+                        <span class="filter-title">🚀 Extra Utmaningar (Icke obligatoriska)</span>
+                        
+                        <p class="status-log">🔴 Använd anropet till GBIF via dess API och sök direkt via ditt formulär</p>
+                        <p class="status-log">🟡 Manipulera kartbeteende med fler funktioner som vi inte gått igenom</p>
+                        <p class="status-log">🔴 Möjliggör ifyllningen av en ny kommun i formuläret</p>
+                    </div>
 
-            <ul>
-                <li>🟢 Klar</li>
-                <li>🟡 Pågående</li>
-                <li>🔴 Ej påbörjad</li>
-            </ul>
-            <h2>Krav</h2>
-            <ul>
+                    <div class="filter-group" style="margin-top: var(--spacing-md);">
+                        <span class="filter-title">✨ Nice to have-idéer</span>
+                        
+                        <p class="status-log">🔴 🔍 Filtrera observationer på kommun</p>
+                        <p class="status-log">🔴 📅 Filtrera datumintervall</p>
+                        <p class="status-log">🔴 🐺 Filtrera art</p>
+                        <p class="status-log">🔴 📊 Visa antal observationer</p>
+                        <p class="status-log">🔴 🌡️ Visa temperatur vid observationen</p>
+                        <p class="status-log">🔴 🖼️ Bild från Unsplash</p>
+                        <p class="status-log">🔴 📖 Kort Wikipedia-text</p>
+                        <p class="status-log">🔴 📍 Zooma kartan till vald observation</p>
+                        <p class="status-log">🟢 Funktion X</p>
+                        <p class="status-log">🟡 Funktion Y</p>
+                        <p class="status-log">🔴 Funktion Z</p>
+                    </div>
 
-                <li>🟡 Supabase med två eller flera tabeller</li>
-                <li>🟡 PK/FK med de nya tabellerna</li>
-                <li>🟡 SQL-satser testade på Servern</li>
-                <li>🟡 Webbdesign enligt designprinciperna</li>
-                <li>🔴 Websidan innehåller länkar till beskrivningar av de/den valda arten</li>
-                <li>🟡 Data API så som Unshplash, Wikipedia mm.</li>
-                <li>🔴 Skicka informationen om vädret under observationsdatumet</li>
-                <li>🔴 Design av sidan med semantiska taggar</li>
-                <li>🟡 CSS filen med alla element stylade. Minst en klass och id.</li>
-                <li>🟡 Leaflet med markörer som representerar djurarten</li>
-            </ul>
+                </div>
 
-            <h3>Icke obligatoriska krav (om du har tid och lust att undersöka lite extra)</h3>
-            <ul>
-                <li>🔴 Använd anropet till GBIF via dess API och sök direkt via ditt formulär.</li>
-                <li>🟡 Manipulera kartbeteende med fler funktioner som vi inte gått igenom</li>
-                <li>🔴 Möjliggör ifyllningen av en ny kommun i formuläret.</li>
-            </ul>
+            </section>
 
-            <h3>Nice to have-idéer</h3>
-            <ul>
-                <li>🔴 🔍 Filtrera observationer på kommun</li>
-                <li>🔴 📅 Filtrera datumintervall</li>
-                <li>🔴 🐺 Filtrera art</li>
-                <li>🔴 📊 Visa antal observationer</li>
-                <li>🔴 🌡️ Visa temperatur vid observationen</li>
-                <li>🔴 🖼️ Bild från Unsplash</li>
-                <li>🔴 📖 Kort Wikipedia-text</li>
-                <li>🔴 📍 Zooma kartan till vald observation</li>
-                <li>🟢 X</li>
-                <li>🟡 Y</li>
-                <li>🔴 Z</li>
-            </ul>
-        </section>
+        </main>
 
-    </main>
-
-    <footer id="footer"></footer>
-
-
-    <script type="module" src="js/app.js"></script>
+        <footer id="footer"></footer>
 
     </div>
 
-</body>
+    <script type="module" src="js/app.js"></script>
 
+</body>
 </html>

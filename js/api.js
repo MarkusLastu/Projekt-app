@@ -82,15 +82,15 @@ export function tolkaVaderKod(kod) {
 }
 
 // Väder (Open-Meteo dagens + historisk väder-data)
-export async function hamtaVader(lat, lon, datum) {
-    const weatherStatusElem = document.getElementById("weatherStatus");
+export async function hamtaVader(lat, lon, datum, elementId) {
+    const weatherStatusElem = document.getElementById(elementId);
 
     if (weatherStatusElem) {
         ui.skapaLoggar("⏳ Hämtar historiskt väderdata...", weatherStatusElem);
     }
 
     try {
-        //Formaterar datumet till YYYY-MM-DD pga API:n kräver det
+        // Formaterar datumet till YYYY-MM-DD pga API:n kräver det
         const d = new Date(datum);
         const aaaa = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, '0');
@@ -102,7 +102,6 @@ export async function hamtaVader(lat, lon, datum) {
         if (!response.ok) throw new Error('Kunde inte hämta väderdata');
 
         const data = await response.json();
-
         const historiskVaderKod = data.daily.weather_code[0];
         const maxTemp = data.daily.temperature_2m_max[0];
 
@@ -128,5 +127,6 @@ export async function hamtaVader(lat, lon, datum) {
         return null;
     }
 }
+
 
 // -----------------------------------------------------------------------------

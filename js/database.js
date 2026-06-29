@@ -30,38 +30,22 @@ export async function laddaLan() {
    skapaLoggar("Laddar län...", dbLanStatus);
 
    try {
-      const { data: observationer, error } = await mySupabaseClient
-         .from("observationer")
-         .select("Lan")
-         .order("Lan");
+      const { data: lan, error } = await mySupabaseClient
+         .from("lanLista")
+         .select("LanNamn")
+         .order("LanNamn");
 
       if (error) {
          if (dbLanStatus) dbLanStatus.textContent = "❌ Fel: " + error.message;
          console.error(error);
+         skapaLoggar("❌ Fel: " + error.message, dbLanStatus);
          return;
       }
 
-      const unikaLan = [...new Set(observationer.map(obs => obs.Lan).filter(Boolean))];
-
-      const select = document.getElementById("lanSelect");
-      if (select) {
-         select.innerHTML = '<option value="">--- Välj län ---</option>';
-
-         unikaLan.forEach(lanNamn => {
-            const option = document.createElement("option");
-            option.value = lanNamn;
-            option.textContent = lanNamn;
-            select.appendChild(option);
-         });
-
-         skapaLoggar(`✅ ${unikaLan.length} unika län inlästa (i dropdown-menyn)!`, dbLanStatus);
-      } else {
-         skapaLoggar(`✅ ${unikaLan.length} unika län inlästa!`, dbLanStatus);
-      }
+      skapaLoggar(`✅ ${lan.length} län inlästa!`, dbLanStatus);
 
    } catch (error) {
       if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
-      console.error(error);
    }
 }
 // -------------------------------------------------------
@@ -73,136 +57,70 @@ export async function laddaObservationer() {
    const dbObservationStatus = document.getElementById("dbObservationStatus");
    skapaLoggar("Laddar observationer...", dbObservationStatus);
 
+   // Hämta ALL data från supabase (annars är max 1000 rader)
+   let allData = [];
+   let rangeStart = 0;
+   const batchSize = 1000;
+   let hasMore = true;
+
    try {
-      const { data: observationer, error } = await mySupabaseClient
-         .from('observationer')
-         .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
-         .order('Datum', { ascending: false })
-         .range(0, 50000);
+      while (hasMore) {
+         const { data: data, error } = await mySupabaseClient
+            .from('observationer')
+            .select(`
+            *,
+            arter (ArtNamn),
+            kommuner!Kommun_id (
+               KommunNamn,
+               lanLista!Lan_id (LanNamn)
+            )
+         `)
+            .order('Datum', { ascending: false })
+            .range(rangeStart, rangeStart + batchSize - 1);
 
-      if (error) {
-         if (dbObservationStatus) dbObservationStatus.textContent = "❌ Fel: " + error.message;
-         console.error(error);
-         skapaLoggar("❌ Fel: " + error.message, dbObservationStatus);
-         return;
-      }
+         if (error) throw error;
 
-      const lista = document.getElementById('observationerLista');
-      if (lista) lista.innerHTML = '';
-
-      if (!observationer || observationer.length === 0) {
-         if (lista) lista.innerHTML = `<div class="empty-state"><p>Inga observationer än.</p></div>`;
-         skapaLoggar('ℹ️ Inga observationer hittades i databasen.', dbObservationStatus);
-         return;
-      }
-
-      allaObservationer = observationer;
-
-      // Kör filtreringen direkt så att kartan laddar första perioden på slidern!
-      uppdateraKartaEfterFilter();
-
-      skapaLoggar(`✅ ${observationer.length} observationer hämtade!`, dbObservationStatus);
-
-   } catch (error) {
-      if (dbObservationStatus) dbObservationStatus.textContent = '❌ Nätverksfel: ' + error.message;
-      console.error('Nätverksfel:', error);
-      skapaLoggar('❌ Systemfel: ' + error.message, dbObservationStatus);
-   }
-
-   /*       GAMMAL KOD
-            observationer.forEach(obs => {
-            const div = document.createElement('div');
-            div.className = 'observation';
-            const datum = new Date(obs.Datum).toLocaleDateString('sv-SE');
-            const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur';
-   
-            div.innerHTML = `
-                   <div>🐾 ${artNamn}</div>
-                   <div class="datum">📅 ${datum}</div>
-                   <div class="koordinater">📍 ${obs.Latitude}, ${obs.Longitude}</div>
-               `;
-            lista.appendChild(div);
-   
-            // KARTA: Lägg till markör om koordinater finns
-            if (obs.Latitude && obs.Longitude) {
-               // Vi skickar med artnamnet istället för län
-               addObservationMarker(obs.Latitude, obs.Longitude, artNamn, 1, obs.Datum);
-            }
-         });
-   
-         // Anpassa kartvy
-         if (observationMarkers.length > 0) {
-            const group = L.featureGroup(observationMarkers);
-            map.fitBounds(group.getBounds().pad(0.1));
+         if (data.length > 0) {
+            allData = allData.concat(data);
+            rangeStart += batchSize;
          }
-   
-         skapaLoggar('✅ ' + observationer.length + ' observationer laddade!', dbObservationStatus);
-         console.log(observationer)
-      } catch (error) {
-         skapaLoggar('Nätverksfel:', error);
-      } */
-}
-// -------------------------------------------------------
 
+         // När vi laddar in färre än 1000 rader är vi klara
+         if (data.length < batchSize) {
+            hasMore = false;
+         }
 
-/* // === SPARA OBSERVATION === (BEHÖVS INTE LÄNGRE)
-export async function sparaObservation() {
-   const dbSaveObservationStatus = document.getElementById("dbSaveObservationStatus");
-   skapaLoggar("Laddar observationer...", dbSaveObservationStatus);
-
-   // Hämta värden från HTML (se till att ID:n stämmer med din HTML)
-   const artId = document.getElementById("ArtNamnSelect").value; // Byt från lanSelect
-   const datum = document.getElementById("datumInput").value;
-   const lat = parseFloat(document.getElementById("latInput").value);
-   const lon = parseFloat(document.getElementById("lonInput").value);
-
-   if (!artId) { alert("Välj en art!"); return }
-   if (!datum) { alert("Välj ett datum!"); return }
-   if (isNaN(lat) || isNaN(lon)) { alert("Ange koordinater!"); return }
-
-   try {
-      const { error } = await mySupabaseClient
-         .from('observationer')
-         .insert({
-            Datum: datum,           // Måste matcha "Datum" i Supabase
-            Latitude: lat,          // Måste matcha "Latitude"
-            Longitude: lon,         // Måste matcha "Longitude"
-            Art_id: artId           // Koppla till rätt art
-         });
-
-      if (error) {
-         alert('Fel vid sparande: ' + error.message);
-         console.error(error);
-         return;
+/*          if (error) {
+            if (dbObservationStatus) dbObservationStatus.textContent = "❌ Fel: " + error.message;
+            console.error(error);
+            skapaLoggar("❌ Fel: " + error.message, dbObservationStatus);
+            return;
+         } */
       }
-      alert('✅ Sparad!');
 
-      // Töm fälten
-      document.getElementById("ArtNamnSelect").value = '';
-      document.getElementById("datumInput").value = '';
-      document.getElementById("latInput").value = '';
-      document.getElementById("lonInput").value = '';
+         allaObservationer = allData;
+         uppdateraKartaEfterFilter();
+         skapaLoggar(`✅ ${allData.length} observationer hämtade!`, dbObservationStatus);
 
-      laddaObservationer(); // Ladda om listan
-
-      skapaLoggar('✅ Observation sparad!', dbSaveObservationStatus);
-
-   } catch (error) {
-      console.error('Nätverksfel: ' + error.message);
+      } catch (error) {
+         // Detta fångar oväntade tekniska fel (t.ex. att internet dör helt)
+         if (dbObservationStatus) dbObservationStatus.textContent = '❌ Nätverksfel: ' + error.message;
+         console.error('Kritiskt nätverksfel:', error);
+         skapaLoggar('❌ Systemfel: ' + error.message, dbObservationStatus);
+      }
    }
-}
-// ------------------------------------------------------- */
 
+// -------------------------------------------------------
 
 
 // === UPPDATERA SIDAN I REALTID OM DB UPPDATERAS ===
 mySupabaseClient
-   .channel('observationer')
-   .on('postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'observationer' },
-      () => laddaObservationer()
-   )
-   .subscribe();
+      .channel('observationer')
+      .on('postgres_changes',
+         { event: 'INSERT', schema: 'public', table: 'observationer' },
+         () => laddaObservationer()
+      )
+      .subscribe();
 
-skapaLoggar('Supabase har uppdaterats', dbStatus);
+   skapaLoggar('Supabase har uppdaterats', dbStatus);
 // -------------------------------------------------------
