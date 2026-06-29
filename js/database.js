@@ -31,7 +31,7 @@ export async function laddaLan() {
 
    try {
       const { data: observationer, error } = await mySupabaseClient
-         .from("Observationer")
+         .from("observationer")
          .select("Lan")
          .order("Lan");
 
@@ -75,8 +75,8 @@ export async function laddaObservationer() {
 
    try {
       const { data: observationer, error } = await mySupabaseClient
-         .from('Observationer')
-         .select("Observationer_id, Datum, Latitude, Longitude, Art_id, Arter(ArtNamn)")
+         .from('observationer')
+         .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
          .order('Datum', { ascending: false });
 
       if (error) {
@@ -161,7 +161,7 @@ export async function sparaObservation() {
 
    try {
       const { error } = await mySupabaseClient
-         .from('Observationer')
+         .from('observationer')
          .insert({
             Datum: datum,           // Måste matcha "Datum" i Supabase
             Latitude: lat,          // Måste matcha "Latitude"
@@ -196,9 +196,9 @@ export async function sparaObservation() {
 
 // === UPPDATERA SIDAN I REALTID OM DB UPPDATERAS ===
 mySupabaseClient
-   .channel('Observationer')
+   .channel('observationer')
    .on('postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'Observationer' },
+      { event: 'INSERT', schema: 'public', table: 'observationer' },
       () => laddaObservationer()
    )
    .subscribe();
