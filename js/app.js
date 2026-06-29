@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
    database.laddaLan();
    database.laddaObservationer();
 
-   // --- TESTKÖRNING FÖR STATUSSIDAN ---
+   // --- TESTKÖRNING FÖR STATUSSIDAN (statusar.html) ---
    // Kollar om vi är på statusar.html (genom att se om wikiStatus-elementet finns)
    if (document.getElementById("wikiStatus")) {
       ui.skapaLoggar('Skickar test-anrop till externa API:er...', document.getElementById('wikiStatus'));

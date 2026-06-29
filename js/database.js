@@ -30,9 +30,9 @@ export async function laddaLan() {
    skapaLoggar("Laddar län...", dbLanStatus);
 
    try {
-      const { data: lan, error } = await mySupabaseClient
+      const { data: observationer, error } = await mySupabaseClient
          .from("Observationer")
-         .select("Observationer_id, Lan") // 🛠️ Ändrat från id till Observationer_id och lan till Lan
+         .select("Lan")
          .order("Lan");
 
       if (error) {
@@ -41,20 +41,23 @@ export async function laddaLan() {
          return;
       }
 
-      // Kika om dropdownen finns (finns bara på index.html)
+      const unikaLan = [...new Set(observationer.map(obs => obs.Lan).filter(Boolean))];
+
       const select = document.getElementById("lanSelect");
       if (select) {
          select.innerHTML = '<option value="">--- Välj län ---</option>';
-         lan.forEach(l => {
+
+         unikaLan.forEach(lanNamn => {
             const option = document.createElement("option");
-            option.value = l.Observationer_id; // 🛠️ Ändrat till Observationer_id
-            option.textContent = l.Lan;        // 🛠️ Ändrat till stort L om det behövs
+            option.value = lanNamn;
+            option.textContent = lanNamn;
             select.appendChild(option);
          });
-      }
 
-      // Den här kommer nu köras på båda sidorna!
-      skapaLoggar(`✅ ${lan.length} län inlästa från databasen!`, dbLanStatus);
+         skapaLoggar(`✅ ${unikaLan.length} unika län inlästa (i dropdown-menyn)!`, dbLanStatus);
+      } else {
+         skapaLoggar(`✅ ${unikaLan.length} unika län inlästa!`, dbLanStatus);
+      }
 
    } catch (error) {
       if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
@@ -141,7 +144,7 @@ export async function laddaObservationer() {
 // -------------------------------------------------------
 
 
-/* // === SPARA OBSERVATION ===
+/* // === SPARA OBSERVATION === (BEHÖVS INTE LÄNGRE)
 export async function sparaObservation() {
    const dbSaveObservationStatus = document.getElementById("dbSaveObservationStatus");
    skapaLoggar("Laddar observationer...", dbSaveObservationStatus);
