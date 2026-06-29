@@ -78,6 +78,7 @@ export async function laddaObservationer() {
          .from('observationer')
          .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
          .order('Datum', { ascending: false });
+         .range(0, 50000);
 
       if (error) {
          if (dbObservationStatus) dbObservationStatus.textContent = "❌ Fel: " + error.message;

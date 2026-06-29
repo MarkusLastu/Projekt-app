@@ -60,7 +60,7 @@ function uppdateraGraf(valdaArtIds) {
    const canvas = document.getElementById('trendsChart');
    if (!canvas) {
       // Om canvas saknas (som på statussidan), avbryt här så det inte kraschar!
-      return; 
+      return;
    }
 
    const ctx = canvas.getContext('2d');
@@ -128,7 +128,7 @@ export function uppdateraKartaEfterFilter() {
       minVal = parseInt(sliderMin.value);
       maxVal = parseInt(sliderMax.value);
 
-      // Säkerhetsåtgärd för att knapparna inte ska gå omlott
+      // Säkerhetsåtgärd för att knapparna inte ska gå förbi varandra
       if (minVal > maxVal) {
          if (this === sliderMin) {
             sliderMax.value = minVal;
@@ -145,10 +145,8 @@ export function uppdateraKartaEfterFilter() {
    }
 
    // Hämta vilka arter som är ikryssade (eller ta alla [1,2,3] som test om inga boxar finns)
-   const ikryssadeCheckboxar = document.querySelectorAll('.checkbox-group input:checked');
-   const valdaArtIds = ikryssadeCheckboxar.length > 0
-      ? Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value))
-      : [1, 2, 3];
+   const ikryssadeCheckboxar = document.querySelectorAll('.checkbox-group:unchecked');
+   const valdaArtIds = Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value));
 
    // Uppdatera grafen
    uppdateraGraf(valdaArtIds);
