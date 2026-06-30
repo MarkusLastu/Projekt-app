@@ -16,6 +16,7 @@ const sliderMax = document.getElementById('timeSliderMax');
 const periodText = document.getElementById('periodText');
 const themeToggle = document.getElementById("themeToggle");
 
+
 // -------------------------------------------------------
 // #endregion
 
@@ -23,6 +24,7 @@ const themeToggle = document.getElementById("themeToggle");
 // #region === STATE - GLOBALA VARIABLER ===
 /* Vilken information behöver programmet komma ihåg? */
 let trendsChart = null;
+
 // -------------------------------------------------------
 // #endregion
 
@@ -178,7 +180,7 @@ export function uppdateraKartaEfterFilter() {
    filtreradData.forEach(obs => {
       if (obs.Latitude && obs.Longitude) {
          const latNum = parseFloat(obs.Latitude);
-         const lonNum = parseFloat(obs.Longitude);         
+         const lonNum = parseFloat(obs.Longitude);
          console.log(obs.artNamn)
          const artNamn = obs.ArtNamn ? obs.ArtNamn : 'Okänt djur';
 
@@ -220,6 +222,11 @@ async function visaVaderForObservation(lat, lon) {
    }
 }
 
+async function loadProjektStatus() {
+   const data = await database.refreshProjektStatus();
+   ui.renderProjektStatusUI(data);
+}
+
 // -------------------------------------------------------
 // #endregion
 
@@ -230,9 +237,8 @@ async function visaVaderForObservation(lat, lon) {
 // #region STARTUP
 /* Kod som ska köras när sidan laddas. */
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
    ui.skapaLoggar('DOMContentLoaded', 'start', 'Appen startar...');
-
 
    // Lyssna på båda slider-knapparna samtidigt!
 
@@ -356,6 +362,68 @@ document.addEventListener('DOMContentLoaded', function () {
       // Testar ett historiskt väder-anrop (t.ex. för ett år sedan) till den andra logg-raden
       api.hamtaVader(60.6745, 17.1417, "2025-06-06", "weatherStatusObs");
    }
+
+   // === PROJEKTINFO-SIDAN ===
+
+   // init   
+   await loadProjektStatus();
+
+   const closeBtn = document.getElementById("closeEditBtn");
+   if (closeBtn) {
+      closeBtn.addEventListener("click", database.closeModal);
+   }
+
+   const saveBtn = document.getElementById("saveEditBtn");
+
+   if (saveBtn) {
+      saveBtn.addEventListener("click", async () => {
+
+         await database.uppdateraProjektStatus(
+            ui.currentEditItem.projektstatus_id,
+            document.getElementById("editTyp").value,
+            document.getElementById("editStatus").value,
+            document.getElementById("editUppgift").value,
+            document.getElementById("editKommentar").value
+         );
+
+         document.getElementById("editModal").classList.add("hidden");
+
+         await loadProjektStatus();
+      });
+   }
+
+   const addBtn = document.getElementById("addBtn");
+   const closeAddBtn = document.getElementById("closeAddBtn");
+   const saveAddBtn = document.getElementById("saveAddBtn");
+
+   if (addBtn) {
+      addBtn.addEventListener("click", () => {
+         ui.openAddModal();
+      });
+   }
+
+   if (closeAddBtn) {
+      closeAddBtn.addEventListener("click", () => {
+         ui.closeAddModal();
+      });
+   }
+
+   if (saveAddBtn) {
+      saveAddBtn.addEventListener("click", async () => {
+
+         const typ = document.getElementById("addTyp").value;
+         const status = document.getElementById("addStatus").value;
+         const uppgift = document.getElementById("addUppgift").value;
+         const kommentar = document.getElementById("addKommentar").value;
+
+         await database.insertProjektStatus(typ, status, uppgift, kommentar);
+
+         ui.closeAddModal();
+      });
+   }
+
 });
+
+
 
 // #endregion
