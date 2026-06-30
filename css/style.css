@@ -204,7 +204,7 @@ nav a:hover {
     grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
 
     grid-template-areas: "aside section";     
-    height: calc(100vh - 180px);
+    min-height: calc(100vh - 180px);
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -303,6 +303,7 @@ hr {
     flex: 1;
     padding: var(--spacing-lg);
     gap: var(--spacing-lg);
+    align-self: start;
 }
 
 .map-container {
