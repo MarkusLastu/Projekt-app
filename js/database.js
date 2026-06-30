@@ -31,18 +31,20 @@ export async function laddaLan() {
    skapaLoggar(laddaLan, 'start', "Laddar län...", dbLanStatus);
 
    try {
-      const { data: observationer, error } = await mySupabaseClient
-         .from("observationer")
-         .select("Lan")
-         .order("Lan");
-
+      const { data: lan, error } = await mySupabaseClient.rpc('get_lan');       
+      console.log(lan)  ;
+ 
       if (error) {
          if (dbLanStatus) skapaLoggar(laddaLan, 'fel', 'Fel: ' + error.message);
          console.error(error);
          return;
       }
 
-      const unikaLan = [...new Set(observationer.map(obs => obs.Lan).filter(Boolean))];
+      const unikaLan = lan;
+
+      // Behövs inte. Vi söker SELECT DISTINCT istället
+      /* [...new Set(lan.map(obs => obs.lanNamn).filter(Boolean))]; */
+
 
       const select = document.getElementById("lanSelect");
       if (select) {
@@ -78,10 +80,13 @@ export async function laddaObservationer() {
 
    try {
       const { data: observationer, error } = await mySupabaseClient
-         .from('observationer')
+      .rpc('get_observationer')
+      
+      console.log(observationer);
+      /*  .from('observationer')
          .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
          .order('Datum', { ascending: false })
-         .range(0, 50000);
+         .range(0, 50000); */
 
       if (error) {
          if (dbObservationStatus) {
@@ -103,7 +108,7 @@ export async function laddaObservationer() {
          return;
       }
 
-      allaObservationer = observationer;
+      allaObservationer = observationer;      
 
       // Kör filtreringen direkt så att kartan laddar första perioden på slidern!
       uppdateraKartaEfterFilter();

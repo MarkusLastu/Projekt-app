@@ -177,8 +177,9 @@ export function uppdateraKartaEfterFilter() {
    filtreradData.forEach(obs => {
       if (obs.Latitude && obs.Longitude) {
          const latNum = parseFloat(obs.Latitude);
-         const lonNum = parseFloat(obs.Longitude);
-         const artNamn = obs.Arter ? obs.Arter.ArtNamn : 'Okänt djur';
+         const lonNum = parseFloat(obs.Longitude);         
+         console.log(obs.artNamn)
+         const artNamn = obs.ArtNamn ? obs.ArtNamn : 'Okänt djur';
 
          if (!isNaN(latNum) && !isNaN(lonNum)) {
             mapModul.addObservationMarker(latNum, lonNum, artNamn, 1, obs.Datum);
