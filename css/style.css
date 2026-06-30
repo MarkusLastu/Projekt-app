@@ -307,7 +307,7 @@ hr {
 }
 
 .map-container {
-    min-height: 300px;
+    min-height: 500px;
     width: 100%;
     flex: 1;
     border-radius: var(--border-radius-lg);
