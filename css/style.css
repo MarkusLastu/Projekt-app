@@ -451,3 +451,61 @@ body.dark-mode .leaflet-control-zoom a {
     color: var(--text-primary);
     border: 1px solid var(--border-color);
 }
+
+
+/* ===== CSS PROJEKTSTATUS ===== */
+.status-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Kolumn 1: status */
+.col-status {
+    width: 30px;
+    flex-shrink: 0;
+}
+
+/* Kolumn 2: uppgift (tar mest plats) */
+.col-uppgift {
+    flex: 1;
+}
+
+/* Kolumn 3: kommentar */
+.col-kommentar {
+    flex: 1;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: var(--bg-surface);
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+/* =============================== */

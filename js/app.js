@@ -256,6 +256,11 @@ async function visaVaderForObservation(lat, lon) {
    }
 }
 
+async function loadProjektStatus() {
+   const data = await database.refreshProjektStatus();
+   ui.renderProjektStatusUI(data);
+}
+
 // -------------------------------------------------------
 // #endregion
 
@@ -266,9 +271,8 @@ async function visaVaderForObservation(lat, lon) {
 // #region STARTUP
 /* Kod som ska köras när sidan laddas. */
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
    ui.skapaLoggar('DOMContentLoaded', 'start', 'Appen startar...');
-
 
    // Lyssna på båda slider-knapparna samtidigt!
 
@@ -447,6 +451,68 @@ document.querySelectorAll('.sound-btn').forEach(knapp => {
    });
 });
 
+
+   // === PROJEKTINFO-SIDAN ===
+
+   // init   
+   await loadProjektStatus();
+
+   const closeBtn = document.getElementById("closeEditBtn");
+   if (closeBtn) {
+      closeBtn.addEventListener("click", database.closeModal);
+   }
+
+   const saveBtn = document.getElementById("saveEditBtn");
+
+   if (saveBtn) {
+      saveBtn.addEventListener("click", async () => {
+
+         await database.uppdateraProjektStatus(
+            ui.currentEditItem.projektstatus_id,
+            document.getElementById("editTyp").value,
+            document.getElementById("editStatus").value,
+            document.getElementById("editUppgift").value,
+            document.getElementById("editKommentar").value
+         );
+
+         document.getElementById("editModal").classList.add("hidden");
+
+         await loadProjektStatus();
+      });
+   }
+
+   const addBtn = document.getElementById("addBtn");
+   const closeAddBtn = document.getElementById("closeAddBtn");
+   const saveAddBtn = document.getElementById("saveAddBtn");
+
+   if (addBtn) {
+      addBtn.addEventListener("click", () => {
+         ui.openAddModal();
+      });
+   }
+
+   if (closeAddBtn) {
+      closeAddBtn.addEventListener("click", () => {
+         ui.closeAddModal();
+      });
+   }
+
+   if (saveAddBtn) {
+      saveAddBtn.addEventListener("click", async () => {
+
+         const typ = document.getElementById("addTyp").value;
+         const status = document.getElementById("addStatus").value;
+         const uppgift = document.getElementById("addUppgift").value;
+         const kommentar = document.getElementById("addKommentar").value;
+
+         await database.insertProjektStatus(typ, status, uppgift, kommentar);
+
+         ui.closeAddModal();
+      });
+   }
+
 });
+
+
 
 // #endregion

@@ -58,6 +58,7 @@
                     <strong>Statusförklaring:</strong><br>
                     🟢 Klar | 🟡 Pågående | 🔴 Ej påbörjad
                 </div>
+                <button id="addBtn" class="btn-primary">➕ Lägg till ny uppgift</button>
             </aside>
 
             <section class="map-section" style="overflow-y: auto;">
@@ -77,6 +78,11 @@
                         </p>
                     </div>
 
+                    <div id="projektStatusContainer"></div>
+
+
+                    <div>=== STATISK INFO NEDAN ===</div>
+                    <!-- 
                     <div class="filter-group">
                         <span class="filter-title">📌 Obligatoriska Krav</span>
 
@@ -95,9 +101,11 @@
                     <div class="filter-group" style="margin-top: var(--spacing-md);">
                         <span class="filter-title">🚀 Extra Utmaningar (Icke obligatoriska)</span>
 
-                        <p class="status-log">🔴 Använd anropet till GBIF via dess API och sök direkt via ditt formulär
+                        <p class="status-log">🔴 Använd anropet till GBIF via dess API och sök direkt via ditt
+                            formulär
                         </p>
-                        <p class="status-log">🟢 Manipulera kartbeteende med fler funktioner som vi inte gått igenom</p>
+                        <p class="status-log">🟢 Manipulera kartbeteende med fler funktioner som vi inte gått igenom
+                        </p>
                         <p class="status-log">🔴 Möjliggör ifyllningen av en ny kommun i formuläret</p>
                     </div>
 
@@ -107,7 +115,8 @@
                         <p class="status-log">🔴 🔍 Filtrera observationer på kommun och län</p>
                         <p class="status-log">🟢 📅 Filtrera datumintervall</p>
                         <p class="status-log">🟢 🐺 Filtrera art</p>
-                        <p class="status-log">🔴 📊 Visa antal observationer - Bygg en räknare och visa nånstans Varg
+                        <p class="status-log">🔴 📊 Visa antal observationer - Bygg en räknare och visa nånstans
+                            Varg
                             (35 visas av totalt 900)</p>
                         <p class="status-log">🟢 🌡️ Visa temperatur vid observationen</p>
                         <p class="status-log">🔴 🖼️ Bild från Unsplash</p>
@@ -126,7 +135,7 @@
 
 
                     </div>
-
+ -->
                 </div>
 
             </section>
@@ -136,6 +145,76 @@
         <footer id="footer"></footer>
 
     </div>
+
+
+    <div id="editModal" class="modal hidden">
+        <div class="modal-content">
+
+            <h2>✏️ Redigera uppgift</h2>
+
+            <label>Typ</label>
+            <select id="editTyp">
+                <option value="krav">📌 Krav</option>
+                <option value="extra">🚀 Extrafunktion</option>
+                <option value="nice">✨ Nice to have</option>
+                <option value="bug">🐛 Bugg</option>
+            </select>
+
+            <label>Status</label>
+            <select id="editStatus">
+                <option value="ej">🔴 Ej påbörjad</option>
+                <option value="pagar">🟡 Pågår</option>
+                <option value="ok">🟢 Klar</option>
+            </select>
+
+            <label>Uppgift</label>
+            <input type="text" id="editUppgift">
+
+            <label>Kommentar</label>
+            <textarea id="editKommentar" rows="4"></textarea>
+
+            <div class="modal-actions">
+                <button id="saveEditBtn" class="btn-primary">Spara</button>
+                <button id="closeEditBtn" class="btn-secondary">Avbryt</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="addModal" class="modal hidden">
+        <div class="modal-content">
+
+            <h2>➕ Lägg till uppgift</h2>
+
+            <label>Typ</label>
+            <select id="addTyp">
+                <option value="krav">📌 Krav</option>
+                <option value="extra">🚀 Extrafunktion</option>
+                <option value="nice">✨ Nice to have</option>
+                <option value="bug">🐛 Bugg</option>
+            </select>
+
+            <label>Status</label>
+            <select id="addStatus">
+                <option value="ej">🔴 Ej påbörjad</option>
+                <option value="pagar">🟡 Pågår</option>
+                <option value="ok">🟢 Klar</option>
+            </select>
+
+            <label>Uppgift</label>
+            <input type="text" id="addUppgift">
+
+            <label>Kommentar</label>
+            <textarea id="addKommentar" rows="4"></textarea>
+
+            <div class="modal-actions">
+                <button id="saveAddBtn" class="btn-primary">Spara</button>
+                <button id="closeAddBtn" class="btn-secondary">Avbryt</button>
+            </div>
+
+        </div>
+    </div>
+
 
     <script type="module" src="js/app.js"></script>
 

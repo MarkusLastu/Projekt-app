@@ -2,10 +2,11 @@
 
 
 // === KOPPLAR TILL ANDRA JS-FILER ===
-import { skapaLoggar } from "./ui.js";
+import { skapaLoggar, renderProjektStatusUI } from "./ui.js";
 import { uppdateraKartaEfterFilter } from "./app.js";
 
 export let allaObservationer = []; // Globala variabeln för att lagra alla observationer
+
 
 
 // -------------------------------------------------------
@@ -31,9 +32,9 @@ export async function laddaLan() {
    skapaLoggar(laddaLan, 'start', "Laddar län...", dbLanStatus);
 
    try {
-      const { data: lan, error } = await mySupabaseClient.rpc('get_lan');       
-      console.log(lan)  ;
- 
+      const { data: lan, error } = await mySupabaseClient.rpc('get_lan');
+      console.log(lan);
+
       if (error) {
          if (dbLanStatus) skapaLoggar(laddaLan, 'fel', 'Fel: ' + error.message);
          console.error(error);
@@ -77,33 +78,33 @@ export async function laddaObservationer() {
    skapaLoggar(laddaObservationer, 'start', "Laddar observationer...", dbObservationStatus);
 
    // Hämta ALL data från supabase (annars är max 1000 rader)
-   let allData = []; 
+   let allData = [];
    let rangeStart = 0;
    const batchSize = 1000;
    let hasMore = true; // Hallå en massa dubbel kod????
 
    try {
       const { data: observationer, error } = await mySupabaseClient
-      .rpc('get_observationer')
-      
+         .rpc('get_observationer')
+
       console.log(observationer);
       /*  .from('observationer')
          .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
          .order('Datum', { ascending: false })
          .range(0, 500w00); */
 
-         if (error) throw error;
+      if (error) throw error;
 
-         if (observationer.length > 0) {
-            allData = allData.concat(observationer);
-            rangeStart += batchSize;
-         }
+      if (observationer.length > 0) {
+         allData = allData.concat(observationer);
+         rangeStart += batchSize;
+      }
 
-         // När vi laddar in färre än 1000 rader är vi klara
-         if (observationer.length < batchSize) {
-            hasMore = false;
-         }
-      
+      // När vi laddar in färre än 1000 rader är vi klara
+      if (observationer.length < batchSize) {
+         hasMore = false;
+      }
+
 
       const lista = document.getElementById('observationerLista');
       if (lista) lista.innerHTML = '';
@@ -114,7 +115,7 @@ export async function laddaObservationer() {
          return;
       }
 
-      allaObservationer = observationer;      
+      allaObservationer = observationer;
 
       // Kör filtreringen direkt så att kartan laddar första perioden på slidern!
       allaObservationer = allData;
@@ -143,3 +144,124 @@ mySupabaseClient
 
 skapaLoggar('Supabase', 'info', 'Supabase har uppdaterats', dbStatus);
 // -------------------------------------------------------
+
+
+
+// === PROJEKTSTATUS ===
+
+
+// ==========================
+// INIT (startar allt)
+// ==========================
+export async function initProjektStatus() {
+   const data = await hamtaProjektStatus();
+   renderProjektStatusUI(data);
+}
+
+
+// ==========================
+// SELECT
+// ==========================
+export async function hamtaProjektStatus() {
+
+   const { data: projStatus, error } =
+      await mySupabaseClient.rpc("get_projektstatus");
+
+   if (error) {
+      console.error(error.message);
+      return [];
+   }
+
+   renderProjektStatusUI(projStatus); // 🔥 detta uppdaterar sidan
+
+   return projStatus;
+}
+
+// ==========================
+// UPDATE
+// ==========================
+export async function uppdateraProjektStatus(item) {
+
+   const { error } = await mySupabaseClient.rpc("update_projektstatus", {
+      p_id: item.projektstatus_id,
+      p_typ: item.typ,
+      p_status: item.status,
+      p_uppgift: item.uppgift,
+      p_kommentar: item.kommentar
+   });
+
+   if (error) {
+      skapaLoggar("Update", "fel", error.message);
+      return false;
+   }
+
+   return true;
+}
+
+
+// ==========================
+// SAVE från modal
+// ==========================
+export async function saveEdit() {
+
+   if (!currentEditItem) return;
+
+   currentEditItem.typ =
+      document.getElementById("editTyp").value;
+
+   currentEditItem.status =
+      document.getElementById("editStatus").value;
+
+   currentEditItem.uppgift =
+      document.getElementById("editUppgift").value;
+
+   currentEditItem.kommentar =
+      document.getElementById("editKommentar").value;
+
+   await uppdateraProjektStatus({
+      projektstatus_id: currentEditItem.projektstatus_id,
+      typ: currentEditItem.typ,
+      status: currentEditItem.status,
+      uppgift: currentEditItem.uppgift,
+      kommentar: currentEditItem.kommentar
+   });
+
+   closeModal();
+
+   const data = await hamtaProjektStatus();
+   renderProjektStatusUI(data);
+}
+
+
+
+// ==========================
+// INSERT
+// ==========================
+export async function insertProjektStatus(p_typ, p_status, p_uppgift, p_kommentar) {
+
+   const { error } = await mySupabaseClient.rpc("insert_projektstatus", {
+      p_typ,
+      p_status,
+      p_uppgift,
+      p_kommentar
+   });
+
+   if (error) {
+      console.error(error.message);
+      return false;
+   }
+   await refreshProjektStatus();
+   return true;
+}
+
+export async function refreshProjektStatus() {
+   const { data, error } =
+      await mySupabaseClient.rpc("get_projektstatus");
+
+   if (error) {
+      console.error(error.message);
+      return [];
+   }
+
+   return data;
+}
