@@ -7,7 +7,6 @@
 
     --accent-color: #4CAF50;
     --accent-hover: #45a049;
-    --border-color: gray;
 
     --border-color: lightgray;
     --status-bg: lightgray;
@@ -64,7 +63,6 @@ body.dark-mode {
 
     --accent-color: snow;
     --accent-hover: snow;
-    --border-color: snow;
 
     --border-color: gray;
     --status-bg: snow;
@@ -129,11 +127,33 @@ body {
     border-radius: var(--border-radius-md);
     cursor: pointer;
     font-weight: bold;
-    transition: 0.2s;
+    transition: 0.25s;
 }
 
 .theme-btn:hover {
     background: var(--border-color);
+}
+
+.theme-btn {
+    padding: 8px 16px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+/* Vit knapp när sidan är i mörkt tema */
+.theme-btn.light-btn {
+    background: #fff;
+    color: #222;
+    border: 1px solid #ccc;
+}
+
+/* Mörk knapp när sidan är i ljust tema */
+.theme-btn.dark-btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
 }
 
 nav {
