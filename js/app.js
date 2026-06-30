@@ -27,6 +27,7 @@ const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
 // #region === STATE - GLOBALA VARIABLER ===
 /* Vilken information behöver programmet komma ihåg? */
 let trendsChart = null;
+let nuvarandeLjud = null;
 // -------------------------------------------------------
 // #endregion
 
@@ -391,6 +392,61 @@ document.addEventListener('DOMContentLoaded', function () {
       // Testar ett historiskt väder-anrop (t.ex. för ett år sedan) till den andra logg-raden
       api.hamtaVader(60.6745, 17.1417, "2025-06-06", "weatherStatusObs");
    }
+
+
+
+
+   // --- Ljudknapparnas logik (Hämtar direkt från observationernas artdata) ---
+document.querySelectorAll('.sound-btn').forEach(knapp => {
+   knapp.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const artId = parseInt(knapp.getAttribute('data-art-id'));
+      
+      // Letar i listan av observationer efter första bästa rad som matchar vårt artId
+      const matchandeObs = database.allaObservationer.find(obs => obs.Art_id === artId);
+      const latinName = matchandeObs ? matchandeObs.VetenskapligtNamn : null;
+
+      if (!latinName) {
+         console.warn(`Hittade inget latinskt namn för Art_id: ${artId} än. (Datan kanske laddas fortfarande)`);
+         return;
+      }
+
+      // Om samma ljud redan spelas – pausa det
+      if (nuvarandeLjud && !nuvarandeLjud.paused && nuvarandeLjud.src === knapp.dataset.playingUrl) {
+         nuvarandeLjud.pause();
+         knapp.textContent = '🔊';
+         return;
+      }
+
+      knapp.textContent = '⏳';
+
+      const audioUrl = await api.hamtaLjudUrl(latinName);
+
+      if (audioUrl) {
+         if (nuvarandeLjud) {
+            nuvarandeLjud.pause();
+            document.querySelectorAll('.sound-btn').forEach(b => b.textContent = '🔊');
+         }
+
+         nuvarandeLjud = new Audio(audioUrl);
+         knapp.dataset.playingUrl = audioUrl;
+         
+         nuvarandeLjud.play();
+         knapp.textContent = '🛑';
+
+         nuvarandeLjud.onended = () => {
+            knapp.textContent = '🔊';
+         };
+
+      } else {
+         knapp.textContent = '❌';
+         setTimeout(() => { knapp.textContent = '🔊'; }, 2000);
+      }
+   });
+});
+
 });
 
 // #endregion

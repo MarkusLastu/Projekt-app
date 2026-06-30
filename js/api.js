@@ -10,7 +10,7 @@ import { renderWikiInfo } from "./components.js";
 
 // === EXTERNA API-TJÄNSTER ===
 
-// Wikipedia
+// Wikipedia ----------------------------------------------------------
 export async function hamtaWikiSammanfattning(sokord) {
     const wikiStatus = document.getElementById("wikiStatus");
     const injectWikiLabel = document.getElementById('wikiLabel');
@@ -64,7 +64,7 @@ export async function hamtaWikiSammanfattning(sokord) {
     }
 }
 
-// Unsplash
+// Unsplash ----------------------------------------------------------
 export async function hamtaBakgrundsbild(sokord) {
     const unsplashStatus = document.getElementById("unsplashStatus");
     skapaLoggar(hamtaBakgrundsbild, 'start', 'Läser från Unsplash...', unsplashStatus);
@@ -93,7 +93,7 @@ export async function hamtaBakgrundsbild(sokord) {
 }
 
 
-//VÄDER ----------------------------------------------------------
+    // VÄDER ----------------------------------------------------------
 
 // Hjälpfunktion för väder
 export function tolkaVaderKod(kod) {
@@ -163,6 +163,48 @@ export async function hamtaVader(lat, lon, datum, elementId) {
         return null;
     }
 }
+
+
+// Freesound API (Hämta ljudlänk baserat på vetenskapligt namn med inbyggt CORS-stöd)
+export async function hamtaLjudUrl(latinName) {
+    const FREESOUND_TOKEN = 'hNMc4qbqSpI4LsbNbHnOvk1GltQzxkFdG83PZCcA'; 
+
+    // Översättningstabell med specifika sökord för att garantera djurläten
+    const engelskaSokord = {
+        'Canis lupus familiaris': 'howl_echo',
+        'Canis lupus': 'howl_echo',          // Vargyl
+        'Alces alces': 'Moose_Elk',         // Älgbröl
+        'Capreolus capreolus': 'stag' // Rådjursskall (de skäller ju när de varnar!)
+    };
+
+    // Hitta det engelska sökordet, eller använd det latinska namnet som backup
+    const sokord = engelskaSokord[latinName] || latinName;
+
+    try {
+        // Vi lägger till ett filter så vi BARA får ljud som är mellan 1 och 10 sekunder långa
+        const url = `https://freesound.org/apiv2/search/text/?query=${encodeURIComponent(sokord)}&token=${FREESOUND_TOKEN}&fields=name,previews&filter=duration:[1+TO+10]&page_size=1`;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Kunde inte nå Freesound API');
+
+        const data = await response.json();
+
+        if (!data.results || data.results.length === 0) {
+            throw new Error('Inga ljud hittades på Freesound för: ' + sokord);
+        }
+
+        // Plocka ut HQ-MP3-streamen från det första sökresultatet
+        const mp3Url = data.results[0].previews['preview-hq-mp3'];
+        
+        if (!mp3Url) throw new Error('Hittade ingen MP3-förhandsvisning för detta ljud');
+
+        return mp3Url;
+    } catch (error) {
+        console.error('Freesound Ljudfel:', error);
+        return null;
+    }
+}
+
 
 
 // -----------------------------------------------------------------------------
