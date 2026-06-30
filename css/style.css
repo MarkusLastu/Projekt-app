@@ -217,7 +217,6 @@ nav a:hover {
     background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
     padding: var(--spacing-lg);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
