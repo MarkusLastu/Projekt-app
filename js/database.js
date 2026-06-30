@@ -90,7 +90,7 @@ export async function laddaObservationer() {
       /*  .from('observationer')
          .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
          .order('Datum', { ascending: false })
-         .range(0, 50000); */
+         .range(0, 500w00); */
 
          if (error) throw error;
 
