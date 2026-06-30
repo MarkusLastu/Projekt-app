@@ -16,6 +16,10 @@ const sliderMax = document.getElementById('timeSliderMax');
 const periodText = document.getElementById('periodText');
 const themeToggle = document.getElementById("themeToggle");
 
+const vargSvg = new Image(22, 22); vargSvg.src = 'images/svg/varg.svg';
+const algSvg = new Image(22, 22); algSvg.src = 'images/svg/alg.svg';
+const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
+
 // -------------------------------------------------------
 // #endregion
 
@@ -48,11 +52,6 @@ function hamtaIndexFranDatum(datumStr) {
    const isH2 = d.getMonth() >= 6; // juli-december
    return (ar - 2016) * 2 + (isH2 ? 1 : 0);
 }
-
-
-const vargSvg = new Image(22, 22); vargSvg.src = 'images/svg/varg.svg';
-const algSvg = new Image(22, 22); algSvg.src = 'images/svg/alg.svg';
-const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
 
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
 function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
@@ -103,19 +102,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
          backgroundColor: info.färg + "22",
          tension: 0.3,
          borderWidth: 3,
-
-
-
-
-         pointStyle: 'circle',
-         pointRadius: 4, // Gör punkterna på linjen lite större så ikonen syns bra
-         pointHoverRadius: 6,
-
          legendIkon: info.ikon
-
-
-
-
       };
    });
 
@@ -123,11 +110,10 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
       trendsChart = new Chart(ctx, {
          type: 'line',
          data: { labels: tidsEtiketter, datasets: nyaDatasets },
+
          options: {
             responsive: true,
             maintainAspectRatio: false,
-
-
 
             plugins: {
                legend: {
@@ -137,8 +123,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
                      boxHeight: 20,
                      font: { size: 14 },
 
-
-                     // ===== FIX 2: TVINGA BARA LEGENDEN ATT ANVÄNDA SVG-IKONERNA =====
+                     // Tvingar bara LEGENDEN att använda sig av SVG-ikonerna
                      generateLabels: function (chart) {
                         const datasets = chart.data.datasets;
                         return datasets.map((dataset, i) => ({
@@ -148,15 +133,12 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
                            lineWidth: dataset.borderWidth,
                            hidden: !chart.isDatasetVisible(i),
                            datasetIndex: i,
-                           // Här hämtar vi vår dolda SVG-ikon istället för linjens vanliga cirkel!
-                           pointStyle: dataset.legendIkon
+                           pointStyle: dataset.legendIkon // Hämtar SVG-ikon istället för linjens vanliga cirkel!
                         }));
                      }
                   }
                }
             },
-
-
 
             scales: {
                x: { grid: { display: false } },
@@ -164,6 +146,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
             }
          }
       });
+      
    } else {
       trendsChart.data.labels = tidsEtiketter;
       trendsChart.data.datasets = nyaDatasets;
