@@ -447,7 +447,7 @@ footer::before {
 }
 
 body.dark-mode .leaflet-control-zoom a {
-    background-color: var(--bg-surface) !important;
-    color: var(--text-primary) !important;
-    border: 1px solid var(--border-color) !important;
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
