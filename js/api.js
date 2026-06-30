@@ -171,8 +171,7 @@ export async function hamtaLjudUrl(latinName) {
 
     // Översättningstabell med specifika sökord för att garantera djurläten
     const engelskaSokord = {
-        'Canis lupus familiaris': 'howl_echo',
-        'Canis lupus': 'howl_echo',          // Vargyl
+        'Canis lupus familiaris': 'howl_echo',          // Vargyl
         'Alces alces': 'Moose_Elk',         // Älgbröl
         'Capreolus capreolus': 'stag' // Rådjursskall (de skäller ju när de varnar!)
     };
