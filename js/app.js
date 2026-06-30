@@ -49,8 +49,14 @@ function hamtaIndexFranDatum(datumStr) {
    return (ar - 2016) * 2 + (isH2 ? 1 : 0);
 }
 
+
+const vargSvg = new Image(22, 22); vargSvg.src = 'images/svg/varg.svg';
+const algSvg = new Image(22, 22); algSvg.src = 'images/svg/alg.svg';
+const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
+
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
-function uppdateraGraf(valdaArtIds) {
+function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
+
    // Berätta för statussidan att graf-logiken fungerar!
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
@@ -60,7 +66,7 @@ function uppdateraGraf(valdaArtIds) {
    // Leta efter själva ritytan (canvasen)
    const canvas = document.getElementById('trendsChart');
    if (!canvas) {
-      // Om canvas saknas (som på statussidan), avbryt här så det inte kraschar!
+      // Om canvas saknas, avbryt här så det inte kraschar!
       return;
    }
 
@@ -68,16 +74,16 @@ function uppdateraGraf(valdaArtIds) {
    const tidsEtiketter = [];
    const perioderIndex = [];
 
-   // Fyll på tidsaxeln (0 till 20 halvvår)
-   for (let i = 0; i <= 20; i++) {
+   // Fyll på tidsaxeln
+   for (let i = minVal; i <= maxVal; i++) {
       perioderIndex.push(i);
       tidsEtiketter.push(indexTillText(i));
    }
 
    const artInställningar = {
-      1: { label: "Varg 🐺", färg: "#4b5563" },
-      2: { label: "Älg 🦌", färg: "#d97706" },
-      3: { label: "Rådjur 🦌", färg: "#2563eb" }
+      1: { label: "Varg", färg: "#515963", ikon: vargSvg },
+      2: { label: "Älg", färg: "#4b2502f5", ikon: algSvg },
+      3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg }
    };
 
    const nyaDatasets = valdaArtIds.map(artId => {
@@ -96,7 +102,20 @@ function uppdateraGraf(valdaArtIds) {
          borderColor: info.färg,
          backgroundColor: info.färg + "22",
          tension: 0.3,
-         borderWidth: 3
+         borderWidth: 3,
+
+
+
+
+         pointStyle: 'circle',
+         pointRadius: 4, // Gör punkterna på linjen lite större så ikonen syns bra
+         pointHoverRadius: 6,
+
+         legendIkon: info.ikon
+
+
+
+
       };
    });
 
@@ -107,6 +126,38 @@ function uppdateraGraf(valdaArtIds) {
          options: {
             responsive: true,
             maintainAspectRatio: false,
+
+
+
+            plugins: {
+               legend: {
+                  labels: {
+                     usePointStyle: true, // Tvingar Chart.js att rita av ikonerna istället för färgade fyrkanter
+                     boxWidth: 20,
+                     boxHeight: 20,
+                     font: { size: 14 },
+
+
+                     // ===== FIX 2: TVINGA BARA LEGENDEN ATT ANVÄNDA SVG-IKONERNA =====
+                     generateLabels: function (chart) {
+                        const datasets = chart.data.datasets;
+                        return datasets.map((dataset, i) => ({
+                           text: dataset.label,
+                           fillStyle: dataset.borderColor,
+                           strokeStyle: dataset.borderColor,
+                           lineWidth: dataset.borderWidth,
+                           hidden: !chart.isDatasetVisible(i),
+                           datasetIndex: i,
+                           // Här hämtar vi vår dolda SVG-ikon istället för linjens vanliga cirkel!
+                           pointStyle: dataset.legendIkon
+                        }));
+                     }
+                  }
+               }
+            },
+
+
+
             scales: {
                x: { grid: { display: false } },
                y: { beginAtZero: true, ticks: { precision: 0 } }
@@ -114,8 +165,9 @@ function uppdateraGraf(valdaArtIds) {
          }
       });
    } else {
+      trendsChart.data.labels = tidsEtiketter;
       trendsChart.data.datasets = nyaDatasets;
-      trendsChart.update();
+      trendsChart.update();/*  */
    }
 }
 
@@ -145,12 +197,12 @@ export function uppdateraKartaEfterFilter() {
       }
    }
 
-   // Hämta vilka arter som är ikryssade (eller ta alla [1,2,3] som test om inga boxar finns)
+   // Hämta vilka arter som är ikryssade
    const ikryssadeCheckboxar = document.querySelectorAll('.art-checkbox:checked');
    const valdaArtIds = Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value));
 
    // Uppdatera grafen
-   uppdateraGraf(valdaArtIds);
+   uppdateraGraf(valdaArtIds, minVal, maxVal);
 
    // UPPDATERA STATUS FÖR GRAFEN:
    const grafStatus = document.getElementById("uppdateraGraf");
@@ -178,7 +230,7 @@ export function uppdateraKartaEfterFilter() {
    filtreradData.forEach(obs => {
       if (obs.Latitude && obs.Longitude) {
          const latNum = parseFloat(obs.Latitude);
-         const lonNum = parseFloat(obs.Longitude);         
+         const lonNum = parseFloat(obs.Longitude);
          console.log(obs.artNamn)
          const artNamn = obs.ArtNamn ? obs.ArtNamn : 'Okänt djur';
 
