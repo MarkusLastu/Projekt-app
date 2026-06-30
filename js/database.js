@@ -58,11 +58,11 @@ export async function laddaObservationer() {
    const dbObservationStatus = document.getElementById("dbObservationStatus");
    skapaLoggar(laddaObservationer, 'start', "Laddar observationer...", dbObservationStatus);
 
-   // Hämta ALL data från supabase (annars är max 1000 rader)
-   let allData = [];
+   /* Hämta ALL data från supabase (annars är max 1000 rader)
+   let allData = []; 
    let rangeStart = 0;
    const batchSize = 1000;
-   let hasMore = true;
+   let hasMore = true; */ //Hallå en massa dubbel kod????//
 
    // Hämta ALL data från supabase (annars är max 1000 rader)
    let allData = [];
