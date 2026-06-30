@@ -79,8 +79,45 @@ export function skapaKarta() {
 // -------------------------------------------------------
 
 
+// 🔥 HJÄLPFUNKTION: Känner av kommunen baserat på koordinater och sätter rullistan
+async function identifieraOchValjKommun(lat, lon) {
+   const obsKommunSelect = document.getElementById("obsKommun");
+   if (!obsKommunSelect) return;
+
+   try {
+      // Vi lägger till zoom=10 för att specifikt be om kommun/stads-nivå
+      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`, {
+         headers: { 'User-Agent': 'BastaKartanApplikation' } // Nominatim kräver en unik user-agent
+      });
+      const data = await response.json();
+
+      if (data && data.address) {
+         // API:et kan returnera kommunen under lite olika fält beroende på plats, vi helgarderar oss:
+         let funnenKommun = data.address.municipality || data.address.city || data.address.town || "";
+         
+         if (funnenKommun) {
+            // API:et svarar ofta t.ex. "Gävle kommun" eller "Stockholms stad". 
+            // Vi rensar bort det så vi bara har "Gävle" eller "Stockholm" kvar:
+            funnenKommun = funnenKommun.replace(" kommun", "").replace(" stad", "").trim().toLowerCase();
+
+            // Loopa igenom alla alternativ i vår <select>-lista för att hitta en matchning
+            for (let i = 0; i < obsKommunSelect.options.length; i++) {
+               const optionText = obsKommunSelect.options[i].text.toLowerCase();
+               
+               if (optionText.includes(funnenKommun)) {
+                  obsKommunSelect.selectedIndex = i; // Välj denna kommun automatiskt!
+                  console.log(`🔮 Matchade automatiskt till kommun: ${obsKommunSelect.options[i].text}`);
+                  break;
+               }
+            }
+         }
+      }
+   } catch (error) {
+      console.warn("Kunde inte hämta kommun från koordinater:", error);
+   }
+}
+
 // === LÄGGER TILL KLICK-FUNKTION PÅ KARTAN ===
-// === När användaren klickar fylls koordinaterna i formuläret ===
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
    skapaLoggar(laggTillKlickFunktion, 'info', 'Klickfunktion på kartan körs.', mapAddClickStatus);
@@ -96,22 +133,73 @@ export function laggTillKlickFunktion() {
       const lat = e.latlng.lat.toFixed(6);
       const lon = e.latlng.lng.toFixed(6);
 
-      // Hämta elementen först
       const latInput = document.getElementById('latInput');
       const lonInput = document.getElementById('lonInput');
 
-      // SÄKERHETSKOLL: Fyll bara i om fälten faktiskt existerar på sidan!
       if (latInput && lonInput) {
          latInput.value = lat;
          lonInput.value = lon;
       }
 
-      // Sätt eller flytta markör (detta vill vi göra oavsett sida!)
+      // 🔥 KÖR DIREKT VID KLICK: Lista ut kommunen direkt
+      identifieraOchValjKommun(lat, lon);
+
+      // Sätt eller flytta markör
       if (marker) {
          marker.setLatLng(e.latlng);
       } else {
-         marker = L.marker(e.latlng).addTo(map);
+         marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+
+         // 1. UNDER DRAGET: Visa bara koordinaterna live (inget API-anrop här för att spara prestanda)
+         marker.on('drag', function () {
+            const nuvarandePosition = marker.getLatLng();
+            const dragLat = nuvarandePosition.lat.toFixed(6);
+            const dragLon = nuvarandePosition.lng.toFixed(6);
+
+            if (latInput && lonInput) {
+               latInput.value = dragLat;
+               lonInput.value = dragLon;
+            }
+
+            marker.setPopupContent(`
+               <div style="text-align: center; min-width: 120px;">
+                  <span style="font-size:12px; font-weight:bold; color:#e78300;">📍 ${dragLat}, ${dragLon}</span>
+               </div>
+            `).openPopup();
+         });
+
+         // 2. NÄR MAN SLÄPPER: Ge tillbaka hela popupen + uppdatera kommunen i bakgrunden
+         marker.on('dragend', function () {
+            const slutligPosition = marker.getLatLng();
+            const slutLat = slutligPosition.lat.toFixed(6);
+            const slutLon = slutligPosition.lng.toFixed(6);
+
+            // 🔥 KÖR VID DRAGEND: Uppdatera kommunväljaren till den nya platsen användaren släppte markören på!
+            identifieraOchValjKommun(slutLat, slutLon);
+
+            marker.setPopupContent(`
+               <div style="text-align: center;">
+                  <strong>Vald position</strong><br>
+                  <span style="font-size:11px; color:#666;">${slutLat}, ${slutLon}</span><br><br>
+                  <button id="openObsModalBtn" style="cursor:pointer; padding: 6px 10px; background: #e78300; color: white; border: none; border-radius: 4px; font-weight:bold;">
+                     🐾 Rapportera här
+                  </button>
+               </div>
+            `).openPopup(); 
+         });
       }
+
+      // Standard-popupen när man klickar första gången på kartan
+      marker.bindPopup(`
+         <div style="text-align: center;">
+            <strong>Vald position</strong><br>
+            <span style="font-size:11px; color:#666;">${lat}, ${lon}</span><br><br>
+            <button id="openObsModalBtn" style="cursor:pointer; padding: 6px 10px; background: #e78300; color: white; border: none; border-radius: 4px; font-weight:bold;">
+               🐾 Rapportera här
+            </button>
+         </div>
+      `).openPopup();
+
       skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
@@ -119,7 +207,7 @@ export function laggTillKlickFunktion() {
 
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
-export function addObservationMarker(lat, lon, artNamn, antal, datum) {
+export function addObservationMarker(lat, lon, artNamn, datum) {
    // Förhindrar krasch om kartan inte finns på sidan
    if (!markerClusterGroup) {
       return;

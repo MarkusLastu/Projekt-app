@@ -81,17 +81,13 @@ export async function laddaObservationer() {
    let allData = [];
    let rangeStart = 0;
    const batchSize = 1000;
-   let hasMore = true; // Hallå en massa dubbel kod????
+   let hasMore = true;
 
    try {
       const { data: observationer, error } = await mySupabaseClient
          .rpc('get_observationer')
 
       console.log(observationer);
-      /*  .from('observationer')
-         .select("Observationer_id, Datum, Latitude, Longitude, Art_id, arter(ArtNamn)")
-         .order('Datum', { ascending: false })
-         .range(0, 500w00); */
 
       if (error) throw error;
 
@@ -131,6 +127,50 @@ export async function laddaObservationer() {
 }
 
 // -------------------------------------------------------
+
+
+
+// 🔥 Hämtar alla kommuner sorterade i bokstavsordning
+export async function hämtaAllaKommuner() {
+   const { data, error } = await mySupabaseClient
+      .from('kommuner')
+      .select('Kommun_id, KommunNamn')
+      .order('KommunNamn', { ascending: true });
+
+   if (error) {
+      console.error("Kunde inte hämta kommuner från Supabase:", error.message);
+      return [];
+   }
+   return data;
+}
+
+
+// ==========================
+// INSERT NY OBSERVATION
+// ==========================
+export async function insertObservation(artId, datum, lat, lon, kommunId) {
+   const { data, error } = await mySupabaseClient
+      .from('observationer') 
+      .insert([
+         { 
+            Art_id: artId, 
+            Datum: datum, 
+            Latitude: lat, 
+            Longitude: lon,
+            Kommun_id: kommunId // Matchar exakt din kolumn i tabellen!
+         }
+      ]);
+
+   if (error) {
+      console.error("Kunde inte spara observationen:", error.message);
+      return false;
+   }
+
+   // Ladda om den lokala arrayen med all data så att kartan/grafen hänger med
+   await laddaObservationer(); 
+   return true;
+}
+
 
 
 // === UPPDATERA SIDAN I REALTID OM DB UPPDATERAS ===
@@ -261,7 +301,7 @@ export async function insertProjektStatus(p_typ, p_status, p_uppgift, p_kommenta
 export async function taBortProjektStatus(id) {
    // OBS: Dubbelkolla att din tabell faktiskt heter 'projektstatus' i Supabase!
    const { error } = await mySupabaseClient
-      .from('projektstatus') 
+      .from('projektstatus')
       .delete()
       .eq('projektstatus_id', id); // Tar bort raden där ID matchar
 

@@ -101,7 +101,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
 
       return {
          // Lägger till totalsumman direkt i namnet (label)
-         label: `${info.label} (${totaltAntal} st)`, 
+         label: `${info.label} (${totaltAntal} st)`,
          data: punkterData,
          borderColor: info.färg,
          backgroundColor: info.färg + "22",
@@ -123,7 +123,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
             plugins: {
                legend: {
                   labels: {
-                     usePointStyle: true, 
+                     usePointStyle: true,
                      boxWidth: 20,
                      boxHeight: 20,
                      font: { size: 14 },
@@ -132,13 +132,13 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
                      generateLabels: function (chart) {
                         const datasets = chart.data.datasets;
                         return datasets.map((dataset, i) => ({
-                           text: dataset.label, 
+                           text: dataset.label,
                            fillStyle: dataset.borderColor,
                            strokeStyle: dataset.borderColor,
                            lineWidth: dataset.borderWidth,
                            hidden: !chart.isDatasetVisible(i),
                            datasetIndex: i,
-                           pointStyle: dataset.legendIkon 
+                           pointStyle: dataset.legendIkon
                         }));
                      }
                   }
@@ -278,8 +278,24 @@ async function loadProjektStatus() {
 document.addEventListener('DOMContentLoaded', async function () {
    ui.skapaLoggar('DOMContentLoaded', 'start', 'Appen startar...');
 
-   // Lyssna på båda slider-knapparna samtidigt!
+   // Fyll kommun-dropdownen från databasen
+   const obsKommunSelect = document.getElementById("obsKommun");
+   if (obsKommunSelect) {
+      database.hämtaAllaKommuner().then(kommuner => {
+         // Rensa "Laddar..." och lägg till en tom start-option
+         obsKommunSelect.innerHTML = '<option value="" disabled selected>-- Välj kommun --</option>';
 
+         // Loopa ut alla kommuner till rullistan
+         kommuner.forEach(kommun => {
+            const option = document.createElement("option");
+            option.value = kommun.Kommun_id; // ID skickas till databasen
+            option.textContent = kommun.KommunNamn; // Namnet visas för användaren
+            obsKommunSelect.appendChild(option);
+         });
+      });
+   }
+
+   // Lyssna på båda slider-knapparna samtidigt!
    if (sliderMin && sliderMax) {
       sliderMin.addEventListener('input', debouncedUppdateraKarta);
       sliderMax.addEventListener('input', debouncedUppdateraKarta);
@@ -538,6 +554,58 @@ document.addEventListener('DOMContentLoaded', async function () {
             } else {
                alert("Det gick inte att ta bort uppgiften. Kolla RLS-policyn i Supabase.");
             }
+         }
+      });
+   }
+
+
+
+   // === LOGIK FÖR ATT RAPPORTERA NY OBSERVATION ===
+   const obsModal = document.getElementById("addObservationModal");
+   const closeObsModalBtn = document.getElementById("closeObsModalBtn");
+   const addObsForm = document.getElementById("addObservationForm");
+
+   // 1. Öppna modalen via knappen i kartans popup (Event delegation)
+   document.addEventListener("click", function (e) {
+      if (e.target && e.target.id === "openObsModalBtn") {
+         if (obsModal) {
+            obsModal.classList.remove("hidden");
+            // Sätt automatiskt dagens datum i datumväljaren för smidighetens skull
+            document.getElementById("obsDatum").value = new Date().toISOString().split('T')[0];
+         }
+      }
+   });
+
+   // 2. Stäng modalen
+   if (closeObsModalBtn) {
+      closeObsModalBtn.addEventListener("click", () => {
+         obsModal.classList.add("hidden");
+      });
+   }
+
+   // 3. Hantera när formuläret skickas (Spara till Supabase)
+   if (addObsForm) {
+      addObsForm.addEventListener("submit", async (e) => {
+         e.preventDefault();
+
+         const artId = parseInt(document.getElementById("obsArt").value);
+         const datum = document.getElementById("obsDatum").value;
+         const lat = document.getElementById("latInput").value;
+         const lon = document.getElementById("lonInput").value;
+
+         // 🔥 NYTT: Hämta det valda kommun-ID:t (görs om till ett heltal)
+         const kommunId = parseInt(document.getElementById("obsKommun").value);
+
+         // Skicka med kommunId som det sista argumentet till databasen!
+         const lyckades = await database.insertObservation(artId, datum, lat, lon, kommunId);
+
+         if (lyckades) {
+            obsModal.classList.add("hidden");
+            mapModul.clearObservationMarkers();
+            uppdateraKartaEfterFilter();
+            alert("Observationen har sparats i databasen! 🎉");
+         } else {
+            alert("Det gick inte att spara. Kolla console-loggen.");
          }
       });
    }
