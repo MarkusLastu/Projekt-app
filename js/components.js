@@ -36,13 +36,23 @@ export function renderWikiInfo(data) {
         const injectWikiData = document.getElementById('wikiData');
         const injectWikiImg = document.getElementById('wikiImg');
 
+        console.log(data);
+        
+
         injectWikiLabel.innerHTML = (`<label class="filter-title">${data.title}</label>`);
         injectWikiData.innerHTML = (`
-                <p>${data.extract}</p>
-                <img src="${data.thumbnail?.source}"></img>
+                ${data.extract_html}
+                <br>
+                ${data.thumbnail?.source
+                        ? `<img class="wiki-img" src="${data.thumbnail.source}" alt="${data.title}">`
+                                : ""
+                }
+
+                <p>
+                        <a href="${data.content_urls?.desktop?.page}" target="_blank" rel="noopener noreferrer">
+                                Läs mer på Wikipedia
+                        </a>
+                </p>
                 `);
         skapaLoggar(renderWikiInfo, 'ok', 'wikiData klar');
-
-
-
 }

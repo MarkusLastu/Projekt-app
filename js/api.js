@@ -33,6 +33,7 @@ export async function hamtaWikiSammanfattning(sokord) {
         const data = await response.json();
 
         skapaLoggar(hamtaWikiSammanfattning, 'ok', 'Wikipedia inläst', wikiStatus);
+        
 
         // SÄKERHETSKOLL: Kör bara render-funktionen om vi faktiskt är på index.html
         if (injectWikiData && typeof renderWikiInfo === "function") {
