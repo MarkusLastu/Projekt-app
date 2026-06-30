@@ -81,7 +81,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
 
    const artInställningar = {
       1: { label: "Varg", färg: "#88919ce0", ikon: vargSvg },
-      2: { label: "Älg", färg: "#4b2502f5", ikon: algSvg },
+      2: { label: "Älg", färg: "#884303f5", ikon: algSvg },
       3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg }
    };
 
