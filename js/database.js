@@ -254,6 +254,26 @@ export async function insertProjektStatus(p_typ, p_status, p_uppgift, p_kommenta
    return true;
 }
 
+
+// ==========================
+// DELETE
+// ==========================
+export async function taBortProjektStatus(id) {
+   // OBS: Dubbelkolla att din tabell faktiskt heter 'projektstatus' i Supabase!
+   const { error } = await mySupabaseClient
+      .from('projektstatus') 
+      .delete()
+      .eq('projektstatus_id', id); // Tar bort raden där ID matchar
+
+   if (error) {
+      console.error("Kunde inte ta bort:", error.message);
+      return false;
+   }
+
+   return true;
+}
+
+
 export async function refreshProjektStatus() {
    const { data, error } =
       await mySupabaseClient.rpc("get_projektstatus");

@@ -96,8 +96,12 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
          }).length;
       });
 
+      // Räkna ihop totalsumman för just denna art i det valda tidsintervallet
+      const totaltAntal = punkterData.reduce((summa, antal) => summa + antal, 0);
+
       return {
-         label: info.label,
+         // Lägger till totalsumman direkt i namnet (label)
+         label: `${info.label} (${totaltAntal} st)`, 
          data: punkterData,
          borderColor: info.färg,
          backgroundColor: info.färg + "22",
@@ -119,7 +123,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
             plugins: {
                legend: {
                   labels: {
-                     usePointStyle: true, // Tvingar Chart.js att rita av ikonerna istället för färgade fyrkanter
+                     usePointStyle: true, 
                      boxWidth: 20,
                      boxHeight: 20,
                      font: { size: 14 },
@@ -128,13 +132,13 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
                      generateLabels: function (chart) {
                         const datasets = chart.data.datasets;
                         return datasets.map((dataset, i) => ({
-                           text: dataset.label,
+                           text: dataset.label, 
                            fillStyle: dataset.borderColor,
                            strokeStyle: dataset.borderColor,
                            lineWidth: dataset.borderWidth,
                            hidden: !chart.isDatasetVisible(i),
                            datasetIndex: i,
-                           pointStyle: dataset.legendIkon // Hämtar SVG-ikon istället för linjens vanliga cirkel!
+                           pointStyle: dataset.legendIkon 
                         }));
                      }
                   }
@@ -147,11 +151,11 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
             }
          }
       });
-      
+
    } else {
       trendsChart.data.labels = tidsEtiketter;
       trendsChart.data.datasets = nyaDatasets;
-      trendsChart.update();/*  */
+      trendsChart.update();
    }
 }
 
@@ -401,55 +405,55 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
    // --- Ljudknapparnas logik (Hämtar direkt från observationernas artdata) ---
-document.querySelectorAll('.sound-btn').forEach(knapp => {
-   knapp.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+   document.querySelectorAll('.sound-btn').forEach(knapp => {
+      knapp.addEventListener('click', async (e) => {
+         e.preventDefault();
+         e.stopPropagation();
 
-      const artId = parseInt(knapp.getAttribute('data-art-id'));
-      
-      // Letar i listan av observationer efter första bästa rad som matchar vårt artId
-      const matchandeObs = database.allaObservationer.find(obs => obs.Art_id === artId);
-      const latinName = matchandeObs ? matchandeObs.VetenskapligtNamn : null;
+         const artId = parseInt(knapp.getAttribute('data-art-id'));
 
-      if (!latinName) {
-         console.warn(`Hittade inget latinskt namn för Art_id: ${artId} än. (Datan kanske laddas fortfarande)`);
-         return;
-      }
+         // Letar i listan av observationer efter första bästa rad som matchar vårt artId
+         const matchandeObs = database.allaObservationer.find(obs => obs.Art_id === artId);
+         const latinName = matchandeObs ? matchandeObs.VetenskapligtNamn : null;
 
-      // Om samma ljud redan spelas – pausa det
-      if (nuvarandeLjud && !nuvarandeLjud.paused && nuvarandeLjud.src === knapp.dataset.playingUrl) {
-         nuvarandeLjud.pause();
-         knapp.textContent = '🔊';
-         return;
-      }
-
-      knapp.textContent = '⏳';
-
-      const audioUrl = await api.hamtaLjudUrl(latinName);
-
-      if (audioUrl) {
-         if (nuvarandeLjud) {
-            nuvarandeLjud.pause();
-            document.querySelectorAll('.sound-btn').forEach(b => b.textContent = '🔊');
+         if (!latinName) {
+            console.warn(`Hittade inget latinskt namn för Art_id: ${artId} än. (Datan kanske laddas fortfarande)`);
+            return;
          }
 
-         nuvarandeLjud = new Audio(audioUrl);
-         knapp.dataset.playingUrl = audioUrl;
-         
-         nuvarandeLjud.play();
-         knapp.textContent = '🛑';
-
-         nuvarandeLjud.onended = () => {
+         // Om samma ljud redan spelas – pausa det
+         if (nuvarandeLjud && !nuvarandeLjud.paused && nuvarandeLjud.src === knapp.dataset.playingUrl) {
+            nuvarandeLjud.pause();
             knapp.textContent = '🔊';
-         };
+            return;
+         }
 
-      } else {
-         knapp.textContent = '❌';
-         setTimeout(() => { knapp.textContent = '🔊'; }, 2000);
-      }
+         knapp.textContent = '⏳';
+
+         const audioUrl = await api.hamtaLjudUrl(latinName);
+
+         if (audioUrl) {
+            if (nuvarandeLjud) {
+               nuvarandeLjud.pause();
+               document.querySelectorAll('.sound-btn').forEach(b => b.textContent = '🔊');
+            }
+
+            nuvarandeLjud = new Audio(audioUrl);
+            knapp.dataset.playingUrl = audioUrl;
+
+            nuvarandeLjud.play();
+            knapp.textContent = '🛑';
+
+            nuvarandeLjud.onended = () => {
+               knapp.textContent = '🔊';
+            };
+
+         } else {
+            knapp.textContent = '❌';
+            setTimeout(() => { knapp.textContent = '🔊'; }, 2000);
+         }
+      });
    });
-});
 
 
    // === PROJEKTINFO-SIDAN ===
@@ -459,7 +463,9 @@ document.querySelectorAll('.sound-btn').forEach(knapp => {
 
    const closeBtn = document.getElementById("closeEditBtn");
    if (closeBtn) {
-      closeBtn.addEventListener("click", database.closeModal);
+      closeBtn.addEventListener("click", () => {
+         ui.closeModal(); // ✅ Nu anropas rätt modul!
+      });
    }
 
    const saveBtn = document.getElementById("saveEditBtn");
@@ -467,17 +473,18 @@ document.querySelectorAll('.sound-btn').forEach(knapp => {
    if (saveBtn) {
       saveBtn.addEventListener("click", async () => {
 
-         await database.uppdateraProjektStatus(
-            ui.currentEditItem.projektstatus_id,
-            document.getElementById("editTyp").value,
-            document.getElementById("editStatus").value,
-            document.getElementById("editUppgift").value,
-            document.getElementById("editKommentar").value
-         );
+         // RÄTTNING: Vi sätter måsvingar runt argumenten för att skapa ett objekt { ... }
+         await database.uppdateraProjektStatus({
+            projektstatus_id: ui.currentEditItem.projektstatus_id,
+            typ: document.getElementById("editTyp").value,
+            status: document.getElementById("editStatus").value,
+            uppgift: document.getElementById("editUppgift").value,
+            kommentar: document.getElementById("editKommentar").value
+         });
 
          document.getElementById("editModal").classList.add("hidden");
 
-         await loadProjektStatus();
+         await loadProjektStatus(); // Larmar om listan på skärmen
       });
    }
 
@@ -508,6 +515,30 @@ document.querySelectorAll('.sound-btn').forEach(knapp => {
          await database.insertProjektStatus(typ, status, uppgift, kommentar);
 
          ui.closeAddModal();
+      });
+   }
+
+   const deleteEditBtn = document.getElementById("deleteEditBtn");
+
+   if (deleteEditBtn) {
+      deleteEditBtn.addEventListener("click", async () => {
+         // Skapa en säkerhetsfråga så användaren inte klickar fel
+         const konfirmera = confirm("Är du säker på att du vill ta bort den här uppgiften?");
+
+         if (konfirmera) {
+            // Hämta ID från det objekt som ui-modulen just nu kom ihåg att vi editerar
+            const id = ui.currentEditItem.projektstatus_id;
+
+            // Kör borttagningen i databasen
+            const lyckades = await database.taBortProjektStatus(id);
+
+            if (lyckades) {
+               ui.closeModal();          // Stäng modalen
+               await loadProjektStatus(); // Ladda om listan på skärmen direkt!
+            } else {
+               alert("Det gick inte att ta bort uppgiften. Kolla RLS-policyn i Supabase.");
+            }
+         }
       });
    }
 
