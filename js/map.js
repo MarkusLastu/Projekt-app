@@ -83,7 +83,7 @@ export function skapaKarta() {
 // === När användaren klickar fylls koordinaterna i formuläret ===
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
-   skapaLoggar(laggTillKlickFunktion, 'start', 'Klickfunktion på kartan körs.', mapAddClickStatus);
+   skapaLoggar(laggTillKlickFunktion, 'info', 'Klickfunktion på kartan körs.', mapAddClickStatus);
 
    const mapContainer = document.getElementById("map");
 
@@ -167,8 +167,8 @@ export function addObservationMarker(lat, lon, artNamn, antal, datum) {
          // Om API:n inte svarar:
          marker.setPopupContent(`
                <strong>${artNamn}</strong><br>
-               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br
-               ❌ Kunde inte hämta väderdata>
+               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+               ❌ Kunde inte hämta väderdata
                `);
       }
    });

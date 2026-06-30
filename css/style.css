@@ -56,7 +56,7 @@
 }
 
 /* ===== TEMA: DARK MODE ===== */
-[data-theme="dark"] {
+body.dark-mode {
     --bg-main: #1a202c;
     --bg-surface: #2d3748;
     --text-primary: #f7fafc;
@@ -183,10 +183,7 @@ nav a:hover {
     display: grid;
     grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
 
-    grid-template-areas:
-        "aside section";     
-    min-height: calc(100vh - 180px);
-        "aside section";
+    grid-template-areas: "aside section";     
     height: calc(100vh - 180px);
     overflow-x: hidden;
     overflow-y: auto;

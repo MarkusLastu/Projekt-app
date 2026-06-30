@@ -43,7 +43,7 @@ export async function laddaLan() {
          return;
       }
 
-      skapaLoggar(`✅ ${lan.length} län inlästa!`, dbLanStatus);
+      skapaLoggar('laddaLan', 'ok', `✅ ${lan.length} län inlästa!`, dbLanStatus);
 
    } catch (error) {
       if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
@@ -63,12 +63,6 @@ export async function laddaObservationer() {
    let rangeStart = 0;
    const batchSize = 1000;
    let hasMore = true; */ //Hallå en massa dubbel kod????//
-
-   // Hämta ALL data från supabase (annars är max 1000 rader)
-   let allData = [];
-   let rangeStart = 0;
-   const batchSize = 1000;
-   let hasMore = true;
 
    try {
       while (hasMore) {
@@ -96,38 +90,31 @@ export async function laddaObservationer() {
          if (data.length < batchSize) {
             hasMore = false;
          }
-
-/*          if (error) {
-            if (dbObservationStatus) dbObservationStatus.textContent = "❌ Fel: " + error.message;
-            console.error(error);
-            skapaLoggar("❌ Fel: " + error.message, dbObservationStatus);
-            return;
-         } */
       }
 
-         allaObservationer = allData;
-         uppdateraKartaEfterFilter();
-         skapaLoggar(`✅ ${allData.length} observationer hämtade!`, dbObservationStatus);
+      allaObservationer = allData;
+      uppdateraKartaEfterFilter();
+      skapaLoggar('laddaObservationer', 'ok', `✅ ${allData.length} observationer hämtade!`, dbObservationStatus);
 
-      } catch (error) {
-         // Detta fångar oväntade tekniska fel (t.ex. att internet dör helt)
-         if (dbObservationStatus) dbObservationStatus.textContent = '❌ Nätverksfel: ' + error.message;
-         console.error('Kritiskt nätverksfel:', error);
-         skapaLoggar('❌ Systemfel: ' + error.message, dbObservationStatus);
-      }
+   } catch (error) {
+      // Detta fångar oväntade tekniska fel (t.ex. att internet dör helt)
+      if (dbObservationStatus) dbObservationStatus.textContent = '❌ Nätverksfel: ' + error.message;
+      console.error('Kritiskt nätverksfel:', error);
+      skapaLoggar('❌ Systemfel: ' + error.message, dbObservationStatus);
    }
+}
 
 // -------------------------------------------------------
 
 
 // === UPPDATERA SIDAN I REALTID OM DB UPPDATERAS ===
 mySupabaseClient
-      .channel('observationer')
-      .on('postgres_changes',
-         { event: 'INSERT', schema: 'public', table: 'observationer' },
-         () => laddaObservationer()
-      )
-      .subscribe();
+   .channel('observationer')
+   .on('postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'observationer' },
+      () => laddaObservationer()
+   )
+   .subscribe();
 
 skapaLoggar('Supabase', 'info', 'Supabase har uppdaterats', dbStatus);
 // -------------------------------------------------------
