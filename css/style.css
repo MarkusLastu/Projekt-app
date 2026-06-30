@@ -441,3 +441,9 @@ footer::before {
             var(--accent-color),
             transparent);
 }
+
+body.dark-mode .leaflet-control-zoom a {
+    background-color: var(--bg-surface) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+}
