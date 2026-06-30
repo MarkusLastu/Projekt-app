@@ -76,11 +76,11 @@ export async function laddaObservationer() {
    const dbObservationStatus = document.getElementById("dbObservationStatus");
    skapaLoggar(laddaObservationer, 'start', "Laddar observationer...", dbObservationStatus);
 
-   /* Hämta ALL data från supabase (annars är max 1000 rader)
+   // Hämta ALL data från supabase (annars är max 1000 rader)
    let allData = []; 
    let rangeStart = 0;
    const batchSize = 1000;
-   let hasMore = true; */ //Hallå en massa dubbel kod????//
+   let hasMore = true; // Hallå en massa dubbel kod????
 
    try {
       const { data: observationer, error } = await mySupabaseClient
@@ -94,13 +94,13 @@ export async function laddaObservationer() {
 
          if (error) throw error;
 
-         if (data.length > 0) {
-            allData = allData.concat(data);
+         if (observationer.length > 0) {
+            allData = allData.concat(observationer);
             rangeStart += batchSize;
          }
 
          // När vi laddar in färre än 1000 rader är vi klara
-         if (data.length < batchSize) {
+         if (observationer.length < batchSize) {
             hasMore = false;
          }
       
