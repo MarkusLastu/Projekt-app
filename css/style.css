@@ -197,6 +197,12 @@ nav a:hover {
     color: var(--accent-color);
 }
 
+body.dark-mode a,
+body.dark-mode a:visited {
+    color: white;
+}
+
+
 
 /* HUVUDINNEHÅLL (MAIN) */
 .main-layout {
