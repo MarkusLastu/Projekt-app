@@ -75,7 +75,7 @@ function uppdateraGraf(valdaArtIds) {
    }
 
    const artInställningar = {
-      1: { label: "Varg 🐺", färg: "#4b5563" },
+      1: { label: "Varg 🐺", färg: "#88919ce0" },
       2: { label: "Älg 🦌", färg: "#d97706" },
       3: { label: "Rådjur 🦌", färg: "#2563eb" }
    };
