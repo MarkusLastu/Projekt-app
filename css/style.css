@@ -59,6 +59,7 @@ body.dark-mode {
     --bg-main: #1a202c;
     --bg-surface: #2d3748;
     --text-primary: #f7fafc;
+    --text-primary2: rgba(68, 66, 66, 0.5);
     --text-secondary: #a0aec0;
 
     --accent-color: snow;
@@ -66,7 +67,8 @@ body.dark-mode {
 
     --border-color: gray;
     --status-bg: snow;
-    --status-border: snow;
+    --status-bg2: rgba(114, 114, 114, 0.76);
+    --status-border: rgba(0, 0, 255, 0.466);
 }
 
 
@@ -197,6 +199,12 @@ nav a:hover {
     color: var(--accent-color);
 }
 
+body.dark-mode a,
+body.dark-mode a:visited {
+    color: white;
+}
+
+
 
 /* HUVUDINNEHÅLL (MAIN) */
 .main-layout {
@@ -237,6 +245,7 @@ nav a:hover {
     padding: var(--spacing-md);
     border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
+    
 }
 
 .filter-title {
@@ -267,12 +276,13 @@ nav a:hover {
 /* SYSTEM STATUS */
 .status-log {
     padding: 8px 12px;
-    background: var(--status-bg);
+    background: var(--status-bg2);
     border-left: 4px solid var(--status-border);
     margin-bottom: 8px;
     font-family: monospace;
     font-size: 12px;
     border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+
 }
 
 hr {
@@ -434,6 +444,12 @@ footer::before {
             transparent,
             var(--accent-color),
             transparent);
+}
+
+body.dark-mode .leaflet-control-zoom a {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
 }
 
 

@@ -16,6 +16,9 @@ const sliderMax = document.getElementById('timeSliderMax');
 const periodText = document.getElementById('periodText');
 const themeToggle = document.getElementById("themeToggle");
 
+const vargSvg = new Image(22, 22); vargSvg.src = 'images/svg/varg.svg';
+const algSvg = new Image(22, 22); algSvg.src = 'images/svg/alg.svg';
+const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
 
 // -------------------------------------------------------
 // #endregion
@@ -52,7 +55,8 @@ function hamtaIndexFranDatum(datumStr) {
 }
 
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
-function uppdateraGraf(valdaArtIds) {
+function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
+
    // Berätta för statussidan att graf-logiken fungerar!
    const grafStatus = document.getElementById("uppdateraGraf");
    if (grafStatus) {
@@ -62,7 +66,7 @@ function uppdateraGraf(valdaArtIds) {
    // Leta efter själva ritytan (canvasen)
    const canvas = document.getElementById('trendsChart');
    if (!canvas) {
-      // Om canvas saknas (som på statussidan), avbryt här så det inte kraschar!
+      // Om canvas saknas, avbryt här så det inte kraschar!
       return;
    }
 
@@ -70,16 +74,16 @@ function uppdateraGraf(valdaArtIds) {
    const tidsEtiketter = [];
    const perioderIndex = [];
 
-   // Fyll på tidsaxeln (0 till 20 halvvår)
-   for (let i = 0; i <= 20; i++) {
+   // Fyll på tidsaxeln
+   for (let i = minVal; i <= maxVal; i++) {
       perioderIndex.push(i);
       tidsEtiketter.push(indexTillText(i));
    }
 
    const artInställningar = {
-      1: { label: "Varg 🐺", färg: "#4b5563" },
-      2: { label: "Älg 🦌", färg: "#d97706" },
-      3: { label: "Rådjur 🦌", färg: "#2563eb" }
+      1: { label: "Varg", färg: "#88919ce0", ikon: vargSvg },
+      2: { label: "Älg", färg: "#884303f5", ikon: algSvg },
+      3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg }
    };
 
    const nyaDatasets = valdaArtIds.map(artId => {
@@ -98,7 +102,8 @@ function uppdateraGraf(valdaArtIds) {
          borderColor: info.färg,
          backgroundColor: info.färg + "22",
          tension: 0.3,
-         borderWidth: 3
+         borderWidth: 3,
+         legendIkon: info.ikon
       };
    });
 
@@ -106,18 +111,47 @@ function uppdateraGraf(valdaArtIds) {
       trendsChart = new Chart(ctx, {
          type: 'line',
          data: { labels: tidsEtiketter, datasets: nyaDatasets },
+
          options: {
             responsive: true,
             maintainAspectRatio: false,
+
+            plugins: {
+               legend: {
+                  labels: {
+                     usePointStyle: true, // Tvingar Chart.js att rita av ikonerna istället för färgade fyrkanter
+                     boxWidth: 20,
+                     boxHeight: 20,
+                     font: { size: 14 },
+
+                     // Tvingar bara LEGENDEN att använda sig av SVG-ikonerna
+                     generateLabels: function (chart) {
+                        const datasets = chart.data.datasets;
+                        return datasets.map((dataset, i) => ({
+                           text: dataset.label,
+                           fillStyle: dataset.borderColor,
+                           strokeStyle: dataset.borderColor,
+                           lineWidth: dataset.borderWidth,
+                           hidden: !chart.isDatasetVisible(i),
+                           datasetIndex: i,
+                           pointStyle: dataset.legendIkon // Hämtar SVG-ikon istället för linjens vanliga cirkel!
+                        }));
+                     }
+                  }
+               }
+            },
+
             scales: {
                x: { grid: { display: false } },
                y: { beginAtZero: true, ticks: { precision: 0 } }
             }
          }
       });
+      
    } else {
+      trendsChart.data.labels = tidsEtiketter;
       trendsChart.data.datasets = nyaDatasets;
-      trendsChart.update();
+      trendsChart.update();/*  */
    }
 }
 
@@ -147,12 +181,12 @@ export function uppdateraKartaEfterFilter() {
       }
    }
 
-   // Hämta vilka arter som är ikryssade (eller ta alla [1,2,3] som test om inga boxar finns)
+   // Hämta vilka arter som är ikryssade
    const ikryssadeCheckboxar = document.querySelectorAll('.art-checkbox:checked');
    const valdaArtIds = Array.from(ikryssadeCheckboxar).map(cb => parseInt(cb.value));
 
    // Uppdatera grafen
-   uppdateraGraf(valdaArtIds);
+   uppdateraGraf(valdaArtIds, minVal, maxVal);
 
    // UPPDATERA STATUS FÖR GRAFEN:
    const grafStatus = document.getElementById("uppdateraGraf");
