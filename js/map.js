@@ -36,6 +36,35 @@ const radjurIcon = L.icon({
    popupAnchor: [0, -36]
 });
 
+const grasalIcon = L.icon({
+   iconUrl: 'images/svg/grasal.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const gravlingIcon = L.icon({
+   iconUrl: 'images/svg/gravling.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const vildsvinIcon = L.icon({
+   iconUrl: 'images/svg/vildsvin.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const ravIcon = L.icon({
+   iconUrl: 'images/svg/rav.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+
 // -------------------------------------------------------
 
 // === SKAPA KARTAN ===
@@ -216,6 +245,11 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
    if (artNamn.includes('Varg')) icon = vargIcon;
    else if (artNamn.includes('Älg')) icon = algIcon;
    else if (artNamn.includes('Rådjur')) icon = radjurIcon;
+   else if (artNamn.includes('Gråsäl')) icon = grasalIcon;
+   else if (artNamn.includes('Grävling')) icon = gravlingIcon;
+   else if (artNamn.includes('Vildsvin')) icon = vildsvinIcon;
+   else if (artNamn.includes('Räv')) icon = ravIcon;
+
 
    const marker = L.marker([lat, lon], { icon });
 

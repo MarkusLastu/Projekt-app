@@ -66,6 +66,31 @@
                             <span>Rådjur</span>
                             <button type="button" class="sound-btn" data-art-id="3">🔊</button>
                         </label>
+
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="4">
+                            <img src="images/svg/grasal.svg" alt="Gråsäl" class="icon-small">
+                            <span>Gråsäl</span>
+                            <button type="button" class="sound-btn" data-art-id="4">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="5">
+                            <img src="images/svg/gravling.svg" alt="Grävling" class="icon-small">
+                            <span>Grävling</span>
+                            <button type="button" class="sound-btn" data-art-id="5">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="6">
+                            <img src="images/svg/vildsvin.svg" alt="Vildsvin" class="icon-small">
+                            <span>Vildsvin</span>
+                            <button type="button" class="sound-btn" data-art-id="6">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="7">
+                            <img src="images/svg/rav.svg" alt="Räv" class="icon-small">
+                            <span>Räv</span>
+                            <button type="button" class="sound-btn" data-art-id="7">🔊</button>
+                        </label>
                     </div>
                 </div>
 
@@ -79,23 +104,23 @@
 
             <section class="map-section">
                 <div id="map" class="map-container">
-<div id="renderProgress" class="render-progress hidden">
-                    <div class="render-progress-box">
+                    <div id="renderProgress" class="render-progress hidden">
+                        <div class="render-progress-box">
 
-                        <div id="renderText">
-                            Laddar 0 / 0 observationer...
+                            <div id="renderText">
+                                Laddar 0 / 0 observationer...
+                            </div>
+
+                            <div class="progress-bar">
+                                <div id="progressFill"></div>
+                            </div>
+
                         </div>
-
-                        <div class="progress-bar">
-                            <div id="progressFill"></div>
-                        </div>
-
                     </div>
-                </div>
-                    
+
                 </div>
 
-                
+
 
                 <div class="timeline-container">
                     <div class="timeline-header">
@@ -144,10 +169,13 @@
                 <div class="form-group">
                     <label for="obsArt">Djurslag</label>
                     <select id="obsArt">
+                        <option value="4"><img src="images/svg/seal.svg" alt="Gråsäl" class="icon-small"> Gråsäl</option>
+                        <option value="5"><img src="images/svg/badger.svg" alt="Grävling" class="icon-small"> Grävling</option>
+                        <option value="3"><img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small"> Rådjur</option>
+                        <option value="7"><img src="images/svg/fox.svg" alt="Räv" class="icon-small"> Räv</option>
                         <option value="1"><img src="images/svg/varg.svg" alt="Varg" class="icon-small"> Varg</option>
+                        <option value="6"><img src="images/svg/boar.svg" alt="Vildsvin" class="icon-small"> Vildsvin</option>                        
                         <option value="2"><img src="images/svg/alg.svg" alt="Älg" class="icon-small"> Älg</option>
-                        <option value="3"><img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small"> Rådjur
-                        </option>
                     </select>
                 </div>
 
