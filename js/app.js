@@ -163,7 +163,7 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
 export function uppdateraKartaEfterFilter() {
    // Sätt standardvärden om reglagen saknas (som på statussidan)
    let minVal = 0;
-   let maxVal = 20;
+   let maxVal = 21;
 
    if (sliderMin && sliderMax) {
       minVal = parseInt(sliderMin.value);
