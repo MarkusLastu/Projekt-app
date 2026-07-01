@@ -546,3 +546,8 @@ export function doljProgress() {
 }
 
 // -------------------------------------------------------
+
+export function taEmotOchRitaObservationer(nyaPunkter) {
+   currentFilteredPoints = nyaPunkter; 
+   uppdateraVynBaseratPaOmrade();     
+}
