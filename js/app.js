@@ -215,19 +215,35 @@ export function uppdateraKartaEfterFilter() {
    });
 
    // Rita ut markörerna på kartan
-   filtreradData.forEach(obs => {
-      if (obs.Latitude && obs.Longitude) {
-         const latNum = parseFloat(obs.Latitude);
-         const lonNum = parseFloat(obs.Longitude);
-         console.log(obs.artNamn)
-         const artNamn = obs.ArtNamn ? obs.ArtNamn : 'Okänt djur';
+   requestAnimationFrame(() => {
+   const chunkSize = 200;
+   let i = 0;
 
-         if (!isNaN(latNum) && !isNaN(lonNum)) {
+   function renderChunk() {
+      const slice = filtreradData.slice(i, i + chunkSize);
 
-            mapModul.addObservationMarker(latNum, lonNum, artNamn, 1, obs.Datum);
+      slice.forEach(obs => {
+         if (obs.Latitude && obs.Longitude) {
+            const lat = parseFloat(obs.Latitude);
+            const lon = parseFloat(obs.Longitude);
+
+            if (!isNaN(lat) && !isNaN(lon)) {
+               mapModul.addObservationMarker(lat, lon, obs.ArtNamn, obs.Datum);
+            }
          }
+      });
+
+      i += chunkSize;
+
+      if (i < filtreradData.length) {
+         requestAnimationFrame(renderChunk);
+      } else {
+         mapModul.renderHeatmap(); // 🔥 bygg heatmap efter render
       }
-   });
+   }
+
+   renderChunk();
+});
 
    ui.skapaLoggar(uppdateraKartaEfterFilter, 'ok', `🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
 }

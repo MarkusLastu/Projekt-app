@@ -12,6 +12,8 @@ import { hamtaVader, hamtaWikiSammanfattning } from "./api.js";
 let map;
 let marker = null;
 let markerClusterGroup;
+let heatLayer = null;
+let allHeatPoints = [];
 
 // Markörerna på kartan 
 const vargIcon = L.icon({
@@ -52,7 +54,7 @@ export function skapaKarta() {
       return;
    }
 
-   map = L.map('map', { maxZoom: 19 }).setView([62.0, 15.0], 5);
+   map = L.map('map', { preferCanvas: true, maxZoom: 19 }).setView([62.0, 15.0], 5);
 
    // Initiera klustret (så att markörer nära varandra blir en markör)
    markerClusterGroup = L.markerClusterGroup();
@@ -94,7 +96,7 @@ async function identifieraOchValjKommun(lat, lon) {
       if (data && data.address) {
          // API:et kan returnera kommunen under lite olika fält beroende på plats, vi helgarderar oss:
          let funnenKommun = data.address.municipality || data.address.city || data.address.town || "";
-         
+
          if (funnenKommun) {
             // API:et svarar ofta t.ex. "Gävle kommun" eller "Stockholms stad". 
             // Vi rensar bort det så vi bara har "Gävle" eller "Stockholm" kvar:
@@ -103,7 +105,7 @@ async function identifieraOchValjKommun(lat, lon) {
             // Loopa igenom alla alternativ i vår <select>-lista för att hitta en matchning
             for (let i = 0; i < obsKommunSelect.options.length; i++) {
                const optionText = obsKommunSelect.options[i].text.toLowerCase();
-               
+
                if (optionText.includes(funnenKommun)) {
                   obsKommunSelect.selectedIndex = i; // Välj denna kommun automatiskt!
                   console.log(`🔮 Matchade automatiskt till kommun: ${obsKommunSelect.options[i].text}`);
@@ -185,7 +187,7 @@ export function laggTillKlickFunktion() {
                      🐾 Rapportera här
                   </button>
                </div>
-            `).openPopup(); 
+            `).openPopup();
          });
       }
 
@@ -208,79 +210,79 @@ export function laggTillKlickFunktion() {
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
 export function addObservationMarker(lat, lon, artNamn, datum) {
-   // Förhindrar krasch om kartan inte finns på sidan
-   if (!markerClusterGroup) {
-      return;
-   }
+   if (!markerClusterGroup) return;
 
-   const popupContent = `
-        <strong>${artNamn}</strong><br>
-        📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
-        ⏳ <em>Hämtar historiskt väderdata...</em>
-    `;
+   let icon = L.Icon.Default;
 
-   // Bestämmer vilken ikon som ska användas beroende på artNamn
-   let valdIkon = L.Icon.Defaults; //Om något går fel används den blå standard-markören)
+   if (artNamn.includes('Varg')) icon = vargIcon;
+   else if (artNamn.includes('Älg')) icon = algIcon;
+   else if (artNamn.includes('Rådjur')) icon = radjurIcon;
 
-   if (artNamn.includes('Varg')) {
-      valdIkon = vargIcon;
-   } else if (artNamn.includes('Älg')) {
-      valdIkon = algIcon;
-   } else if (artNamn.includes('Rådjur')) {
-      valdIkon = radjurIcon;
-   }
+   const marker = L.marker([lat, lon], { icon });
 
-   const marker = L.marker([lat, lon], { icon: valdIkon })
-      .bindPopup(popupContent);
-   markerClusterGroup.addLayer(marker);
+   marker.bindPopup(`
+      <strong>${artNamn}</strong><br>
+      📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+      ⏳ Laddar data...
+   `);
 
    marker.on('popupopen', async function () {
-      //Om vädret redan blivit laddad för just dennna markör -> gör inget mer
-      if (marker.vaderLaddat)
-         return;
+      if (marker._loaded) return;
+      marker._loaded = true;
 
-      //Anropar historiskt väder API med markörens koordinater
       const vader = await hamtaVader(lat, lon, datum);
-      //Anropar väder Wiki API med djurets namn      
-      const wikiData = await hamtaWikiSammanfattning(artNamn);
+      const wiki = await hamtaWikiSammanfattning(artNamn);
 
-      if (vader) {
-         marker.setPopupContent(`
-               <strong>${artNamn}</strong><br>
-               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
-               <hr style="margin: 5px 0; border: 0; border-top: 1px solid #eee;">
-               ${vader.emoji} ${vader.temp}°C, ${vader.beskrivning}
-               `);
-      } else {
-         // Om API:n inte svarar:
-         marker.setPopupContent(`
-               <strong>${artNamn}</strong><br>
-               📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
-               ❌ Kunde inte hämta väderdata
-               `);
-      }
+      marker.setPopupContent(`
+         <strong>${artNamn}</strong><br>
+         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+         <hr>
+         ${vader ? `${vader.emoji} ${vader.temp}°C` : "❌ väder saknas"}
+      `);
    });
 
-   /*    observationMarkers.push(marker); */
-}
+   markerClusterGroup.addLayer(marker);
 
+   // 🔥 heatmap data
+   allHeatPoints.push([lat, lon, 1]);
+}
 // -------------------------------------------------------
 
 
 // === TAR BORT MARKERING PÅ KARTAN ===
 export function clearObservationMarkers() {
-   // Förhindrar krasch om kartan saknas!
-   if (!markerClusterGroup) {
-      return; // Avbryt funktionen direkt, det finns inget att rensa
+   if (markerClusterGroup) {
+      markerClusterGroup.clearLayers();
    }
 
-   markerClusterGroup.clearLayers();
+   if (heatLayer) {
+      map.removeLayer(heatLayer);
+      heatLayer = null;
+   }
 
-   // Flytta in den tillfälliga klick-markören här så den rensas på rätt ställe!
+   allHeatPoints = [];
+
    if (marker) {
       map.removeLayer(marker);
       marker = null;
    }
+}
+
+let useHeatMap = false
+// === HEATMAP ===
+export function renderHeatmap() {
+   if (!map) return;
+   if (useHeatMap) return;
+
+   if (heatLayer) {
+      map.removeLayer(heatLayer);
+   }
+
+   heatLayer = L.heatLayer(allHeatPoints, {
+      radius: 25,
+      blur: 15,
+      maxZoom: 10,
+   }).addTo(map);
 }
 
 // -------------------------------------------------------
