@@ -57,10 +57,10 @@ export function skapaLoggar(fn, status, text, statusElement) {
 
    if (statusElement) {
       console.log(logg);
-      document.getElementById(statusElement.textContent = logg)
-   } else {
-      console.log(logg);
-   }
+      statusElement.textContent = logg;
+} else {
+   console.log(logg);
+}
 }
 
 

@@ -28,6 +28,7 @@ const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
 /* Vilken information behöver programmet komma ihåg? */
 let trendsChart = null;
 let nuvarandeLjud = null;
+let currentRenderId = 0; // Håller koll på vilken filtreringsrunda som är den absolut senaste
 // -------------------------------------------------------
 // #endregion
 
@@ -158,9 +159,9 @@ function uppdateraGraf(valdaArtIds, minVal = 0, maxVal = 20) {
    }
 }
 
-// Den här funktionen körs så fort man drar i NÅGON av knapparna
+// Den här funktionen körs så fort man drar i NÅGON av knapparna eller ändrar filter
 export function uppdateraKartaEfterFilter() {
-   // Sätt standardvärden om reglagen saknas (som på statussidan)
+   // Sätt standardvärden om reglagen saknas
    let minVal = 0;
    let maxVal = 21;
 
@@ -168,17 +169,10 @@ export function uppdateraKartaEfterFilter() {
       minVal = parseInt(sliderMin.value);
       maxVal = parseInt(sliderMax.value);
 
-      // Säkerhetsåtgärd för att knapparna inte ska gå förbi varandra
       if (minVal > maxVal) {
-         if (this === sliderMin) {
-            sliderMax.value = minVal;
-            maxVal = minVal;
-         } else {
-            sliderMin.value = maxVal;
-            minVal = maxVal;
-         }
+         if (this === sliderMin) { sliderMax.value = minVal; maxVal = minVal; } 
+         else { sliderMin.value = maxVal; minVal = maxVal; }
       }
-
       if (periodText) {
          periodText.textContent = `${indexTillText(minVal)} till ${indexTillText(maxVal)}`;
       }
@@ -191,58 +185,27 @@ export function uppdateraKartaEfterFilter() {
    // Uppdatera grafen
    uppdateraGraf(valdaArtIds, minVal, maxVal);
 
-   // UPPDATERA STATUS FÖR GRAFEN:
-   const grafStatus = document.getElementById("uppdateraGraf");
-   if (grafStatus) {
-      ui.skapaLoggar('grafStatus', 'ok', "Grafen är uppdaterad och laddad!", grafStatus);
-   }
-
-   // Rensa gamla markörer från kartan
-   mapModul.clearObservationMarkers();
-
-   // Filtrera datan baserat på det nya UTDRAGNA intervallet!
+   // Filtrera datan baserat på art och tid
    const filtreradData = database.allaObservationer.filter(obs => {
       const artMatch = valdaArtIds.includes(obs.Art_id);
-
-      // Räkna ut observationens tidsindex
       const obsIndex = hamtaIndexFranDatum(obs.Datum);
-
-      // Kolla om den ligger INNANFÖR start- och slutknappen
       const tidsMatch = (obsIndex >= minVal && obsIndex <= maxVal);
-
       return artMatch && tidsMatch;
    });
 
-   // Rita ut markörerna på kartan
-   requestAnimationFrame(() => {
-   const chunkSize = 200;
-   let i = 0;
+   // 🔥 NYTT: Formatera datan direkt till det format kartan vill ha
+   const punkterTillKartan = filtreradData
+      .filter(obs => obs.Latitude && obs.Longitude)
+      .map(obs => ({
+         lat: parseFloat(obs.Latitude),
+         lon: parseFloat(obs.Longitude),
+         artNamn: obs.ArtNamn,
+         datum: obs.Datum
+      }))
+      .filter(pt => !isNaN(pt.lat) && !isNaN(pt.lon));
 
-   function renderChunk() {
-      const slice = filtreradData.slice(i, i + chunkSize);
-
-      slice.forEach(obs => {
-         if (obs.Latitude && obs.Longitude) {
-            const lat = parseFloat(obs.Latitude);
-            const lon = parseFloat(obs.Longitude);
-
-            if (!isNaN(lat) && !isNaN(lon)) {
-               mapModul.addObservationMarker(lat, lon, obs.ArtNamn, obs.Datum);
-            }
-         }
-      });
-
-      i += chunkSize;
-
-      if (i < filtreradData.length) {
-         requestAnimationFrame(renderChunk);
-      } else {
-         mapModul.renderHeatmap(); // 🔥 bygg heatmap efter render
-      }
-   }
-
-   renderChunk();
-});
+   // 🔥 NYTT: Skicka allt på en gång till kartan! Ingen loop, ingen väntan.
+   mapModul.taEmotOchRitaObservationer(punkterTillKartan);
 
    ui.skapaLoggar(uppdateraKartaEfterFilter, 'ok', `🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
 }
