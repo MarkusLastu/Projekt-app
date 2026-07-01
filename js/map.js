@@ -417,8 +417,8 @@ export function laggTillKlickFunktion() {
       skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
+// -------------------------------------------------------
 
-<<<<<<< HEAD
 
 // === LÄGGER TILL MARKERING PÅ KARTAN ===
 export function addObservationMarker(lat, lon, artNamn, datum) {
@@ -429,11 +429,6 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
    if (artNamn.includes('Varg')) icon = vargIcon;
    else if (artNamn.includes('Älg')) icon = algIcon;
    else if (artNamn.includes('Rådjur')) icon = radjurIcon;
-   else if (artNamn.includes('Gråsäl')) icon = grasalIcon;
-   else if (artNamn.includes('Grävling')) icon = gravlingIcon;
-   else if (artNamn.includes('Vildsvin')) icon = vildsvinIcon;
-   else if (artNamn.includes('Räv')) icon = ravIcon;
-
 
    const marker = L.marker([lat, lon], { icon });
 
@@ -547,9 +542,3 @@ export function doljProgress() {
 }
 
 // -------------------------------------------------------
-=======
-export function taEmotOchRitaObservationer(nyaPunkter) {
-   currentFilteredPoints = nyaPunkter; 
-   uppdateraVynBaseratPaOmrade();     
-}
->>>>>>> 6b7a103d68869c741d569e6e32568d3958749321
