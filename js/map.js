@@ -284,4 +284,48 @@ export function renderHeatmap() {
    }).addTo(map);
 }
 
+// === PROGRESS BAR ===
+export function visaProgress(max) {
+   skapaLoggar(visaProgress, 'start', `Visar progress bar: ${max}`);
+
+   const el = document.getElementById("renderProgress");
+
+   el.style.display = "flex";
+   el.style.visibility = "visible";
+   el.style.opacity = "1";
+   el.style.pointerEvents = "auto";
+
+   document.getElementById("progressFill").style.width = "0%";
+
+   document.getElementById("renderText").textContent =
+      `Laddar 0 / ${max} observationer...`;
+}
+
+export function uppdateraProgress(antal, max) {
+   skapaLoggar(uppdateraProgress, 'start', `Uppdaterar progress: ${antal} / ${max}`);
+   const procent = (antal / max) * 100;
+
+   document
+      .getElementById("progressFill")
+      .style.width = procent + "%";
+
+   document
+      .getElementById("renderText")
+      .textContent =
+      `Laddar ${antal.toLocaleString()} / ${max.toLocaleString()} observationer...`;
+}
+
+export function doljProgress() {
+   skapaLoggar(doljProgress, 'ok', 'Döljer progress bar');
+
+   const el = document.getElementById("renderProgress");
+
+   if (!el) return;
+
+   el.style.display = "none";
+   el.style.visibility = "hidden";
+   el.style.opacity = "0";
+   el.style.pointerEvents = "none";
+}
+
 // -------------------------------------------------------

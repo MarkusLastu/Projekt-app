@@ -211,7 +211,7 @@ body.dark-mode a:visited {
     display: grid;
     grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
 
-    grid-template-areas: "aside section";     
+    grid-template-areas: "aside section";
     min-height: calc(100vh - 180px);
     overflow-x: hidden;
     overflow-y: auto;
@@ -245,7 +245,7 @@ body.dark-mode a:visited {
     padding: var(--spacing-md);
     border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
-    
+
 }
 
 .filter-title {
@@ -266,8 +266,10 @@ body.dark-mode a:visited {
     cursor: pointer;
 }
 
-.icon-small { /* Styling för SVG-ikoner i menyn */
-    width: 1.25em;    /* 1.25 * 16px (normal text) = 20px */
+.icon-small {
+    /* Styling för SVG-ikoner i menyn */
+    width: 1.25em;
+    /* 1.25 * 16px (normal text) = 20px */
     height: 1.25em;
     margin-right: 8px;
     vertical-align: middle;
@@ -299,7 +301,7 @@ hr {
 
     margin-bottom: var(--spacing-sm);
 
-    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 
     object-fit: cover;
 }
@@ -483,7 +485,7 @@ body.dark-mode .leaflet-control-zoom a {
 .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.55);
+    background: rgba(0, 0, 0, .55);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -493,7 +495,7 @@ body.dark-mode .leaflet-control-zoom a {
 }
 
 .modal-content {
-    width: min(550px,90vw);
+    width: min(550px, 90vw);
 
     background: var(--bg-surface);
 
@@ -502,137 +504,194 @@ body.dark-mode .leaflet-control-zoom a {
     padding: 28px;
 
     box-shadow:
-        0 25px 60px rgba(0,0,0,.30);
+        0 25px 60px rgba(0, 0, 0, .30);
 
-    display:flex;
-    flex-direction:column;
-    gap:18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 
-    border:1px solid var(--border-color);
+    border: 1px solid var(--border-color);
 }
 
 .hidden {
-  display: none;
+    display: none;
 }
 
-.modal-actions{
+.modal-actions {
 
-    display:flex;
+    display: flex;
 
-    justify-content:flex-end;
+    justify-content: flex-end;
 
-    gap:12px;
+    gap: 12px;
 
-    margin-top:var(--spacing-sm);
+    margin-top: var(--spacing-sm);
 }
 
-.modal-content h2{
-    font-size:1.4rem;
-    margin:0;
-    padding-bottom:12px;
+.modal-content h2 {
+    font-size: 1.4rem;
+    margin: 0;
+    padding-bottom: 12px;
 
-    border-bottom:3px solid var(--accent-color);
+    border-bottom: 3px solid var(--accent-color);
 }
 
-.modal-content label{
-    font-weight:600;
-    margin-bottom:4px;
-    display:block;
+.modal-content label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
 }
 
 .modal-content input,
 .modal-content select,
-.modal-content textarea{
-    width:100%;
-    padding:12px;
-    border-radius:var(--spacing-sm);
-    border:1px solid var(--border-color);
-    background:var(--bg-main);
-    color:var(--text-primary);
-    font-size:15px;
-    transition:.15s;
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: .15s;
 }
 
 .modal-content input:focus,
 .modal-content select:focus,
-.modal-content textarea:focus{
+.modal-content textarea:focus {
 
-    outline:none;
+    outline: none;
 
-    border-color:var(--accent-color);
+    border-color: var(--accent-color);
 
-    box-shadow:0 0 0 3px rgba(76,175,80,.20);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, .20);
 }
 
-.modal-content textarea{
+.modal-content textarea {
 
-    min-height:120px;
-    resize:vertical;
+    min-height: 120px;
+    resize: vertical;
 }
 
-.modal-grid{
+.modal-grid {
 
-    display:grid;    
-    grid-template-columns:1fr 1fr;
-    gap:var(--spacing-md);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
 }
 
 .btn-primary,
-.modal-actions.modal-actions button{
+.modal-actions.modal-actions button {
 
-    border:none;
+    border: none;
 
-    border-radius:var(--spacing-sm);
+    border-radius: var(--spacing-sm);
 
-    padding:var(--spacing-sm) 22px;
+    padding: var(--spacing-sm) 22px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    font-weight:600;
+    font-weight: 600;
 
-    transition:.2s;
+    transition: .2s;
 }
 
 #saveEditBtn,
-#saveAddBtn{
+#saveAddBtn {
 
-    background:var(--accent-color);
+    background: var(--accent-color);
 
-    color:white;
+    color: white;
 }
 
 #saveEditBtn:hover,
-#saveAddBtn:hover{
+#saveAddBtn:hover {
 
-    background:var(--accent-hover);
+    background: var(--accent-hover);
 
-    transform:translateY(-1px);
+    transform: translateY(-1px);
 }
 
 #closeEditBtn,
-#closeAddBtn{
+#closeAddBtn {
 
-    background:#888;
+    background: #888;
 
-    color:white;
+    color: white;
 }
 
 #closeEditBtn:hover,
-#closeAddBtn:hover{
+#closeAddBtn:hover {
 
-    background:#666;
+    background: #666;
 }
 
-.btn-primary{
+.btn-primary {
     padding: var(--spacing-sm);
 }
 
-.btn-primary:hover{
+.btn-primary:hover {
 
-    background:#666;
+    background: #666;
 
-    transform:translateY(-1px);
+    transform: translateY(-1px);
 }
 
 
 /* =============================== */
+
+
+.render-progress {
+    position: absolute; /* läggs ovanpå kartan */
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+
+    padding: 10px 12px;
+    min-width: 220px;
+
+    /* ingen full-screen overlay */
+    pointer-events: none; /* så den inte stör kartan */
+}
+
+body.dark-mode .render-progress {
+    background: rgba(0, 0, 0, .55);
+}
+
+/* boxen inne i */
+.render-progress-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* texten */
+#renderText {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* själva progressbaren */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* fyllning */
+#progressFill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-color);
+    border-radius: 20px;
+    transition: width 0.15s linear;
+}
+
+

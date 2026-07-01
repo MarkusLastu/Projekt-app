@@ -215,34 +215,64 @@ export function uppdateraKartaEfterFilter() {
 
    // Rita ut markörerna på kartan
    requestAnimationFrame(() => {
-   const chunkSize = 200;
-   let i = 0;
 
-   function renderChunk() {
-      const slice = filtreradData.slice(i, i + chunkSize);
+      const chunkSize = 200;
+      let i = 0;
+      const total = filtreradData.length;
 
-      slice.forEach(obs => {
-         if (obs.Latitude && obs.Longitude) {
-            const lat = parseFloat(obs.Latitude);
-            const lon = parseFloat(obs.Longitude);
-
-            if (!isNaN(lat) && !isNaN(lon)) {
-               mapModul.addObservationMarker(lat, lon, obs.ArtNamn, obs.Datum);
-            }
-         }
-      });
-
-      i += chunkSize;
-
-      if (i < filtreradData.length) {
-         requestAnimationFrame(renderChunk);
-      } else {
-         mapModul.renderHeatmap(); // 🔥 bygg heatmap efter render
+      if (total === 0) {
+         mapModul.visaProgress(0);
+         mapModul.doljProgress();
+         return;
       }
-   }
 
-   renderChunk();
-});
+      mapModul.visaProgress(total);
+
+      function renderChunk() {
+         const slice = filtreradData.slice(i, i + chunkSize);
+
+         slice.forEach(obs => {
+
+            if (obs.Latitude && obs.Longitude) {
+               const lat = parseFloat(obs.Latitude);
+               const lon = parseFloat(obs.Longitude);
+
+               if (!isNaN(lat) && !isNaN(lon)) {
+                  mapModul.addObservationMarker(
+                     lat,
+                     lon,
+                     obs.ArtNamn,
+                     obs.Datum
+                  );
+               }
+            }
+         });
+
+         i += chunkSize;
+
+         mapModul.uppdateraProgress(
+            Math.min(i, total),
+            total
+         );
+         console.log("TOTAL::: " + total);
+
+         if (total > 0 && i < total) {
+
+            requestAnimationFrame(renderChunk);
+
+         } else {
+
+            setTimeout(() => {
+               mapModul.doljProgress();
+               mapModul.renderHeatmap();
+            }, 300);
+
+         }
+      }
+
+      renderChunk();
+
+   });
 
    ui.skapaLoggar(uppdateraKartaEfterFilter, 'ok', `🔍 Visar ${filtreradData.length} av ${database.allaObservationer.length} observationer på kartan.`, observationStatus);
 }
