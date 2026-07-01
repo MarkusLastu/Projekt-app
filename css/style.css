@@ -199,11 +199,14 @@ nav a:hover {
     color: var(--accent-color);
 }
 
-body.dark-mode a,
-body.dark-mode a:visited {
+body.dark-mode #nav a,
+body.dark-mode #nav a:visited {
     color: white;
 }
 
+body.dark-mode .wiki-url a:visited {
+    color: white;
+}
 
 
 /* HUVUDINNEHÅLL (MAIN) */
