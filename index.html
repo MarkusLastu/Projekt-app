@@ -62,6 +62,31 @@
                             <span>Rådjur</span>
                             <button type="button" class="sound-btn" data-art-id="3">🔊</button>
                         </label>
+
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="4">
+                            <img src="images/svg/grasal.svg" alt="Gråsäl" class="icon-small">
+                            <span>Gråsäl</span>
+                            <button type="button" class="sound-btn" data-art-id="4">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="5">
+                            <img src="images/svg/gravling.svg" alt="Grävling" class="icon-small">
+                            <span>Grävling</span>
+                            <button type="button" class="sound-btn" data-art-id="5">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="6">
+                            <img src="images/svg/vildsvin.svg" alt="Vildsvin" class="icon-small">
+                            <span>Vildsvin</span>
+                            <button type="button" class="sound-btn" data-art-id="6">🔊</button>
+                        </label>
+                        <label>
+                            <input type="checkbox" class="art-checkbox" value="7">
+                            <img src="images/svg/rav.svg" alt="Räv" class="icon-small">
+                            <span>Räv</span>
+                            <button type="button" class="sound-btn" data-art-id="7">🔊</button>
+                        </label>
                     </div>
                 </div>
 
@@ -74,46 +99,21 @@
             </aside>
 
             <section class="map-section">
+                <div id="map" class="map-container">
+<div id="renderProgress" class="render-progress hidden">
+                    <div class="render-progress-box">
 
-                <div id="map-wrapper" style="position: relative;">
-                    <div id="map" class="map-container"></div>
-
-                    <div id="map-loader" class="hidden" style="
-                        position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-                        background: rgba(0,0,0,0.2); z-index: 1000; 
-                        display: flex; justify-content: center; align-items: center;
-                        pointer-events: none; transition: opacity 0.2s;">
-                        <div class="spinner" style="
-                            width: 50px; height: 50px; border: 5px solid #f3f3f3; 
-                            border-top: 5px solid #e78300; border-radius: 50%; 
-                            animation: spin 1s linear infinite;">
+                        <div id="renderText">
+                            Laddar 0 / 0 observationer...
                         </div>
+
+                        <div class="progress-bar">
+                            <div id="progressFill"></div>
+                        </div>
+
                     </div>
                 </div>
-
-                <style>
-                    @keyframes spin {
-                        0% {
-                            transform: rotate(0deg);
-                        }
-
-                        100% {
-                            transform: rotate(360deg);
-                        }
-                    }
-
-                    .hidden {
-                        opacity: 0;
-                        pointer-events: none;
-                    }
-                </style>
-
-
-                <div class="map-legend-container">
-                    <p><strong>Observationer i det synliga området:</strong></p>
-                    <div id="live-counter-container"
-                        style="display: flex; gap: 15px; align-items: center; margin-top: 5px;">
-                    </div>
+                    
                 </div>
 
 
@@ -160,16 +160,18 @@
                 Fyll i uppgifterna nedan och klicka sedan på <strong>Spara observation</strong>.
             </p>
 
-            <div class="form-group">
-                <label for="obsArt">Djurslag</label>
-                <select id="obsArt">
-                    <option value="1">Varg</option>
-                    <option value="2">Älg</option>
-                    <option value="3">Rådjur</option>
-                </select>
-            </div>
-
-            <div class="modal-grid">
+                <div class="form-group">
+                    <label for="obsArt">Djurslag</label>
+                    <select id="obsArt">
+                        <option value="4"><img src="images/svg/seal.svg" alt="Gråsäl" class="icon-small"> Gråsäl</option>
+                        <option value="5"><img src="images/svg/badger.svg" alt="Grävling" class="icon-small"> Grävling</option>
+                        <option value="3"><img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small"> Rådjur</option>
+                        <option value="7"><img src="images/svg/fox.svg" alt="Räv" class="icon-small"> Räv</option>
+                        <option value="1"><img src="images/svg/varg.svg" alt="Varg" class="icon-small"> Varg</option>
+                        <option value="6"><img src="images/svg/boar.svg" alt="Vildsvin" class="icon-small"> Vildsvin</option>                        
+                        <option value="2"><img src="images/svg/alg.svg" alt="Älg" class="icon-small"> Älg</option>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <label for="obsDatum">Datum</label>

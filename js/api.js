@@ -173,7 +173,11 @@ export async function hamtaLjudUrl(latinName) {
     const engelskaSokord = {
         'Canis lupus familiaris': 'howl_echo',          // Vargyl
         'Alces alces': 'Moose_Elk',         // Älgbröl
-        'Capreolus capreolus': 'stag' // Rådjursskall (de skäller ju när de varnar!)
+        'Capreolus capreolus': 'stag', // Rådjursskall (de skäller ju när de varnar!)
+        'Halichoerus grypus': 'seal', // Sälskrik
+        'Meles meles': 'badger', // Grävling
+        'Sus scrofa': 'boar', // Vildsvin
+        'Vulpes': 'fox' // Räv
     };
 
     // Hitta det engelska sökordet, eller använd det latinska namnet som backup

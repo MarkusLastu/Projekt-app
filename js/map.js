@@ -34,6 +34,35 @@ const radjurIcon = L.icon({
    popupAnchor: [0, -36]
 });
 
+const grasalIcon = L.icon({
+   iconUrl: 'images/svg/grasal.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const gravlingIcon = L.icon({
+   iconUrl: 'images/svg/gravling.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const vildsvinIcon = L.icon({
+   iconUrl: 'images/svg/vildsvin.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+const ravIcon = L.icon({
+   iconUrl: 'images/svg/rav.svg',
+   iconSize: [36, 36],
+   iconAnchor: [18, 36],
+   popupAnchor: [0, -36]
+});
+
+
 // -------------------------------------------------------
 
 // === SKAPA KARTAN ===
@@ -392,8 +421,128 @@ export function laggTillKlickFunktion() {
       skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
+// -------------------------------------------------------
 
-export function taEmotOchRitaObservationer(nyaPunkter) {
-   currentFilteredPoints = nyaPunkter; 
-   uppdateraVynBaseratPaOmrade();     
+
+// === LÄGGER TILL MARKERING PÅ KARTAN ===
+export function addObservationMarker(lat, lon, artNamn, datum) {
+   if (!markerClusterGroup) return;
+
+   let icon = L.Icon.Default;
+
+   if (artNamn.includes('Varg')) icon = vargIcon;
+   else if (artNamn.includes('Älg')) icon = algIcon;
+   else if (artNamn.includes('Rådjur')) icon = radjurIcon;
+
+   const marker = L.marker([lat, lon], { icon });
+
+   marker.bindPopup(`
+      <strong>${artNamn}</strong><br>
+      📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+      ⏳ Laddar data...
+   `);
+
+   marker.on('popupopen', async function () {
+      if (marker._loaded) return;
+      marker._loaded = true;
+
+      const vader = await hamtaVader(lat, lon, datum);
+      const wiki = await hamtaWikiSammanfattning(artNamn);
+
+      marker.setPopupContent(`
+         <strong>${artNamn}</strong><br>
+         📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
+         <hr>
+         ${vader ? `${vader.emoji} ${vader.temp}°C` : "❌ väder saknas"}
+      `);
+   });
+
+   markerClusterGroup.addLayer(marker);
+
+   // 🔥 heatmap data
+   allHeatPoints.push([lat, lon, 1]);
 }
+// -------------------------------------------------------
+
+
+// === TAR BORT MARKERING PÅ KARTAN ===
+export function clearObservationMarkers() {
+   if (markerClusterGroup) {
+      markerClusterGroup.clearLayers();
+   }
+
+   if (heatLayer) {
+      map.removeLayer(heatLayer);
+      heatLayer = null;
+   }
+
+   allHeatPoints = [];
+
+   if (marker) {
+      map.removeLayer(marker);
+      marker = null;
+   }
+}
+
+let useHeatMap = false
+// === HEATMAP ===
+export function renderHeatmap() {
+   if (!map) return;
+   if (useHeatMap) return;
+
+   if (heatLayer) {
+      map.removeLayer(heatLayer);
+   }
+
+   heatLayer = L.heatLayer(allHeatPoints, {
+      radius: 25,
+      blur: 15,
+      maxZoom: 10,
+   }).addTo(map);
+}
+
+// === PROGRESS BAR ===
+export function visaProgress(max) {
+   skapaLoggar(visaProgress, 'start', `Visar progress bar: ${max}`);
+
+   const el = document.getElementById("renderProgress");
+
+   el.style.display = "flex";
+   el.style.visibility = "visible";
+   el.style.opacity = "1";
+   el.style.pointerEvents = "auto";
+
+   document.getElementById("progressFill").style.width = "0%";
+
+   document.getElementById("renderText").textContent =
+      `Laddar 0 / ${max} observationer...`;
+}
+
+export function uppdateraProgress(antal, max) {
+   skapaLoggar(uppdateraProgress, 'start', `Uppdaterar progress: ${antal} / ${max}`);
+   const procent = (antal / max) * 100;
+
+   document
+      .getElementById("progressFill")
+      .style.width = procent + "%";
+
+   document
+      .getElementById("renderText")
+      .textContent =
+      `Laddar ${antal.toLocaleString()} / ${max.toLocaleString()} observationer...`;
+}
+
+export function doljProgress() {
+   skapaLoggar(doljProgress, 'ok', 'Döljer progress bar');
+
+   const el = document.getElementById("renderProgress");
+
+   if (!el) return;
+
+   el.style.display = "none";
+   el.style.visibility = "hidden";
+   el.style.opacity = "0";
+   el.style.pointerEvents = "none";
+}
+
+// -------------------------------------------------------
