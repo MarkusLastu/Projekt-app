@@ -50,7 +50,7 @@ export function renderWikiInfo(data) {
 
                 <p class="wiki-url">
                         <a href="${data.content_urls?.desktop?.page}" target="_blank" rel="noopener noreferrer">
-                                Läs mer på Wikipedia
+                                <u>Läs mer på Wikipedia här!</u>
                         </a>
                 </p>
                 `);

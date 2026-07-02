@@ -11,21 +11,11 @@ export let currentEditItem = null;
 
 // === SKAPA LOGG I CONSOLE OCH DIV-ELEMENT ===
 export function skapaLoggar(fn, status, text, statusElement) {
+   // fn = (namnet på funktionen som anropar denna logg-funktion / textsträng som beskriver flödet
+   // status = (start, ok, fel, info) beroende på vad som händer i koden
    // text = texten du vill skriva i loggen och på sidan
-   // statusElement = (ID på elementet du vill skicka texten till) (jag har skapat flera divvar i HTML med olika Namn: lanStatus, obersvationStatus, kartaStatus)
-   // -----------------------------------------------------
-   // Lägg in dessa längst js-filen utanför denna funktion
-   // const lanStatus = document.getElementById("lanStatus");
-   // const observationStatus = document.getElementById('observationStatus');
-   // const kartaStatus = document.getElementById('kartaStatus');
-   // -----------------------------------------------------
-   // Anropa så här från andra funktioner:
-   // skapaLoggar("Laddar län...", lanStatus);
-   // skapaLoggar("Sparar observation...", observationStatus);
-   // skapaLoggar("Kartan är klar", kartaStatus);
-   // -----------------------------------------------------
-   // Då är det enklare att följa hur långt koden funka om det går fel nånstans.
-
+   // statusElement = (ID på elementet du vill skicka texten till (ej obligatoriskt)
+   
    let fnText = fn?.name || fn;
    let ikon = '';
 
@@ -35,25 +25,13 @@ export function skapaLoggar(fn, status, text, statusElement) {
       ikon = '✅ ';
    } else if (status === "fel") {
       ikon = '❌ ';
+   } else if (status === "varning") {
+      ikon = '⚠️ ';
    } else {
       ikon = 'ℹ️ ';
    }
 
    const logg = `${ikon} [${fnText}] ${text}`;
-
-   // Fler ikoner vi kan använda om vi vill
-   // 🔄 Startar / laddar
-   // ⏳ Väntar
-   // ✅ Ok
-   // ⚠️ Varning
-   // ❌ Fel
-   // ℹ️ Information
-   // 🚀 Startar appen
-   // 📡 API-anrop
-   // 💾 Databas
-   // 🗺️ Karta
-   // 🌐 Nätverk
-   // 🔍 Visar
 
    if (statusElement) {
       console.log(logg);
@@ -66,12 +44,14 @@ export function skapaLoggar(fn, status, text, statusElement) {
 
 // === VISA PROJEKTINFO  ===
 
+// ikoner för status
 const ikon = {
    ok: "🟢",
    pagar: "🟡",
    ej: "🔴"
 };
 
+// rubrik för olika typer av uppgifter
 const rubrik = {
    krav: "📌 Obligatoriska krav",
    extra: "🚀 Extra utmaningar",
@@ -80,14 +60,7 @@ const rubrik = {
 };
 
 
-
-
-
-
-// === GENERERAR LISTA I HTML FRÅN DATABASEN ===
-// ==========================
-// RENDER UI
-// ==========================
+// === Renderar lista från databasen ===
 export function renderProjektStatusUI(lista) {
 
    const container =
@@ -142,9 +115,7 @@ export function renderProjektStatusUI(lista) {
    });
 }
 
-// ==========================
-// MODAL OPEN
-// ==========================
+// === Hanterar modalt fönster för att lägga till ny uppgift ===
 export function openAddModal() {
 
    document.getElementById("addTyp").value = "krav";
@@ -159,7 +130,7 @@ export function closeAddModal() {
    document.getElementById("addModal").classList.add("hidden");
 }
 
-
+// === Öppnar modalt fönster för att ändra uppgift ===
 export function openEditModal(item) {
 
    currentEditItem = item;
@@ -180,7 +151,7 @@ export function closeModal() {
 }
 
 
-// 🔥 Lägg till denna i ui.js (eller app.js)
+// Renderar filter för arter i UI
 export function renderaArterFilter(arterLista) {
    const container = document.getElementById("arterFilterGroup");
    if (!container) return;
@@ -192,9 +163,6 @@ export function renderaArterFilter(arterLista) {
          <span>🌟 Markera alla</span>
       </label>
    `;
-
-
-
 
    // Loopa ut arterna från databasen
    arterLista.forEach(art => {
