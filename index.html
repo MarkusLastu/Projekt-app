@@ -50,9 +50,9 @@
         <nav id="nav"></nav>
 
         <main class="main-layout">
-
+            
             <section class="sidebar">
-
+            <!-- Filter för observationer -->    
                 <h3>Filtrera observationer</h3>
                 <div class="filter-group">
                     <label class="filter-title">Välj arter:</label>
@@ -63,7 +63,7 @@
                         </label>
                     </div>
                 </div>
-
+            <!--filter för plats-->
                 <h3>Filtrera plats</h3>
                 <div class="filter-group location-filter">
                     <div class="input-field">
@@ -80,10 +80,10 @@
                         </select>
                     </div>
                 </div>
-
+                <!--filter för tid-->
                 <h3>Filtrera tid</h3>
                 <div class="filter-group date-filter-group">
-
+                    <!-- Tid på dygnet -->
                     <div class="filter-group">
                         <label for="timePresetSelect">🕒 Tid på dygnet</label>
                         <select id="timePresetSelect" class="filter-select">
@@ -94,7 +94,7 @@
                             <option value="evening">Kväll/Skymning (18:00 - 22:00)</option>
                         </select>
                     </div>
-
+                    <!-- Tidsperiod in en fält -->
                     <div class="input-field">
                         <label for="datePresetSelect">Välj tidsperiod:</label>
                         <select id="datePresetSelect">
@@ -108,7 +108,7 @@
                             <option value="custom">Anpassad period...</option>
                         </select>
                     </div>
-
+                    <!-- Anpassade datumfält -->
                     <div class="date-inputs">
                         <div class="input-field">
                             <label for="dateMin">Från:</label>
@@ -123,17 +123,23 @@
 
 
             </section>
-
+            <!-- Kartan -->
             <section class="map-section">
                 <div id="map" class="map-container">
                     <div id="renderProgress" class="render-progress hidden">
                         <div class="render-progress-box">
-                            <div id="renderText">Laddar 0 / 0 observationer...</div>
+                            <!--<div id="renderText">Laddar 0 / 0 observationer...</div> används inte-->
                             <div class="progress-bar">
                                 <div id="progressFill"></div>
                             </div>
                         </div>
                     </div>
+                </div>
+                    <!--Visar observationer efter antal djur i det synliga området-->
+                <div class="map-legend-container">
+                    <p><strong>Observationer i det synliga området:</strong></p>
+                    <div id="live-counter-container"
+                        style="display: flex; gap: 15px; align-items: center; margin-top: 5px;"></div>
                 </div>
 
                 <!-- <div class="timeline-container">
@@ -163,12 +169,13 @@
 
 
             </section>
+            <!-- Diagram för observationer -->
             <section class="chart-container">
 
                 <canvas id="trendsChart"></canvas>
 
             </section>
-
+            <!--Detaljerad info om observationen-->
             <section class="wiki-container">
 
                 <h3 class="wikiHeader">Detaljfakta</h3>
@@ -182,7 +189,7 @@
         <footer id="footer"></footer>
 
     </div>
-
+    <!-- modul för att rapportera ny observation -->
     <div id="addObservationModal" class="modal hidden">
         <form id="addObservationForm" class="modal-content">
 
@@ -238,7 +245,7 @@
 
         </form>
     </div>
-
+    <!-- script imports -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
