@@ -21,7 +21,11 @@ const themeToggle = document.getElementById("themeToggle");
 const vargSvg = new Image(22, 22); vargSvg.src = 'images/svg/varg.svg';
 const algSvg = new Image(22, 22); algSvg.src = 'images/svg/alg.svg';
 const radjurSvg = new Image(22, 22); radjurSvg.src = 'images/svg/radjur.svg';
-
+const grasalSvg = new Image(22, 22); grasalSvg.src = 'images/svg/grasal.svg';
+const gravlingSvg = new Image(22, 22); gravlingSvg.src = 'images/svg/gravling.svg';
+const kungsornSvg = new Image(22, 22); kungsornSvg.src = 'images/svg/kungsorn.svg';
+const ravSvg = new Image(22, 22); ravSvg.src = 'images/svg/rav.svg';
+const vildsvinSvg = new Image(22, 22); vildsvinSvg.src = 'images/svg/vildsvin.svg';
 // -------------------------------------------------------
 // #endregion
 
@@ -85,7 +89,12 @@ function uppdateraGraf(valdaArtIds = [], minVal = 0, maxVal = 20) {
    const artInställningar = {
       1: { label: "Varg", färg: "#88919ce0", ikon: vargSvg },
       2: { label: "Älg", färg: "#884303f5", ikon: algSvg },
-      3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg }
+      3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg },
+      4: { label: "Gråsäl", färg: "#00a0e3", ikon: grasalSvg },
+      5: { label: "Grävling", färg: "#6b4c3b", ikon: gravlingSvg },
+      10: { label: "Kungsörn", färg: "#c0c0c0", ikon: kungsornSvg },
+      7: { label: "Räv", färg: "#8B4513", ikon: ravSvg },
+      6: { label: "Vildsvin", färg: "#8B4513", ikon: vildsvinSvg }
    };
 
    const nyaDatasets = valdaArtIds.map(artId => {
