@@ -812,6 +812,7 @@ document.addEventListener('DOMContentLoaded', async function () {
    const artFörslagDiv = document.getElementById("artFörslag");
    const valtArtNamnInput = document.getElementById("valtArtNamn");
    const valtVetenskapligtNamnInput = document.getElementById("valtVetenskapligtNamn");
+   
    if (artSökInput && artFörslagDiv) {
       artSökInput.addEventListener("input", async (e) => {
          const sökord = e.target.value.trim();
@@ -821,14 +822,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             artFörslagDiv.classList.add("hidden");
             return;
          }
-//         console.log("Söker efter art:", sökord);
-         try {
-            const backboneKey = "d7dddbf4-2cf0-4f39-9b2a-bb099caae36c";
-            const url = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(sökord)}&datasetKey=${backboneKey}&limit=20`;
 
-            const svar = await fetch(url);
-            const data = await svar.json();
-            const rawFörslag = data.results || [];
+         try {
+            // Vi anropar api-modulen istället för direkt fetch!
+            const rawFörslag = await api.sokArtIGBIF(sökord);
 
             artFörslagDiv.innerHTML = "";
 
@@ -887,7 +884,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             artFörslagDiv.classList.remove("hidden");
          } catch (fel) {
-            console.error("GBIF API-fel:", fel);
+            console.error("Fel vid hantering av artförslag:", fel);
          }
       });
 

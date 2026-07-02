@@ -220,18 +220,18 @@ export async function hamtaLjudUrl(latinName) {
 }
 
 
-
-export async function sokArtIGBIF(sokord) {
+export async function sokArtIGBIF(sökord) {
    const backboneKey = "d7dddbf4-2cf0-4f39-9b2a-bb099caae36c";
-   const url = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(sokord)}&datasetKey=${backboneKey}&limit=20`;
-   
+   const url = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(sökord)}&datasetKey=${backboneKey}&limit=20`;
+
    try {
       const svar = await fetch(url);
+      if (!svar.ok) throw new Error(`Status: ${svar.status}`);
       const data = await svar.json();
       return data.results || [];
    } catch (fel) {
       console.error("GBIF API-fel:", fel);
-      return [];
+      return []; // Returnera tom array om det skiter sig
    }
 }
 
