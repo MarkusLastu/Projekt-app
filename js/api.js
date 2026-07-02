@@ -221,4 +221,19 @@ export async function hamtaLjudUrl(latinName) {
 
 
 
+export async function sokArtIGBIF(sokord) {
+   const backboneKey = "d7dddbf4-2cf0-4f39-9b2a-bb099caae36c";
+   const url = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(sokord)}&datasetKey=${backboneKey}&limit=20`;
+   
+   try {
+      const svar = await fetch(url);
+      const data = await svar.json();
+      return data.results || [];
+   } catch (fel) {
+      console.error("GBIF API-fel:", fel);
+      return [];
+   }
+}
+
+
 // -----------------------------------------------------------------------------
