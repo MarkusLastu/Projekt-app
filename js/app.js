@@ -63,37 +63,40 @@ function hamtaIndexFranDatum(datumStr) {
 
 // Hjälpfunktion: Skapar en "slug" för bildnamn baserat på artnamnet
 function skapaBildSlug(text) {
-      if (!text) return "paw";
-      return text
-         .toLowerCase()
-         .replace(/å/g, "a")
-         .replace(/ä/g, "a")
-         .replace(/ö/g, "o")
-         .replace(/[^a-z0-9]/g, ""); // Tar bort eventuella kvarvarande konstiga tecken eller mellanslag
-   }
+   if (!text) return "paw";
+   return text
+      .toLowerCase()
+      .replace(/å/g, "a")
+      .replace(/ä/g, "a")
+      .replace(/ö/g, "o")
+      .replace(/[^a-z0-9]/g, ""); // Tar bort eventuella kvarvarande konstiga tecken eller mellanslag
+}
 
 
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
 export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const canvas = document.getElementById('trendsChart');
-   if (!canvas) return;
+   if (!canvas || typeof canvas.getContext !== 'function') {
+      console.log("📊 Grafmodulen hoppades över (trendsChart saknas eller är inte en canvas på denna sida).");
+      return;
+   }
 
    const ctx = canvas.getContext('2d');
 
    const minInput = document.getElementById('dateMin')?.value;
    const maxInput = document.getElementById('dateMax')?.value;
-   const startDatumStr = minInput || "2026-01-01"; 
+   const startDatumStr = minInput || "2026-01-01";
    const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
 
    const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
 
    const fargPalett = ["#88919c", "#884303", "#e78300", "#00a0e3", "#6b4c3b", "#c0c0c0", "#8B4513", "#2e7d32", "#c62828", "#1565c0"];
-   
+
    const snyggArtInfo = {};
    valdaArtIds.forEach((artId, index) => {
       const cb = document.querySelector(`#arterFilterGroup input[value="${artId}"]`);
       let namn = `Art ${artId}`;
-      
+
       if (cb) {
          const labelParent = cb.closest('label');
          if (labelParent) {
@@ -106,13 +109,13 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
       // 🌟 DYNAMISK IKON-LOGIK 🌟
       // 1. Skapa filnamnet baserat på det tvättade artnamnet (t.ex. "grasal")
       const slug = skapaBildSlug(namn);
-      
+
       // 2. Skapa ett Image-objekt som Chart.js kan använda som punktstil
       const ikonImg = new Image(20, 20);
       ikonImg.src = `images/svg/${slug}.svg`;
 
       // 3. Fallback: Om bilden inte hittas på servern, ladda paw.svg istället
-      ikonImg.onerror = function() {
+      ikonImg.onerror = function () {
          if (this.src !== 'images/svg/paw.svg') {
             this.src = 'images/svg/paw.svg';
          }
@@ -128,7 +131,7 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    // 4. Skapa datasets baserat på tidsaxeln
    const nyaDatasets = valdaArtIds.map(artId => {
       const artInfo = snyggArtInfo[artId];
-      
+
       const artData = filtreradData.filter(obs => {
          const nuvarandeArtId = typeof obs.Art_id !== 'undefined' ? obs.Art_id : obs.art_id;
          return parseInt(nuvarandeArtId) === artId;
@@ -146,14 +149,14 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
       return {
          label: `${artInfo.namn} (${totaltAntal} st)`,
          data: punkterData,
-         backgroundColor: artInfo.färg + "22", 
+         backgroundColor: artInfo.färg + "22",
          borderColor: artInfo.färg,
          borderWidth: 3,
-         tension: 0.3, 
+         tension: 0.3,
          fill: true,
-         
+
          // 🌟 BERÄTTA FÖR CHART.JS ATT ANVÄNDA IKONEN 🌟
-         pointStyle: artInfo.ikon, 
+         pointStyle: artInfo.ikon,
          pointRadius: 6,      // Storlek på ikonen i själva graf-punkterna
          pointHoverRadius: 8
       };
