@@ -955,7 +955,7 @@ document.addEventListener('DOMContentLoaded', async function () {
    const artFörslagDiv = document.getElementById("artFörslag");
    const valtArtNamnInput = document.getElementById("valtArtNamn");
    const valtVetenskapligtNamnInput = document.getElementById("valtVetenskapligtNamn");
-
+// Lyssna på input i art-sökfältet och hämta förslag från GBIF
    if (artSökInput && artFörslagDiv) {
       artSökInput.addEventListener("input", async (e) => {
          const sökord = e.target.value.trim();

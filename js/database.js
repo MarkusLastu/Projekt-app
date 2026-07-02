@@ -27,7 +27,7 @@ skapaLoggar('dbStatus', 'ok', 'Ansluten med mySupabaseClient...', dbStatus);
 // -------------------------------------------------------
 
 
-
+// === HÄMTA LÄN OCH KOMMUNER ===
 export async function laddaRegioner() {
    const dbLanStatus = document.getElementById("dbLanStatus");
 

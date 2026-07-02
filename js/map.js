@@ -134,7 +134,7 @@ export function skapaKarta() {
    skapaLoggar(skapaKarta, 'ok', 'Karta skapad med OpenStreetMap', mapCreateStatus);
    return map;
 }
-
+// Kopplar kartan till händelser som uppdaterar markörer och rutor när användaren flyttar eller zoomar kartan
 function kopplaKarthandelser() {
    const loader = document.getElementById("map-loader");
 
@@ -152,7 +152,7 @@ function kopplaKarthandelser() {
 }
 
 
-
+// updateMapViewBasedOnArea() uppdaterar kartan baserat på synliga punkter och zoomnivå. Den hanterar både rutnätsvisning och markörer beroende på zoomnivån.
 export function uppdateraVynBaseratPaOmrade() {
    if (!map) return;
 
@@ -289,7 +289,7 @@ export function uppdateraVynBaseratPaOmrade() {
    }, 25); // 25ms är precis lagom för att ge webbläsaren en chans att uppdatera gränssnittet
 }
 
-
+// === RENDERAR RUTNÄT PÅ KARTAN ===
 function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
    if (mittLaddningsId !== nuvarandeLaddningsId) return;
    if (!gridLayer) gridLayer = L.layerGroup().addTo(map);
@@ -341,7 +341,7 @@ function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
 
 
 
-
+// === UPPDATERAR LEGENDEN PÅ KARTAN ===
 function uppdateraKartLegendUI(synligaPunkter) {
    const container = document.getElementById("live-counter-container");
    if (!container) return;
@@ -386,7 +386,7 @@ function uppdateraKartLegendUI(synligaPunkter) {
    container.innerHTML = htmlInnehåll;
 }
 
-
+// === LÄGGER TILL KLICKFUNKTION PÅ KARTAN ===
 async function identifieraOchValjKommun(lat, lon) {
    const obsKommunSelect = document.getElementById("obsKommun");
    if (!obsKommunSelect) return;
@@ -417,7 +417,7 @@ async function identifieraOchValjKommun(lat, lon) {
       console.warn("Kunde inte hämta kommun från koordinater:", error);
    }
 }
-
+//lägger till klickfunktion på kartan
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
    skapaLoggar(laggTillKlickFunktion, 'info', 'Klickfunktion på kartan körs.', mapAddClickStatus);
@@ -611,7 +611,7 @@ export function visaProgress(max) {
    document.getElementById("renderText").textContent =
       `Laddar 0 / ${max} observationer...`;
 }
-
+//updaterar progress bar
 export function uppdateraProgress(antal, max) {
    skapaLoggar(uppdateraProgress, 'start', `Uppdaterar progress: ${antal} / ${max}`);
    const procent = (antal / max) * 100;
@@ -625,7 +625,7 @@ export function uppdateraProgress(antal, max) {
       .textContent =
       `Laddar ${antal.toLocaleString()} / ${max.toLocaleString()} observationer...`;
 }
-
+//döljer progress bar
 export function doljProgress() {
    skapaLoggar(doljProgress, 'ok', 'Döljer progress bar');
 
@@ -640,7 +640,7 @@ export function doljProgress() {
 }
 
 // -------------------------------------------------------
-
+// === TAR EMOT FILTRERADE OBSERVATIONER OCH RITAR PÅ KARTAN ===
 export function taEmotOchRitaObservationer(nyaPunkter) {
    if (nyaPunkter.length > 0) {
       console.log("🧐 RÅTT OBJEKT FRÅN FILTRET (Kolla vad artnamnet heter här):", nyaPunkter[0]);
