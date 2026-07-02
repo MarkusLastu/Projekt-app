@@ -282,7 +282,7 @@ function hamtaIndexFranDatum(datumStr) {
 }
 
 
-
+/* 
 
 // Hjälpfunktion: Skapar en "slug" för bildnamn baserat på artnamnet
 function skapaBildSlug(text) {
@@ -293,6 +293,36 @@ function skapaBildSlug(text) {
       .replace(/ä/g, "a")
       .replace(/ö/g, "o")
       .replace(/[^a-z0-9]/g, ""); // Tar bort eventuella kvarvarande konstiga tecken eller mellanslag
+} */
+
+export function skapaBildSlug(namn) {
+   const tillgangligaBilder = [       
+      'alg', 
+      'baver', 
+      'bjorn',
+      'grasal', 
+      'gravling', 
+      'kungsorn',
+      'radjur', 
+      'rav', 
+      'varg',
+      'vildsvin',      
+      'wolf' 
+   ];
+
+   // Din befintliga kod för att rensa å,ä,ö...
+   let slug = namn
+      .toLowerCase()
+      .replace(/[åä]/g, 'a')
+      .replace(/[ö]/g, 'o')
+      .replace(/\s+/g, '')
+      .replace(/[^a-z0-9]/g, ""); // Tar bort eventuella kvarvarande konstiga tecken eller mellanslag;
+
+   // Om den genererade sluggen inte finns i listan, returnera 'paw' direkt
+   if (!tillgangligaBilder.includes(slug)) {
+      return 'paw';
+   }
+   return slug;
 }
 
 
@@ -316,9 +346,9 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
 
    const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
-// färgpalett för linjerna i grafen
+   // färgpalett för linjerna i grafen
    const fargPalett = ["#88919c", "#884303", "#e78300", "#00a0e3", "#6b4c3b", "#c0c0c0", "#8B4513", "#2e7d32", "#c62828", "#1565c0"];
-//hämtar snygg info om valda arter (namn, färg, ikon)
+   //hämtar snygg info om valda arter (namn, färg, ikon)
    const snyggArtInfo = {};
    valdaArtIds.forEach((artId, index) => {
       const cb = document.querySelector(`#arterFilterGroup input[value="${artId}"]`);
@@ -337,16 +367,24 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
       // 1. Skapa filnamnet baserat på det tvättade artnamnet (t.ex. "grasal")
       const slug = skapaBildSlug(namn);
 
-      // 2. Skapa ett Image-objekt som Chart.js kan använda som punktstil
+      // 2. Skapa ett Image-objekt
       const ikonImg = new Image(20, 20);
-      ikonImg.src = `images/svg/${slug}.svg`;
 
-      // 3. Fallback: Om bilden inte hittas på servern, ladda paw.svg istället
+      // 3. Fallback: Berätta FÖRST för webbläsaren vad som ska hända om det blir fel
       ikonImg.onerror = function () {
-         if (this.src !== 'images/svg/paw.svg') {
+         // Kontrollera om vi redan har försökt med paw.svg (för att undvika oändlig loop)
+         if (!this.src.endsWith('images/svg/paw.svg')) {
+            console.log(`⚠️ Bilden för ${slug} saknades, använder paw.svg som fallback.`);
             this.src = 'images/svg/paw.svg';
          }
       };
+
+      // 4. SÄTT KÄLLAN SIST: Nu kan webbläsaren börja leta, och har koll på din onerror!
+      ikonImg.src = `images/svg/${slug}.svg`;
+
+
+
+
       // Spara informationen i snyggArtInfo
       snyggArtInfo[artId] = {
          namn: namn,
@@ -573,7 +611,7 @@ async function uppdateraDashboard(lanNamn) {
 // Anropa väder funktion
 async function visaVaderForObservation(lat, lon) {
    const vader = await hamtaVader(lat, lon);
-   
+
    if (vader) {
       mapModul.skapaLoggar(visaVaderForObservation, 'ok', `Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`)
 
@@ -673,7 +711,7 @@ document.addEventListener('DOMContentLoaded', async function () {
          ui.closeModal();
       });
    }
-   
+
    // Lyssna på spara-knappen i redigeringsmodalen
    const saveBtn = document.getElementById("saveEditBtn");
    if (saveBtn) {
@@ -693,7 +731,7 @@ document.addEventListener('DOMContentLoaded', async function () {
    const addBtn = document.getElementById("addBtn");
    const closeAddBtn = document.getElementById("closeAddBtn");
    const saveAddBtn = document.getElementById("saveAddBtn");
-   
+
    // Lyssna på knapparna i lägg-till-modal
    if (addBtn) {
       addBtn.addEventListener("click", () => { ui.openAddModal(); });
@@ -713,7 +751,7 @@ document.addEventListener('DOMContentLoaded', async function () {
          await loadProjektStatus();
       });
    }
-   
+
    // Lyssna på ta bort-knappen i redigeringsmodalen
    const deleteEditBtn = document.getElementById("deleteEditBtn");
    if (deleteEditBtn) {

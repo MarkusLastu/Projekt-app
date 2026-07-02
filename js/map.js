@@ -1,6 +1,8 @@
 // === KOPPLAR TILL ANDRA JS-FILER ===
 import { skapaLoggar } from "./ui.js";
 import { hamtaVader, hamtaWikiSammanfattning } from "./api.js";
+import { skapaBildSlug } from "./app.js";
+
 
 // -------------------------------------------------------
 
@@ -383,16 +385,16 @@ function uppdateraKartLegendUI(synligaPunkter) {
       const antal = räknare[art];
       if (antal > 0) {
          // Gör om namnet till gemener och ta bort å,ä,ö för att matcha din filstruktur (t.ex. "Älg" -> "alg")
-         const filnamn = art.toLowerCase()
-            .replace(/ä/g, 'a')
-            .replace(/å/g, 'a')
-            .replace(/ö/g, 'o');
+
+         const filnamn = skapaBildSlug(art);
 
          const ikonStig = `images/svg/${filnamn}.svg`;
+         skapaLoggar(uppdateraKartLegendUI, 'info', `ikonStig: ${ikonStig}`);
+
          // 3. Lägg till HTML för varje art i räknaren
          htmlInnehåll += `
             <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold;">
-               <img src="${ikonStig}" alt="${art}" onerror="this.src='images/svg/paw.svg';" style="width: 24px; height: 1px;" />
+               <img src="${ikonStig}" alt="${art}" onerror="this.src='images/svg/paw.svg';" style="width: 24px; height: 24px;" />
                <span>${art}: ${antal} st</span>
             </div>
          `;

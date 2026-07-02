@@ -17,9 +17,9 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
 
    const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
-// färgpalett för linjerna i grafen
+   // färgpalett för linjerna i grafen
    const fargPalett = ["#88919c", "#884303", "#e78300", "#00a0e3", "#6b4c3b", "#c0c0c0", "#8B4513", "#2e7d32", "#c62828", "#1565c0"];
-//hämtar snygg info om valda arter (namn, färg, ikon)
+   //hämtar snygg info om valda arter (namn, färg, ikon)
    const snyggArtInfo = {};
    valdaArtIds.forEach((artId, index) => {
       const cb = document.querySelector(`#arterFilterGroup input[value="${artId}"]`);
@@ -34,7 +34,30 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
       // färg från paletten baserat på index
       const farg = fargPalett[index % fargPalett.length];
 
+
       // 🌟 DYNAMISK IKON-LOGIK 🌟
+      // 1. Skapa filnamnet baserat på det tvättade artnamnet (t.ex. "grasal")
+      const slug = skapaBildSlug(namn);
+
+      // 2. Skapa ett Image-objekt
+      const ikonImg = new Image(20, 20);
+
+      // 3. Fallback: Berätta FÖRST för webbläsaren vad som ska hända om det blir fel
+      ikonImg.onerror = function () {
+         // Kontrollera om vi redan har försökt med paw.svg (för att undvika oändlig loop)
+         if (!this.src.endsWith('images/svg/paw.svg')) {
+            skapaloggar('Sätt djurlogga: ','varning',`Bilden för ${slug} saknades, använder paw.svg som fallback.`);
+            this.src = 'images/svg/paw.svg';
+         }
+      };
+
+      // 4. SÄTT KÄLLAN SIST: Nu kan webbläsaren börja leta, och har koll på din onerror!
+      ikonImg.src = `images/svg/${slug}.svg`;
+
+
+/* 
+
+      // 🌟 GAMMAL: DYNAMISK IKON-LOGIK 🌟
       // 1. Skapa filnamnet baserat på det tvättade artnamnet (t.ex. "grasal")
       const slug = skapaBildSlug(namn);
 
@@ -48,6 +71,8 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
             this.src = 'images/svg/paw.svg';
          }
       };
+
+       */
       // Spara informationen i snyggArtInfo
       snyggArtInfo[artId] = {
          namn: namn,
