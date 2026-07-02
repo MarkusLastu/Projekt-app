@@ -28,13 +28,6 @@ skapaLoggar('dbStatus', 'ok', 'Ansluten med mySupabaseClient...', dbStatus);
 
 
 
-
-
-
-
-
-
-
 export async function laddaRegioner() {
    const dbLanStatus = document.getElementById("dbLanStatus");
 
@@ -94,79 +87,6 @@ export async function laddaRegioner() {
 }
 
 
-
-/* export async function laddaRegioner() {
-   const dbLanStatus = document.getElementById("dbLanStatus");
-
-   // Start-logg
-   skapaLoggar(laddaRegioner, 'start', "Hämtar län och kommuner från Supabase...", dbLanStatus);
-
-   try {
-      // Anropa den kombinerade funktionen i Supabase
-      const { data, error } = await mySupabaseClient.rpc('get_kommun_and_lan');
-
-      if (error) {
-         if (dbLanStatus) skapaLoggar(laddaRegioner, 'fel', 'Fel: ' + error.message, dbLanStatus);
-         console.error("Supabase-fel:", error);
-         return;
-      }
-
-      allRegionData = data;
-
-      // 1. Fyll filter-rullistorna i index.html
-      populeraFilterUI(data);
-
-      // 🔥 RÄKNA UT ANTAL HÄR:
-      const antalKommuner = data.length;
-      // Skapa en unik lista av län bara för att kunna räkna dem
-      const unikaLan = [...new Set(data.map(item => item.lan_namn))];
-      const antalLan = unikaLan.length;
-
-      // 🔥 COSOLE.LOG SOM SYNS I INSPEKTERA -> CONSOLE:
-      console.log("📊 DATABAS-STATUS:");
-      console.log(`-> Antal inlästa län: ${antalLan}`);
-      console.log(`-> Antal inlästa kommuner: ${antalKommuner}`);
-      console.log("Hela datapaketet:", data);
-
-      // Hitta kommun-rullistan från din index.html
-      const kommunSelect = document.getElementById("obsKommun");
-
-      if (kommunSelect) {
-         // Töm "Laddar kommuner..." texten
-         kommunSelect.innerHTML = '<option value="" disabled selected>--- Välj kommun ---</option>';
-
-         // Loopa ut ALLA kommuner direkt i listan
-         data.forEach(k => {
-            const option = document.createElement("option");
-            option.value = k.kommun_id; // Sparar ID (siffran)
-            option.textContent = `${k.kommun_namn} (${k.lan_namn})`; // Visar t.ex. "Gävle (Gävleborgs län)"
-            kommunSelect.appendChild(option);
-         });
-      }
-
-      // 🔥 LOGGEN PÅ SKÄRMEN (skapaLoggar):
-      const loggText = `Klart! Inläst: ${antalLan} län och ${antalKommuner} kommuner.`;
-      skapaLoggar(laddaRegioner, 'ok', loggText, dbLanStatus);
-
-   } catch (error) {
-      console.error("Nätverksfel i laddaRegioner:", error);
-      if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
-   }
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export async function laddaAllData() {
    await laddaRegioner();
    await laddaObservationer();
@@ -212,15 +132,6 @@ export function uppdateraKommunDropdown(valtLan) {
       kommunSelect.appendChild(option);
    });
 }
-
-
-
-
-
-
-
-
-
 
 
 // === HÄMTA ELLER SKAPA ART DYNAMISKT ===
@@ -272,117 +183,6 @@ export async function hamtaAllaArter() {
    }
    return data;
 }
-
-
-
-
-
-
-// === LADDA ARTER DYNAMISKT ===
-/* export async function laddaArter() {
-   const dbObservationStatus = document.getElementById("dbObservationStatus");
-   skapaLoggar('laddaArter', 'start', "Hämtar djurslag från databasen...", dbObservationStatus);
-
-   try {
-      // Hämta alla arter från tabellen och sortera dem i bokstavsordning
-      const { data: arter, error } = await mySupabaseClient
-         .from('arter')
-         .select('Art_id, ArtNamn')
-         .order('ArtNamn', { ascending: true });
-
-      if (error) throw error;
-
-      const artSelect = document.getElementById("obsArt");
-      if (artSelect) {
-         // Töm "Laddar..." och sätt dit vår korrekta tomma placeholder
-         artSelect.innerHTML = '<option value="" disabled selected>--- Välj djur ---</option>';
-
-         // En snygg ordbok för att matcha rätt emoji till rätt Art_id!
-         const artEmojis = {
-            1: '🐺', // Varg
-            2: '🦌', // Älg
-            3: '🦌', // Rådjur
-            4: '🦭', // Gråsäl
-            5: '🦡', // Grävling
-            6: '🐗', // Vildsvin
-            7: '🦊'  // Räv
-         };
-
-         // Loopa ut arterna och bygg alternativen dynamiskt
-         arter.forEach(art => {
-            const option = document.createElement("option");
-            option.value = art.Art_id; // Skickas till Supabase vid sparning
-            
-            // Hämta matchande emoji, eller en standardtass 🐾 om det är ett helt nytt djur
-            const emoji = artEmojis[art.Art_id] || '🐾';
-            
-            option.textContent = `${emoji} ${art.ArtNamn}`;
-            artSelect.appendChild(option);
-         });
-
-         // Logga status i F12-konsolen
-         console.log(`🦫 ART-STATUS: ${arter.length} djurslag har laddats dynamiskt.`);
-         skapaLoggar('laddaArter', 'ok', `✅ ${arter.length} djurslag inlästa!`, dbObservationStatus);
-      }
-
-   } catch (error) {
-      console.error("Fel i laddaArter:", error);
-      if (dbObservationStatus) dbObservationStatus.textContent = '❌ Fel vid laddning av arter: ' + error.message;
-   }
-} */
-
-
-
-
-
-
-
-
-
-
-// === LADDA LÄN ===
-/* export async function laddaLan() {
-   const dbLanStatus = document.getElementById("dbLanStatus");
-   skapaLoggar(laddaLan, 'start', "Laddar län...", dbLanStatus);
-
-   try {
-      const { data: lan, error } = await mySupabaseClient.rpc('get_lan');
-      console.log(lan);
-
-      if (error) {
-         if (dbLanStatus) skapaLoggar(laddaLan, 'fel', 'Fel: ' + error.message);
-         console.error(error);
-         skapaLoggar("❌ Fel: " + error.message, dbLanStatus);
-         return;
-      }
-
-      const unikaLan = lan;
-
-      // Behövs inte. Vi söker SELECT DISTINCT istället
-      /* [...new Set(lan.map(obs => obs.lanNamn).filter(Boolean))]; */
-
-
-/* const select = document.getElementById("lanSelect");
-if (select) {
-   select.innerHTML = '<option value="">--- Välj län ---</option>';
-
-   unikaLan.forEach(lanNamn => {
-      const option = document.createElement("option");
-      option.value = lanNamn;
-      option.textContent = lanNamn;
-      select.appendChild(option);
-   });
-
-   skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa (i dropdown-menyn)!`, dbLanStatus);
-} else {
-   skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa!`, dbLanStatus);
-}
-
-} catch (error) {
-if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
-} */
-/* } */
-// -------------------------------------------------------
 
 
 // === LADDA OBSERVATIONER ===
