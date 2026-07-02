@@ -265,7 +265,7 @@ export function uppdateraVynBaseratPaOmrade() {
 
                   const vader = await hamtaVader(pt.lat, pt.lon, pt.datum);
                   const wiki = await hamtaWikiSammanfattning(pt.artNamn);
-
+                  // Uppdatera popup-innehållet med väderdata och wiki-sammanfattning
                   if (marker.getPopup().isOpen()) {
                      marker.setPopupContent(`
                         <strong>${pt.artNamn || "Okänt djur"}</strong><br>
@@ -302,7 +302,7 @@ function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
 
    const limit1 = antalRutor > 0 ? allaAntal[index33] : 0;
    const limit2 = antalRutor > 0 ? allaAntal[index66] : 0;
-
+   //för varje ruta i gridCounter, rita en rektangel med färg baserat på antal observationer
    Object.keys(gridCounter).forEach(key => {
       if (mittLaddningsId !== nuvarandeLaddningsId) return;
 
@@ -329,7 +329,7 @@ function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
          fillColor: färg,
          fillOpacity: 0.75
       });
-
+   
       rectangle.bindPopup(`<b>Här finns:</b> ${antalObs} st observationer.`);
       rectangle.on('click', function () {
          map.fitBounds(cellBounds);
@@ -369,7 +369,7 @@ function uppdateraKartLegendUI(synligaPunkter) {
             .replace(/ö/g, 'o');
          
          const ikonStig = `images/svg/${filnamn}.svg`;
-
+         // 3. Lägg till HTML för varje art i räknaren
          htmlInnehåll += `
             <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold;">
                <img src="${ikonStig}" alt="${art}" onerror="this.src='images/svg/paw.svg';" style="width: 24px; height: 24px;" />
@@ -378,7 +378,7 @@ function uppdateraKartLegendUI(synligaPunkter) {
          `;
       }
    });
-
+   // 4. Om inga observationer hittades, visa ett meddelande
    if (htmlInnehåll === "") {
       htmlInnehåll = '<em style="color: #666; font-size: 13px;">Inga observationer i detta område.</em>';
    }
@@ -390,19 +390,19 @@ function uppdateraKartLegendUI(synligaPunkter) {
 async function identifieraOchValjKommun(lat, lon) {
    const obsKommunSelect = document.getElementById("obsKommun");
    if (!obsKommunSelect) return;
-
+   //console.log(`Försöker identifiera kommun för koordinater: ${lat}, ${lon}`);
    try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`, {
          headers: { 'User-Agent': 'BastaKartanApplikation' }
       });
       const data = await response.json();
-
+      //data.address innehåller information om kommunen, staden, länet etc.
       if (data && data.address) {
          let funnenKommun = data.address.municipality || data.address.city || data.address.town || "";
-
+         //funnenKommun kan innehålla "kommun" eller "stad" i slutet, ta bort det
          if (funnenKommun) {
             funnenKommun = funnenKommun.replace(" kommun", "").replace(" stad", "").trim().toLowerCase();
-
+            //matchr mot options i obsKommunSelect
             for (let i = 0; i < obsKommunSelect.options.length; i++) {
                const optionText = obsKommunSelect.options[i].text.toLowerCase();
                if (optionText.includes(funnenKommun)) {
@@ -413,6 +413,7 @@ async function identifieraOchValjKommun(lat, lon) {
             }
          }
       }
+      //felmeddelande om ingen kommun hittades
    } catch (error) {
       console.warn("Kunde inte hämta kommun från koordinater:", error);
    }
@@ -421,10 +422,10 @@ async function identifieraOchValjKommun(lat, lon) {
 export function laggTillKlickFunktion() {
    const mapAddClickStatus = document.getElementById("mapAddClickStatus");
    skapaLoggar(laggTillKlickFunktion, 'info', 'Klickfunktion på kartan körs.', mapAddClickStatus);
-
+   // Kontrollera om kartan finns innan du lägger till klickfunktionen
    const mapContainer = document.getElementById("map");
    if (!mapContainer) return;
-
+   // clickar på kartan för att få koordinater
    map.on('click', function (e) {
       const lat = e.latlng.lat.toFixed(6);
       const lon = e.latlng.lng.toFixed(6);
@@ -436,38 +437,38 @@ export function laggTillKlickFunktion() {
          latInput.value = lat;
          lonInput.value = lon;
       }
-
+      // Identifiera och välj kommun baserat på klickade koordinater
       identifieraOchValjKommun(lat, lon);
-
+      // Om markören redan finns, flytta den; annars skapa en ny markör
       if (marker) {
          marker.setLatLng(e.latlng);
       } else {
          marker = L.marker(e.latlng, { draggable: true }).addTo(map);
-
+         // Lägg till drag-händelse för markören
          marker.on('drag', function () {
             const nuvarandePosition = marker.getLatLng();
             const dragLat = nuvarandePosition.lat.toFixed(6);
             const dragLon = nuvarandePosition.lng.toFixed(6);
-
+            // Uppdatera input-fälten när markören dras
             if (latInput && lonInput) {
                latInput.value = dragLat;
                lonInput.value = dragLon;
             }
-
+            // Uppdatera popup-innehållet medan markören dras
             marker.setPopupContent(`
                <div style="text-align: center; min-width: 120px;">
                   <span style="font-size:12px; font-weight:bold; color:#e78300;">📍 ${dragLat}, ${dragLon}</span>
                </div>
             `).openPopup();
          });
-
+         // När markören släpps, identifiera kommunen och uppdatera popup-innehållet
          marker.on('dragend', function () {
             const slutligPosition = marker.getLatLng();
             const slutLat = slutligPosition.lat.toFixed(6);
             const slutLon = slutligPosition.lng.toFixed(6);
 
             identifieraOchValjKommun(slutLat, slutLon);
-
+            // Uppdatera popup-innehållet när markören släpps
             marker.setPopupContent(`
                <div style="text-align: center;">
                   <strong>Vald position</strong><br>
@@ -479,7 +480,7 @@ export function laggTillKlickFunktion() {
             `).openPopup();
          });
       }
-
+      // Uppdatera popup-innehållet direkt när markören placeras
       marker.bindPopup(`
          <div style="text-align: center;">
             <strong>Vald position</strong><br>
@@ -489,7 +490,7 @@ export function laggTillKlickFunktion() {
             </button>
          </div>
       `).openPopup();
-
+         // Logga klicket i konsolen och i loggfilen
       skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
@@ -502,7 +503,7 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
 
    // Standardikon om  som default direkt!
    let icon = pawIcon;
-
+   // Dynamisk ikon baserat på artnamnet
    if (artNamn.includes('Varg')) icon = vargIcon;
    else if (artNamn.includes('Älg')) icon = algIcon;
    else if (artNamn.includes('Gråsäl')) icon = grasalIcon;
@@ -515,20 +516,20 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
    else if (artNamn.includes('Kungsörn')) icon = kungsornIcon;
 
    const marker = L.marker([lat, lon], { icon });
-
+   // Sätt en tillfällig popup som visar att data laddas
    marker.bindPopup(`
       <strong>${artNamn}</strong><br>
       📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
       ⏳ Laddar data...
    `);
-
+// När popupen öppnas, hämta väder och wiki-data
    marker.on('popupopen', async function () {
       if (marker._loaded) return;
       marker._loaded = true;
 
       const vader = await hamtaVader(lat, lon, datum);
       const wiki = await hamtaWikiSammanfattning(artNamn);
-
+      // Uppdatera popup-innehållet med väderdata
       marker.setPopupContent(`
          <strong>${artNamn}</strong><br>
          📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
@@ -536,7 +537,7 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
          ${vader ? `${vader.emoji} ${vader.temp}°C` : "❌ väder saknas"}
       `);
    });
-
+   // Lägg till markören i markerClusterGroup istället för direkt på kartan
    markerClusterGroup.addLayer(marker);
 
    // 🔥 heatmap data
@@ -573,11 +574,11 @@ export function clearObservationMarkers() {
       map.removeLayer(marker);
       marker = null;
    }
-
+   // 5. loggar även markerClusterGroup
    console.log("🧹 Kartans lager har rensats och förberetts för ny data!");
 }
 
-
+//heatmap toggle
 let useHeatMap = false
 // === HEATMAP ===
 export function renderHeatmap() {
@@ -649,7 +650,7 @@ export function taEmotOchRitaObservationer(nyaPunkter) {
    currentFilteredPoints = nyaPunkter.map(pt => {
       // Lägg till eventuella kolumnnamn du ser i loggen här:
       const hittatNamn = pt.artNamn || pt.ArtNamn || pt.art_namn || pt.namn || pt.ArtNamnSvenska;
-
+   //returnerar lat, lon, artNamn, datum och tid för varje observation
       return {
          lat: typeof pt.lat === 'number' ? pt.lat : parseFloat(pt.Latitude || pt.latitude || pt.latitud),
          lon: typeof pt.lon === 'number' ? pt.lon : parseFloat(pt.Longitude || pt.longitude || pt.longitud),
@@ -658,6 +659,6 @@ export function taEmotOchRitaObservationer(nyaPunkter) {
          tid: pt.tid || pt.Tid || null
       };
    }).filter(pt => !isNaN(pt.lat) && !isNaN(pt.lon));
-
+   // updaterar vyn baserat på det nya området och de filtrerade punkterna
    uppdateraVynBaseratPaOmrade();
 }
