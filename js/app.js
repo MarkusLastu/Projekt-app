@@ -60,6 +60,19 @@ function hamtaIndexFranDatum(datumStr) {
    return (ar - 2016) * 2 + (isH2 ? 1 : 0);
 }
 
+
+// Hjälpfunktion: Skapar en "slug" för bildnamn baserat på artnamnet
+function skapaBildSlug(text) {
+      if (!text) return "paw";
+      return text
+         .toLowerCase()
+         .replace(/å/g, "a")
+         .replace(/ä/g, "a")
+         .replace(/ö/g, "o")
+         .replace(/[^a-z0-9]/g, ""); // Tar bort eventuella kvarvarande konstiga tecken eller mellanslag
+   }
+
+
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
 export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const canvas = document.getElementById('trendsChart');
@@ -67,40 +80,60 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
 
    const ctx = canvas.getContext('2d');
 
-   // 1. Hämta de faktiska datumen från dina filter i sidebaren
    const minInput = document.getElementById('dateMin')?.value;
    const maxInput = document.getElementById('dateMax')?.value;
-
-   // Fallback: Om inget datum är valt, sätt standard (t.ex. senaste 7 dagarna eller fasta datum)
    const startDatumStr = minInput || "2026-01-01"; 
    const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
 
-   // 2. Generera X-axeln: En lista med alla datum mellan start och slut
    const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
 
-   // 3. Matcha färger dynamiskt (så inte alla linjer blir blåa)
-   const artFarger = {
-      1: { namn: "Varg", färg: "#88919c" },
-      2: { namn: "Älg", färg: "#884303" },
-      3: { namn: "Rådjur", färg: "#e78300" },
-      4: { label: "Gråsäl", färg: "#00a0e3", ikon: grasalSvg },
-      5: { label: "Grävling", färg: "#6b4c3b", ikon: gravlingSvg },
-      10: { label: "Kungsörn", färg: "#c0c0c0", ikon: kungsornSvg },
-      7: { label: "Räv", färg: "#8B4513", ikon: ravSvg },
-      6: { label: "Vildsvin", färg: "#8B4513", ikon: vildsvinSvg }
-   };
+   const fargPalett = ["#88919c", "#884303", "#e78300", "#00a0e3", "#6b4c3b", "#c0c0c0", "#8B4513", "#2e7d32", "#c62828", "#1565c0"];
+   
+   const snyggArtInfo = {};
+   valdaArtIds.forEach((artId, index) => {
+      const cb = document.querySelector(`#arterFilterGroup input[value="${artId}"]`);
+      let namn = `Art ${artId}`;
+      
+      if (cb) {
+         const labelParent = cb.closest('label');
+         if (labelParent) {
+            namn = labelParent.textContent.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDC00-\uDFFF]/g, '').trim();
+         }
+      }
+
+      const farg = fargPalett[index % fargPalett.length];
+
+      // 🌟 DYNAMISK IKON-LOGIK 🌟
+      // 1. Skapa filnamnet baserat på det tvättade artnamnet (t.ex. "grasal")
+      const slug = skapaBildSlug(namn);
+      
+      // 2. Skapa ett Image-objekt som Chart.js kan använda som punktstil
+      const ikonImg = new Image(20, 20);
+      ikonImg.src = `images/svg/${slug}.svg`;
+
+      // 3. Fallback: Om bilden inte hittas på servern, ladda paw.svg istället
+      ikonImg.onerror = function() {
+         if (this.src !== 'images/svg/paw.svg') {
+            this.src = 'images/svg/paw.svg';
+         }
+      };
+
+      snyggArtInfo[artId] = {
+         namn: namn,
+         färg: farg,
+         ikon: ikonImg // Spara bildobjektet här!
+      };
+   });
 
    // 4. Skapa datasets baserat på tidsaxeln
    const nyaDatasets = valdaArtIds.map(artId => {
-      const artInfo = artFarger[artId] || { namn: `Art ${artId}`, färg: "#666666" };
+      const artInfo = snyggArtInfo[artId];
       
-      // Filtrera fram observationer för just denna art
       const artData = filtreradData.filter(obs => {
          const nuvarandeArtId = typeof obs.Art_id !== 'undefined' ? obs.Art_id : obs.art_id;
          return parseInt(nuvarandeArtId) === artId;
       });
 
-      // Räkna hur många observationer som gjordes på VARJE enskilt datum i listan
       const punkterData = tidsEtiketter.map(datum => {
          return artData.filter(obs => {
             const obsDatum = obs.Datum || obs.datum;
@@ -112,12 +145,17 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
 
       return {
          label: `${artInfo.namn} (${totaltAntal} st)`,
-         data: punkterData, // Array med antal per datum, t.ex. [0, 2, 1, 0, 5...]
-         backgroundColor: artInfo.färg + "22", // Genomskinlig fyllning under linjen
+         data: punkterData,
+         backgroundColor: artInfo.färg + "22", 
          borderColor: artInfo.färg,
          borderWidth: 3,
-         tension: 0.3, // 🌟 Detta gör linjen rundkantig och mjuk!
-         fill: true
+         tension: 0.3, 
+         fill: true,
+         
+         // 🌟 BERÄTTA FÖR CHART.JS ATT ANVÄNDA IKONEN 🌟
+         pointStyle: artInfo.ikon, 
+         pointRadius: 6,      // Storlek på ikonen i själva graf-punkterna
+         pointHoverRadius: 8
       };
    });
 
@@ -129,27 +167,26 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    } else {
       trendsChart = new Chart(ctx, {
          type: 'line',
-         data: {
-            labels: tidsEtiketter, // X-axeln får datumen
-            datasets: nyaDatasets
-         },
+         data: { labels: tidsEtiketter, datasets: nyaDatasets },
          options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-               x: {
-                  grid: { display: false },
-                  ticks: { maxTicksLimit: 10 } // Hindrar att X-axeln blir helt klottrad om intervallet är långt
-               },
-               y: {
-                  beginAtZero: true,
-                  ticks: { precision: 0 }
+            plugins: {
+               legend: {
+                  labels: {
+                     usePointStyle: true // 🌟 Tvingar förklaringen (legenden) högst upp att visa ikonerna också!
+                  }
                }
+            },
+            scales: {
+               x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
+               y: { beginAtZero: true, ticks: { precision: 0 } }
             }
          }
       });
    }
 }
+
 
 // 🛠️ Hjälpfunktion för att bygga listan med datum (X-axeln)
 function genereraDatumIntervall(startStr, slutStr) {
@@ -219,7 +256,12 @@ export function uppdateraKartaEfterFilter() {
    // Om inget är ikryssat, rensa och stäng av
    if (valdaArtIds.length === 0) {
       console.warn("⚠️ Inga djur är ikryssade. Tömmer kartan.");
+      // 1. Töm kartan (din gamla rad)
       mapModul.taEmotOchRitaObservationer([]);
+      // 2. Töm grafen live! (Skicka in tomma arrayer)
+      if (typeof uppdateraGraf === "function") {
+         uppdateraGraf([], []);
+      }
       return;
    }
 
