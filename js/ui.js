@@ -48,7 +48,8 @@ export function skapaLoggar(fn, status, text, statusElement) {
 const ikon = {
    ok: "🟢",
    pagar: "🟡",
-   ej: "🔴"
+   ej: "🔴",
+   borttagen: "❌"
 };
 
 // rubrik för olika typer av uppgifter
