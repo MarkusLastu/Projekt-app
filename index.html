@@ -33,7 +33,7 @@
 
         <main class="main-layout">
 
-            <aside class="sidebar">
+            <section class="sidebar">
 
                 <h3>Filtrera observationer</h3>
                 <div class="filter-group">
@@ -104,16 +104,12 @@
 
 
 
-                    
+
 
                 </div>
 
-                <h3>Detaljfakta</h3>
-                <div class="filter-group">
-                    <label class="filter-title" id="wikiLabel">Välj en observation:</label>
-                    <p id="wikiData">Klicka på en kartan för detaljerad info</p>
-                </div>
-            </aside>
+
+            </section>
 
             <section class="map-section">
                 <div id="map" class="map-container">
@@ -161,6 +157,14 @@
                     <canvas id="trendsChart"></canvas>
                 </div>
             </section>
+
+            <aside class="wiki-container">
+
+                <h3 class="wikiHeader">Detaljfakta</h3>
+                <label id="wikiLabel">Välj en observation:</label>
+                <p id="wikiData">Klicka på en kartan för detaljerad info</p>
+
+            </aside>
 
         </main>
 
