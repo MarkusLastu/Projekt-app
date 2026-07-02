@@ -10,7 +10,7 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    }
 
    const ctx = canvas.getContext('2d');
-
+   // Hämta datumintervall från input-fälten, eller använd standardvärden
    const minInput = document.getElementById('dateMin')?.value;
    const maxInput = document.getElementById('dateMax')?.value;
    const startDatumStr = minInput || "2026-01-01";
