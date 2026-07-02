@@ -71,12 +71,12 @@ export function renderProjektStatusUI(lista) {
    container.innerHTML = "";
 
    const grupper = {};
-
+// Gruppera uppgifterna efter typ
    lista.forEach(item => {
       if (!grupper[item.typ]) grupper[item.typ] = [];
       grupper[item.typ].push(item);
    });
-
+   // Loopa igenom grupperna och rendera varje typ med dess uppgifter
    Object.keys(grupper).forEach(typ => {
 
       const block = document.createElement("div");
@@ -125,7 +125,7 @@ export function openAddModal() {
 
    document.getElementById("addModal").classList.remove("hidden");
 }
-
+// === Stänger modalt fönster för att lägga till ny uppgift ===
 export function closeAddModal() {
    document.getElementById("addModal").classList.add("hidden");
 }
@@ -143,7 +143,7 @@ export function openEditModal(item) {
    document.getElementById("editModal")
       .classList.remove("hidden");
 }
-
+// === Stänger modalt fönster för att ändra uppgift ===
 export function closeModal() {
 
    document.getElementById("editModal")
@@ -182,7 +182,6 @@ export function renderaArterFilter(arterLista) {
          <span>${art.ArtNamn}</span>
          <button type="button" class="sound-btn" data-art-id="${art.Art_id}" data-latin="${art.VetenskapligtNamn || ''}">🔊</button>
       `;
-
       container.appendChild(label);
    });
 }
