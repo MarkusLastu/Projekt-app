@@ -86,7 +86,7 @@ export async function laddaRegioner() {
    }
 }
 
-
+//Ladda alla observationer från Supabase och uppdatera den globala variabeln
 export async function laddaAllData() {
    await laddaRegioner();
    await laddaObservationer();
@@ -303,7 +303,7 @@ export async function initProjektStatus() {
 
 // ==========================
 // SELECT
-// ==========================
+//
 export async function hamtaProjektStatus() {
 
    const { data: projStatus, error } =
@@ -415,7 +415,8 @@ export async function taBortProjektStatus(id) {
    return true;
 }
 
-
+// refreshProjektStatus hämtar den senaste listan av projektstatusar från Supabase via RPC och 
+// returnerar den. Denna funktion kan användas för att uppdatera UI:t efter en INSERT eller DELETE.
 export async function refreshProjektStatus() {
    const { data, error } =
       await mySupabaseClient.rpc("get_projektstatus");
