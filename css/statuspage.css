@@ -1,0 +1,42 @@
+/* 
+Här är koden för statuspage.css. 
+Den innehåller din systemlogg i monospaced-stil samt flexbox-kolumnerna för projektets statusrader.
+ */
+
+/* ===== SYSTEM STATUS / LOGG ===== */
+.status-log {
+    padding: 8px 12px;
+    background: var(--status-bg2);
+    border-left: 4px solid var(--status-border);
+    margin-bottom: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+}
+
+/* ===== CSS PROJEKTSTATUS-TABELL ===== */
+.status-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Kolumn 1: Status-ikon/färg */
+.col-status {
+    width: 30px;
+    flex-shrink: 0;
+}
+
+/* Kolumn 2: Uppgift (Tar upp tillgängligt utrymme) */
+.col-uppgift {
+    flex: 1;
+}
+
+/* Kolumn 3: Kommentar */
+.col-kommentar {
+    flex: 1;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}

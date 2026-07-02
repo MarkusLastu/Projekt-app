@@ -1,0 +1,83 @@
+
+/* 
+    Här är den städade koden för wiki.css.
+
+    Här har jag rensat bort det gamla, extra bildblocket som låg och skräpade
+    längst ner i din gamla CSS, och slagit ihop det till en enda, ren bildregel. 
+    Nu kommer  wiki-bilden att skala helt perfekt utan att någonsin beskäras!
+ */
+
+ 
+ /* ===== WIKIPANEL ===== */
+.wiki-container {
+    grid-area: wiki;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border-color);    
+    padding: var(--spacing-md);    
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    
+    align-self: start;       /* HÄR! Hindrar boxen från att stretcha och skapa tomrum */
+    height: fit-content;     /* Boxen blir bara så hög som texten+bilden kräver */
+    overflow-y: hidden;      /* Ingen scrollbar överhuvudtaget */
+}
+
+.wikiHeader {
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent-color);
+    font-size: 1.2rem;
+}
+
+#wikiLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+#wikiData {
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+/* Den sammanslagna, perfekta bildregeln */
+#wikiData img {
+    width: 100%;             /* Sträcker ut bilden till max 100% av containern */
+    max-width: 400px;        /* Hindrar bilden från att bli för enorm på stora skärmar */
+    min-width: 150px;        /* Sätter en bra minsta storlek */
+    height: auto;            /* Behåller bildens korrekta proportioner (Aspect Ratio) */
+    object-fit: contain;     /* Garanterar att bilden aldrig beskärs eller zoomas sönder */
+    place-self: center;      /* Centrerar bilden snyggt i panelen */
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-sm);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+#wikiData h4 {
+    margin-bottom: 10px;
+}
+
+#wikiData p {
+    margin-bottom: 12px;
+}
+
+#wikiData a {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--accent-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#wikiData a:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .wiki-url a:visited {
+    color: white;
+}

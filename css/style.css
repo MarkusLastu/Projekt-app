@@ -136,13 +136,7 @@ body {
     background: var(--border-color);
 }
 
-.theme-btn {
-    padding: 8px 16px;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
+
 
 /* Vit knapp när sidan är i mörkt tema */
 .theme-btn.light-btn {
@@ -156,11 +150,6 @@ body {
     background: #222;
     color: #fff;
     border: 1px solid #555;
-}
-
-nav {
-    display: flex;
-    gap: var(--spacing-lg);
 }
 
 nav {
@@ -374,8 +363,8 @@ body.dark-mode .wiki-url a:visited {
 
     place-self: center;        /* Centrerar bilden i containern */
 
-    border-radius: 10px;
-    margin-bottom: 15px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--spacing-md);
 
     box-shadow: var(--shadow-md);
 }
@@ -429,19 +418,6 @@ hr {
     border: 0;
     border-top: 1px solid var(--border-color);
     margin: var(--spacing-sm) 0;
-}
-
-#wikiData img {
-    width: 100%;
-    height: auto;
-
-    border-radius: var(--border-radius-md);
-
-    margin-bottom: var(--spacing-sm);
-
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-
-    object-fit: cover;
 }
 
 /* MAP SECTION */

@@ -1,0 +1,135 @@
+
+/* 
+Här är koden för projectinfo.css. 
+Den samlar all avancerad kod för modaler (.modal och .modal-content), dess formulärfält, 
+knappar (.btn-primary) samt den dolda hjälpklassen .hidden.
+ */
+
+
+ /* ===== GLOBAL HJÄLPKLASS ===== */
+.hidden {
+    display: none !important; /* Garanterar att gömda element faktiskt göms */
+}
+
+/* ===== MODAL RIGG (BAKGRUND) ===== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ligger absolut överst på hela sajten */
+    backdrop-filter: blur(4px);
+}
+
+/* ===== MODAL FÖNSTER ===== */
+.modal-content {
+    width: min(550px, 90vw);
+    background: var(--bg-surface);
+    border-radius: var(--border-radius-lg);
+    padding: 28px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, .30);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border: 1px solid var(--border-color);
+}
+
+.modal-content h2 {
+    font-size: 1.4rem;
+    margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 3px solid var(--accent-color);
+}
+
+/* ===== FORMULÄR INUTI MODALER ===== */
+.modal-content label {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-size: 15px;
+    transition: .15s;
+}
+
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, .20);
+}
+
+.modal-content textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* ===== KNAPPAR & AKTIONER ===== */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: var(--spacing-sm);
+}
+
+.btn-primary,
+.modal-actions button {
+    border: none;
+    border-radius: var(--spacing-sm);
+    padding: var(--spacing-sm) 22px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.btn-primary {
+    padding: var(--spacing-sm);
+}
+
+.btn-primary:hover {
+    background: #666;
+    transform: translateY(-1px);
+}
+
+/* Spara-knappar (Gröna) */
+#saveEditBtn,
+#saveAddBtn {
+    background: var(--accent-color);
+    color: white;
+}
+
+#saveEditBtn:hover,
+#saveAddBtn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* Avbryt/Stäng-knappar (Gråa) */
+#closeEditBtn,
+#closeAddBtn {
+    background: #888;
+    color: white;
+}
+
+#closeEditBtn:hover,
+#closeAddBtn:hover {
+    background: #666;
+}

@@ -1,0 +1,63 @@
+/* 
+    Här är variables.css
+    Den innehåller alla globala designsystem-inställningar (CSS Custom Variables) för både ljust och mörkt tema.
+ */
+
+:root {
+    /* ===== TEMA: LIGHT MODE (Standard) ===== */
+    --bg-main: #f4f7f6;
+    --bg-surface: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #718096;
+
+    --accent-color: #4CAF50;
+    --accent-hover: #45a049;
+
+    --border-color: lightgray;
+    --status-bg: lightgray;
+    --status-border: #0056b3;
+
+    /* ===== LAYOUT ===== */
+    --page-maxwidth: 1000px;
+
+    /* ===== TYPOGRAPHY ===== */
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-size-xsmall: 12px;
+    --font-size-small: 14px;
+    --font-size-normal: 16px;
+    --font-size-large: 20px;
+    --font-size-heading: 20px;
+
+    /* ===== SPACING ===== */
+    --spacing-xs: 5px;
+    --spacing-sm: 10px;
+    --spacing-md: 15px;
+    --spacing-lg: 20px;
+    --spacing-xl: 25px;
+
+    /* ===== SHADOWS & BORDERS ===== */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --border-radius-lg: 12px;
+    --border-radius-md: 8px;  /* Ska ändra till 10px */
+    --border-radius-sm: 8px;
+    --border-radius-xs: 3px;
+
+}
+
+/* ===== TEMA: DARK MODE ===== */
+body.dark-mode {
+    --bg-main: #1a202c;
+    --bg-surface: #2d3748;
+    --text-primary: #f7fafc;
+    --text-primary2: rgba(68, 66, 66, 0.5);
+    --text-secondary: #a0aec0;
+
+    --accent-color: snow;
+    --accent-hover: snow;
+
+    --border-color: gray;
+    --status-bg: snow;
+    --status-bg2: rgba(114, 114, 114, 0.76);
+    --status-border: rgba(0, 0,  blue, 0.466);
+}

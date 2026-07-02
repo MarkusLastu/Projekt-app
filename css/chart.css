@@ -1,0 +1,19 @@
+
+/* 
+    Här är koden för chart.css. 
+    Den innehåller enbart reglerna för din graf-behållare, som har en 
+    fast höjd och relativ positionering så att ditt Chart.js-diagram 
+    ritas ut helt perfekt utan att hoppa runt på skärmen.
+*/
+
+/* ===== GRAF-CONTAINER ===== */
+.chart-container {
+    grid-area: chart;
+    background-color: var(--bg-surface);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    height: 200px; /* Perfekt fast höjd för att inte ta över hela skärmen */
+    position: relative; /* Krävs för att Chart.js ska kunna skala responsivt */
+}

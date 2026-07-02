@@ -1,0 +1,38 @@
+
+/* 
+    Här är koden för base.css. Den innehåller globala nollställningar, 
+    grundinställningarna för body, scrollbars samt det allmänna hr-strecket.
+ */
+ 
+/* ===== GRUNDINSTÄLLNINGAR & NOLLSTÄLLNING ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100%;
+    font-family: var(--font-family);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
+    overflow-y: auto; /* Ger en app-känsla och förhindrar sidscroll */
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: var(--spacing-sm) 0;
+}
+
+/* ===== GLOBALA SCROLLBARS ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: var(--border-radius-md);
+}

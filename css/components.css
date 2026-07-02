@@ -1,0 +1,278 @@
+/* 
+    Här är koden för components.css. 
+    Den samlar alla återanvändbara och mindre gränssnittskomponenter: väder-widgeten, tema-knapparna, 
+    filtergrupperna, checkboxarna, reglagen (sliders) samt autocomplete-förslagen.
+*/
+ 
+/* ===== TEMA-KNAPPAR & VÄDER ===== */
+.weather-widget {
+    font-weight: 500;
+    font-size: var(--font-size-small);
+}
+
+.theme-btn {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.25s;
+}
+
+.theme-btn:hover {
+    background: var(--border-color);
+}
+
+/* Vit knapp när sidan är i mörkt tema */
+.theme-btn.light-btn {
+    background: #fff;
+    color: #222;
+    border: 1px solid #ccc;
+}
+
+/* Mörk knapp när sidan är i ljust tema */
+.theme-btn.dark-btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+/* ===== SIDOFÄLT / FILTERPANEL ===== */
+.sidebar {
+    grid-area: filter;
+    width: 100%;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.sidebar h3 {
+    font-size: var(--font-size-normal);
+    margin-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: var(--spacing-xs);
+    display: inline-block;
+}
+
+.filter-group.location-filter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.input-field label {
+    font-weight: 600;
+    font-size: var(--font-size-small);
+    color: var(--text-primary);
+}
+
+.filter-group select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.filter-title {
+    display: block;
+    font-weight: bold;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-small);
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.art-checkbox span {
+    font-size: var(--font-size-normal);
+    cursor: pointer;
+}
+
+/* Styling för SVG-ikoner i menyn/filtret */
+.icon-small {
+    width: 1.25em;
+    height: 1.25em;
+    margin-right: var(--spacing-sm);
+    vertical-align: middle;
+}
+
+/* ===== DATUMFILTER ===== */
+.date-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.date-inputs {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.date-inputs .input-field {
+    flex: 1;
+}
+
+.date-inputs input[type="date"] {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    font-family: var(--font-family);
+    cursor: text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.date-inputs input[type="date"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+/* ===== STANDARD TIMELINE SLIDER ===== */
+.timeline-container {
+    background-color: var(--bg-surface);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.timeline-header {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    font-size: var(--font-size-normal);
+}
+
+.styled-slider {
+    width: 100%;
+    cursor: pointer;
+    accent-color: var(--accent-color);
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xsmall);
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+/* ===== RANGE SLIDER (DUBBEL) ===== */
+.range-slider-wrapper {
+    position: relative;
+    height: 30px;
+    margin: var(--spacing-md) 0;
+}
+
+.range-slider-wrapper input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 6px;
+    background: none;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.range-slider-wrapper input[type="range"]:first-child {
+    background: var(--border-color);
+    border-radius: var(--border-radius-xs);
+}
+
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s;
+}
+
+.range-slider-wrapper input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.range-slider-wrapper input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ===== AUTOCOMPLETE SUGGESTIONS ===== */
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+    padding: var(--spacing-sm);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.suggestion-item:hover {
+    background-color: var(--bg-main);
+}
+
+.suggestion-item small {
+    color: var(--text-secondary);
+    font-style: italic;
+}

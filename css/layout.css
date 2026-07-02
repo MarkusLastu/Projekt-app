@@ -1,0 +1,110 @@
+/* 
+    Här är koden för layout.css. 
+    Den sätter upp själva ryggraden för applikationen – sidans övergripande grid, topbar (header), 
+    den klistriga navigationen (nav) samt .main-layout med fungerande CSS Grid.
+ */
+/* ===== ÖVERGRIPANDE SIDSTRUKTUR ===== */
+.page {
+    display: grid;
+    grid-template-areas:
+        "header"
+        "nav"
+        "main"
+        "footer";
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    max-width: var(--page-maxwidth);
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #638f63, #3f7a3f);
+}
+
+/* ===== HEADER (TOPBAR) ===== */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-surface);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    z-index: 10;
+}
+
+.logo h1 {
+    font-size: var(--font-size-heading);
+    margin: 0;
+}
+
+.topbar-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+/* ===== NAVIGATION ===== */
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-lg);
+    background-color: var(--bg-surface);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: var(--font-size-small);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-sm);
+    transition: 0.2s ease;
+}
+
+nav a:hover {
+    background-color: var(--bg-main);
+    color: var(--accent-color);
+}
+
+body.dark-mode #nav a,
+body.dark-mode #nav a:visited {
+    color: white;
+}
+
+/* ===== HUVUDINNEHÅLL (MAIN GRID) ===== */
+.main-layout {
+    display: grid;
+    grid-template-areas: 
+        "filter map   wiki"
+        "filter chart chart";
+    grid-template-columns: clamp(200px, 20vw, 360px) 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: var(--spacing-lg);
+    min-height: calc(100vh - 180px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    position: relative;
+    padding: var(--spacing-md);
+}
+
+footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20%;
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(to right,
+            transparent,
+            var(--accent-color),
+            transparent);
+}
