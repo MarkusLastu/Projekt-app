@@ -27,7 +27,7 @@
             </div>
         </header>
 
-    <nav id="nav"></nav>
+        <nav id="nav"></nav>
 
         <main class="main-layout">
 
@@ -54,6 +54,7 @@
                         <span class="filter-title">📦 Databas (Supabase)</span>
                         <p id="dbStatus" class="status-log">... kopplar upp ...</p>
                         <p id="dbLanStatus" class="status-log">... laddar län ...</p>
+                        <p id="artFilterStatus" class="status-log">... laddar artfilter ...</p>
                         <p id="dbObservationStatus" class="status-log">... laddar observationer ...</p>
                     </div>
 
@@ -67,18 +68,22 @@
                         <p style="font-size: var(--font-size-small); font-weight: bold; margin: var(--spacing-xs) 0;">
                             Open-Meteo Weather API:</p>
 
-                        <p style="font-size: var(--font-size-small); color: var(--text-secondary); margin: 0;">
+                        <p style="font-size: var(--font-size-small); font-weight: bold; color: var(--text-secondary); margin: 0;">
                             Observation (Historisk):</p>
                         <p id="weatherStatusObs" class="status-log">...</p>
 
                         <p
-                            style="font-size: var(--font-size-small); color: var(--text-secondary); margin: var(--spacing-xs) 0 0 0;">
+                            style="font-size: var(--font-size-small); font-weight: bold; color: var(--text-secondary); margin: var(--spacing-xs) 0 0 0;">
                             Toppmeny (Dagens live-väder):</p>
                         <p id="weatherStatusTopp" class="status-log">...</p>
 
                         <p style="font-size: var(--font-size-small); font-weight: bold; margin: var(--spacing-xs) 0;">
-                            Unsplash Image API:</p>
-                        <p id="unsplashStatus" class="status-log">...</p>
+                            GBIF Species API (Art-sök):</p>
+                        <p id="gbifStatus" class="status-log">...</p>
+
+                        <p style="font-size: var(--font-size-small); font-weight: bold; margin: var(--spacing-xs) 0;">
+                            Freesound API (Djurljud):</p>
+                        <p id="freesoundStatus" class="status-log">...</p>
                     </div>
 
                     <div class="filter-group" style="margin-top: var(--spacing-md);">
@@ -90,16 +95,16 @@
                         <p
                             style="font-size: var(--font-size-small); font-weight: bold; margin: var(--spacing-xs) 0; margin-top: var(--spacing-sm);">
                             Statistikgraf (Chart.js):</p>
-                        <p id="uppdateraGraf" class="status-log">... laddar graf ...</p>
+                        <p id="trendsChart" class="status-log">... laddar graf ...</p>
                     </div>
 
                 </div>
 
-        </section>
+            </section>
 
         </main>
 
-    <footer id="footer"></footer>
+        <footer id="footer"></footer>
 
     </div>
     <div id="map" style="display: none;"></div>

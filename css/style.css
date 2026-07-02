@@ -243,12 +243,49 @@ body.dark-mode .wiki-url a:visited {
 
 
 /* FILTER & CHECKBOXAR */
-.filter-group {
+/* .filter-group {
     background: var(--bg-main);
     padding: var(--spacing-md);
     border-radius: var(--border-radius-md);
     border: 1px solid var(--border-color);
 
+} */
+
+.filter-group.location-filter {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.input-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.input-field label {
+    font-weight: 600;
+    font-size: var(--font-size-small);
+    color: var(--text-primary);
+}
+
+.filter-group select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
 }
 
 .filter-title {
@@ -698,3 +735,86 @@ body.dark-mode .render-progress {
 }
 
 
+
+
+
+
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-card, #fff); /* Anpassa efter ditt tema */
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+.suggestion-item small {
+    color: #666;
+    font-style: italic;
+}
+
+
+
+
+
+/* Styling för den nya datumcontainern i sidomenyn */
+.date-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.date-inputs {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.date-inputs .input-field {
+    flex: 1;
+}
+
+/* Styla datumväljarna så de ser ut exakt som select-boxarna */
+.date-inputs input[type="date"] {
+    width: 100%;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: var(--font-size-small);
+    font-family: var(--font-family);
+    cursor: text;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Fokus-effekt när användaren klickar/skriver i rutorna */
+.date-inputs input[type="date"]:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+/* Mörkt tema-anpassning för kalender-ikonen inuti rutan (valfritt men snyggt) */
+body.dark-mode input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}

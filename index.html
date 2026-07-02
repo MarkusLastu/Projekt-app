@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
 </head>
 
 <body>
@@ -35,61 +34,79 @@
         <main class="main-layout">
 
             <aside class="sidebar">
-                <h3>Filtrera observationer</h3>
 
+                <h3>Filtrera observationer</h3>
                 <div class="filter-group">
                     <label class="filter-title">Välj arter:</label>
-                    <div class="checkbox-group">
+                    <div class="checkbox-group" id="arterFilterGroup">
                         <label class="art-checkbox">
                             <input type="checkbox" id="markeraAlla">
                             <span>🌟 Markera alla</span>
                         </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="1">
-                            <img src="images/svg/varg.svg" alt="Varg" class="icon-small">
-                            <span>Varg</span>
-                            <button type="button" class="sound-btn" data-art-id="1">🔊</button>
-                        </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="2">
-                            <img src="images/svg/alg.svg" alt="Älg" class="icon-small">
-                            <span>Älg</span>
-                            <button type="button" class="sound-btn" data-art-id="2">🔊</button>
-                        </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="3">
-                            <img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small">
-                            <span>Rådjur</span>
-                            <button type="button" class="sound-btn" data-art-id="3">🔊</button>
-                        </label>
-
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="4">
-                            <img src="images/svg/grasal.svg" alt="Gråsäl" class="icon-small">
-                            <span>Gråsäl</span>
-                            <button type="button" class="sound-btn" data-art-id="4">🔊</button>
-                        </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="5">
-                            <img src="images/svg/gravling.svg" alt="Grävling" class="icon-small">
-                            <span>Grävling</span>
-                            <button type="button" class="sound-btn" data-art-id="5">🔊</button>
-                        </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="6">
-                            <img src="images/svg/vildsvin.svg" alt="Vildsvin" class="icon-small">
-                            <span>Vildsvin</span>
-                            <button type="button" class="sound-btn" data-art-id="6">🔊</button>
-                        </label>
-                        <label>
-                            <input type="checkbox" class="art-checkbox" value="7">
-                            <img src="images/svg/rav.svg" alt="Räv" class="icon-small">
-                            <span>Räv</span>
-                            <button type="button" class="sound-btn" data-art-id="7">🔊</button>
-                        </label>
                     </div>
                 </div>
 
+                <h3>Filtrera plats</h3>
+                <div class="filter-group location-filter">
+                    <div class="input-field">
+                        <label for="lanFilter">Län:</label>
+                        <select id="lanFilter">
+                            <option value="alla">Alla län</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="kommunFilter">Kommun:</label>
+                        <select id="kommunFilter">
+                            <option value="alla">Alla kommuner</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h3>Filtrera tid</h3>
+                <div class="filter-group date-filter-group">
+
+                    <div class="filter-group">
+                        <label for="timePresetSelect">🕒 Tid på dygnet</label>
+                        <select id="timePresetSelect" class="filter-select">
+                            <option value="all">Hela dygnet (00:00 - 24:00)</option>
+                            <option value="night">Natt (22:00 - 05:00)</option>
+                            <option value="morning">Morgon/Gryning (05:00 - 09:00)</option>
+                            <option value="day">Dag (09:00 - 18:00)</option>
+                            <option value="evening">Kväll/Skymning (18:00 - 22:00)</option>
+                        </select>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="datePresetSelect">Välj tidsperiod:</label>
+                        <select id="datePresetSelect">
+                            <option value="30days">Senaste 30 dagarna</option>
+                            <option value="current">Innevarande år</option>
+                            <option value="previous">Föregående år</option>
+                            <option value="5years">Senaste 5 åren</option>
+                            <option value="10years">Senaste 10 åren</option>
+                            <!-- <option value="25years">Senaste 25 åren</option> -->
+                            <option value="all" selected>Alla år</option>
+                            <option value="custom">Anpassad period...</option>
+                        </select>
+                    </div>
+
+                    <div class="date-inputs">
+                        <div class="input-field">
+                            <label for="dateMin">Från:</label>
+                            <input type="date" id="dateMin" value="2016-01-01" ondblclick="this.showPicker()">
+                        </div>
+                        <div class="input-field">
+                            <label for="dateMax">Till:</label>
+                            <input type="date" id="dateMax" ondblclick="this.showPicker()">
+                        </div>
+                    </div>
+
+
+
+                    
+
+                </div>
 
                 <h3>Detaljfakta</h3>
                 <div class="filter-group">
@@ -100,47 +117,49 @@
 
             <section class="map-section">
                 <div id="map" class="map-container">
-<div id="renderProgress" class="render-progress hidden">
-                    <div class="render-progress-box">
-
-                        <div id="renderText">
-                            Laddar 0 / 0 observationer...
+                    <div id="renderProgress" class="render-progress hidden">
+                        <div class="render-progress-box">
+                            <div id="renderText">Laddar 0 / 0 observationer...</div>
+                            <div class="progress-bar">
+                                <div id="progressFill"></div>
+                            </div>
                         </div>
-
-                        <div class="progress-bar">
-                            <div id="progressFill"></div>
-                        </div>
-
                     </div>
                 </div>
-                    
+
+                <div class="map-legend-container">
+                    <p><strong>Observationer i det synliga området:</strong></p>
+                    <div id="live-counter-container"
+                        style="display: flex; gap: 15px; align-items: center; margin-top: 5px;"></div>
                 </div>
 
 
 
-                <div class="timeline-container">
+
+
+
+                <!-- <div class="timeline-container">
+
                     <div class="timeline-header">
                         <span id="currentTimelineDate">Visar tidsperiod:
                             <strong id="periodText">2016 H1 till 2026 H2</strong>
                         </span>
                     </div>
-
                     <div class="range-slider-wrapper">
                         <input type="range" id="timeSliderMin" min="0" max="21" value="20" step="1">
                         <input type="range" id="timeSliderMax" min="0" max="21" value="21" step="1">
                     </div>
-
                     <div class="timeline-labels">
                         <span>2016 H1</span>
                         <span>2021 H1</span>
                         <span>2026 H2</span>
                     </div>
-                </div>
+
+                </div> -->
 
                 <div class="chart-container">
                     <canvas id="trendsChart"></canvas>
                 </div>
-
             </section>
 
         </main>
@@ -149,95 +168,92 @@
 
     </div>
 
-
     <div id="addObservationModal" class="modal hidden">
-
-        <div class="modal-content">
+        <form id="addObservationForm" class="modal-content">
 
             <h2>🐾 Rapportera ny observation</h2>
+            <p class="modal-subtitle">Fyll i uppgifterna nedan...</p>
 
-            <p class="modal-subtitle">
-                Fyll i uppgifterna nedan och klicka sedan på <strong>Spara observation</strong>.
-            </p>
+            <!-- <div class="form-group">
+                <label for="obsArt">Djurslag</label>
+                <select id="obsArt" required>
+                    <option value="" disabled selected>--- Välj djur ---</option>
+                    <option value="4">&#129453; Gråsäl</option>
+                    <option value="5">&#129441; Grävling</option>
+                    <option value="3">&#129420; Rådjur</option>
+                    <option value="7">&#129418; Räv</option>
+                    <option value="1">&#128058; Varg</option>
+                    <option value="6">&#128023; Vildsvin</option>
+                    <option value="2">&#129420; Älg</option>
+                </select>
+            </div> -->
 
-                <div class="form-group">
-                    <label for="obsArt">Djurslag</label>
-                    <select id="obsArt">
-                        <option value="4"><img src="images/svg/seal.svg" alt="Gråsäl" class="icon-small"> Gråsäl</option>
-                        <option value="5"><img src="images/svg/badger.svg" alt="Grävling" class="icon-small"> Grävling</option>
-                        <option value="3"><img src="images/svg/radjur.svg" alt="Rådjur" class="icon-small"> Rådjur</option>
-                        <option value="7"><img src="images/svg/fox.svg" alt="Räv" class="icon-small"> Räv</option>
-                        <option value="1"><img src="images/svg/varg.svg" alt="Varg" class="icon-small"> Varg</option>
-                        <option value="6"><img src="images/svg/boar.svg" alt="Vildsvin" class="icon-small"> Vildsvin</option>                        
-                        <option value="2"><img src="images/svg/alg.svg" alt="Älg" class="icon-small"> Älg</option>
-                    </select>
-                </div>
+            <!-- <div class="form-group">
+                <label for="obsArt">Djurslag</label>
+                <select id="obsArt" required>
+                    <option value="" disabled selected>Laddar djurslag...</option>
+                </select>
+            </div> -->
 
-                <div class="form-group">
-                    <label for="obsDatum">Datum</label>
-                    <input type="date" id="obsDatum" required>
-                </div>
+            <div class="form-group autocomplete-container" style="position: relative;">
+                <label for="artSök">🐾 Sök djurslag</label>
+                <input type="text" id="artSök" placeholder="Börja skriva t.ex. Kungsörn, Varg, Vildsvin..."
+                    autocomplete="off" required>
 
-                <div class="form-group">
-                    <label for="obsTid">🕒 Klockslag</label>
-                    <input type="time" id="obsTid" required>
-                </div>
+                <div id="artFörslag" class="autocomplete-suggestions hidden"></div>
 
+                <input type="hidden" id="valtArtNamn">
+                <input type="hidden" id="valtVetenskapligtNamn">
+            </div>
+
+
+
+
+            <div class="form-group">
+                <label for="obsDatum">Datum</label>
+                <input type="date" id="obsDatum" required>
             </div>
 
             <div class="form-group">
-                <label for="obsKommun">Kommun</label>
+                <label for="obsTid">🕒 Klockslag</label>
+                <input type="time" id="obsTid" required>
+            </div>
+
+            <div class="form-group">
+                <label for="obsKommun">Kommun (Grupperat per län)</label>
                 <select id="obsKommun" required>
-                    <option value="" disabled selected>Laddar kommuner...</option>
+                    <option value="" disabled selected>Laddar regioner...</option>
                 </select>
             </div>
 
             <div class="modal-grid">
-
                 <div class="form-group">
                     <label for="latInput">📍 Latitud</label>
-                    <input type="text" id="latInput" placeholder="Klicka på kartan">
+                    <input type="text" id="latInput" placeholder="Klicka på kartan" required readonly>
                 </div>
-
                 <div class="form-group">
                     <label for="lonInput">📍 Longitud</label>
-                    <input type="text" id="lonInput" placeholder="Klicka på kartan">
+                    <input type="text" id="lonInput" placeholder="Klicka på kartan" required readonly>
                 </div>
-
             </div>
 
             <div class="modal-info">
-
                 💡 Klicka på kartan för att välja plats för observationen.
-
             </div>
 
             <div class="modal-actions">
-
-                <button type="button" id="closeObsModalBtn" class="btn-secondary">
-                    Avbryt
-                </button>
-
-                <button type="submit" form="addObservationForm" class="btn-primary">
-                    💾 Spara observation
-                </button>
-
+                <button type="button" id="closeObsModalBtn" class="btn-secondary">Avbryt</button>
+                <button type="submit" class="btn-primary">💾 Spara observation</button>
             </div>
 
-        </div>
-
+        </form>
     </div>
-
-    <form id="addObservationForm" style="display:none;"></form>
-
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script type="module" src="js/app.js"></script>
 
 </body>

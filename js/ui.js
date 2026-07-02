@@ -178,3 +178,43 @@ export function closeModal() {
    document.getElementById("editModal")
       .classList.add("hidden");
 }
+
+
+// 🔥 Lägg till denna i ui.js (eller app.js)
+export function renderaArterFilter(arterLista) {
+   const container = document.getElementById("arterFilterGroup");
+   if (!container) return;
+
+   // Töm behållaren men behåll "Markera alla" i toppen
+   container.innerHTML = `
+      <label class="art-checkbox">
+         <input type="checkbox" id="markeraAlla">
+         <span>🌟 Markera alla</span>
+      </label>
+   `;
+
+
+
+
+   // Loopa ut arterna från databasen
+   arterLista.forEach(art => {
+      // Gör om t.ex. "Gråsäl" till "grasal" för att matcha din filstruktur
+      const svgNamn = art.ArtNamn.toLowerCase()
+         .replace(/ä/g, 'a')
+         .replace(/å/g, 'a')
+         .replace(/ö/g, 'o')
+         .replace(/\s+/g, ''); // Tar bort eventuella mellanslag
+
+      const label = document.createElement("label");
+      
+      // Vi sätter data-latin direkt på ljudknappen så Freesound vet vad den ska söka på!
+      label.innerHTML = `
+         <input type="checkbox" class="art-checkbox" value="${art.Art_id}">
+         <img src="images/svg/${svgNamn}.svg" alt="${art.ArtNamn}" class="icon-small" onerror="this.src='images/svg/paw.svg'">
+         <span>${art.ArtNamn}</span>
+         <button type="button" class="sound-btn" data-art-id="${art.Art_id}" data-latin="${art.VetenskapligtNamn || ''}">🔊</button>
+      `;
+
+      container.appendChild(label);
+   });
+}

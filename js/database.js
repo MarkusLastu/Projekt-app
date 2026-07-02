@@ -6,6 +6,7 @@ import { skapaLoggar, renderProjektStatusUI } from "./ui.js";
 import { uppdateraKartaEfterFilter } from "./app.js";
 
 export let allaObservationer = []; // Globala variabeln för att lagra alla observationer
+export let allRegionData = [];
 
 
 
@@ -26,8 +27,321 @@ skapaLoggar('dbStatus', 'ok', 'Ansluten med mySupabaseClient...', dbStatus);
 // -------------------------------------------------------
 
 
+
+
+
+
+
+
+
+
+export async function laddaRegioner() {
+   const dbLanStatus = document.getElementById("dbLanStatus");
+
+   // Sträng 'laddaRegioner' istället för funktionsreferens så att det inte blir undefined!
+   skapaLoggar('laddaRegioner', 'start', "Hämtar län och kommuner från Supabase...", dbLanStatus);
+
+   try {
+      // Anropa den kombinerade funktionen i Supabase
+      const { data, error } = await mySupabaseClient.rpc('get_kommun_and_lan');
+
+      if (error) {
+         if (dbLanStatus) skapaLoggar('laddaRegioner', 'fel', 'Fel: ' + error.message, dbLanStatus);
+         console.error("Supabase-fel:", error);
+         return;
+      }
+
+      allRegionData = data;
+
+      // 🔥 SÄKERHETSKONTROLL: Kör bara populeraFilterUI om elementet faktiskt finns på sidan!
+      if (document.getElementById("lanFilter")) {
+         populeraFilterUI(data);
+      } else {
+         console.log("lanFilter saknas på denna sida (statusar.html). Regioner sparade i minnet.");
+      }
+
+      // 🔥 RÄKNA UT ANTAL HÄR:
+      const antalKommuner = data.length;
+      const unikaLan = [...new Set(data.map(item => item.lan_namn))];
+      const antalLan = unikaLan.length;
+
+      console.log("📊 DATABAS-STATUS:");
+      console.log(`-> Antal inlästa län: ${antalLan}`);
+      console.log(`-> Antal inlästa kommuner: ${antalKommuner}`);
+
+      // Hitta kommun-rullistan från din index.html
+      const kommunSelect = document.getElementById("obsKommun");
+
+      if (kommunSelect) {
+         kommunSelect.innerHTML = '<option value="" disabled selected>--- Välj kommun ---</option>';
+
+         data.forEach(k => {
+            const option = document.createElement("option");
+            option.value = k.kommun_id; 
+            option.textContent = `${k.kommun_namn} (${k.lan_namn})`; 
+            kommunSelect.appendChild(option);
+         });
+      }
+
+      // 🔥 LOGGEN PÅ SKÄRMEN (skapaLoggar):
+      const loggText = `Klart! Inläst: ${antalLan} län och ${antalKommuner} kommuner.`;
+      skapaLoggar('laddaRegioner', 'ok', loggText, dbLanStatus);
+
+   } catch (error) {
+      console.error("Nätverksfel i laddaRegioner:", error);
+      if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
+   }
+}
+
+
+
+/* export async function laddaRegioner() {
+   const dbLanStatus = document.getElementById("dbLanStatus");
+
+   // Start-logg
+   skapaLoggar(laddaRegioner, 'start', "Hämtar län och kommuner från Supabase...", dbLanStatus);
+
+   try {
+      // Anropa den kombinerade funktionen i Supabase
+      const { data, error } = await mySupabaseClient.rpc('get_kommun_and_lan');
+
+      if (error) {
+         if (dbLanStatus) skapaLoggar(laddaRegioner, 'fel', 'Fel: ' + error.message, dbLanStatus);
+         console.error("Supabase-fel:", error);
+         return;
+      }
+
+      allRegionData = data;
+
+      // 1. Fyll filter-rullistorna i index.html
+      populeraFilterUI(data);
+
+      // 🔥 RÄKNA UT ANTAL HÄR:
+      const antalKommuner = data.length;
+      // Skapa en unik lista av län bara för att kunna räkna dem
+      const unikaLan = [...new Set(data.map(item => item.lan_namn))];
+      const antalLan = unikaLan.length;
+
+      // 🔥 COSOLE.LOG SOM SYNS I INSPEKTERA -> CONSOLE:
+      console.log("📊 DATABAS-STATUS:");
+      console.log(`-> Antal inlästa län: ${antalLan}`);
+      console.log(`-> Antal inlästa kommuner: ${antalKommuner}`);
+      console.log("Hela datapaketet:", data);
+
+      // Hitta kommun-rullistan från din index.html
+      const kommunSelect = document.getElementById("obsKommun");
+
+      if (kommunSelect) {
+         // Töm "Laddar kommuner..." texten
+         kommunSelect.innerHTML = '<option value="" disabled selected>--- Välj kommun ---</option>';
+
+         // Loopa ut ALLA kommuner direkt i listan
+         data.forEach(k => {
+            const option = document.createElement("option");
+            option.value = k.kommun_id; // Sparar ID (siffran)
+            option.textContent = `${k.kommun_namn} (${k.lan_namn})`; // Visar t.ex. "Gävle (Gävleborgs län)"
+            kommunSelect.appendChild(option);
+         });
+      }
+
+      // 🔥 LOGGEN PÅ SKÄRMEN (skapaLoggar):
+      const loggText = `Klart! Inläst: ${antalLan} län och ${antalKommuner} kommuner.`;
+      skapaLoggar(laddaRegioner, 'ok', loggText, dbLanStatus);
+
+   } catch (error) {
+      console.error("Nätverksfel i laddaRegioner:", error);
+      if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
+   }
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export async function laddaAllData() {
+   await laddaRegioner();
+   await laddaObservationer();
+}
+
+
+// Ny funktion för att fylla filter-UI:t
+export function populeraFilterUI(data) {
+   const lanFilter = document.getElementById("lanFilter");
+
+   // Hämta unika län
+   const unikaLan = [...new Set(data.map(item => item.lan_namn))].sort();
+
+   lanFilter.innerHTML = '<option value="alla">Alla län</option>';
+   unikaLan.forEach(lan => {
+      const opt = document.createElement("option");
+      opt.value = lan;
+      opt.textContent = lan;
+      lanFilter.appendChild(opt);
+   });
+}
+
+// Hjälpfunktion som lyssnar på läns-väljaren och fyller på med RÄTT kommuner
+export function uppdateraKommunDropdown(valtLan) {
+   const kommunSelect = document.getElementById("obsKommun"); // Ditt ID från index.html
+   if (!kommunSelect) return;
+
+   // Om inget län är valt, visa en blockerad hjälptext
+   if (!valtLan) {
+      kommunSelect.innerHTML = '<option value="" disabled selected>⚠️ Välj ett län först...</option>';
+      return;
+   }
+
+   kommunSelect.innerHTML = '<option value="" disabled selected>--- Välj kommun ---</option>';
+
+   // Filtrera blixtsnabbt ut de kommuner som tillhör det valda länet i JavaScript
+   const filtreradeKommuner = allRegionData.filter(item => item.lan_namn === valtLan);
+
+   filtreradeKommuner.forEach(k => {
+      const option = document.createElement("option");
+      option.value = k.kommun_id; // Skickar ID (siffran) till Supabase sen
+      option.textContent = k.kommun_namn; // Visar namnet för användaren
+      kommunSelect.appendChild(option);
+   });
+}
+
+
+
+
+
+
+
+
+
+
+
+// === HÄMTA ELLER SKAPA ART DYNAMISKT ===
+export async function getOrCreateArt(artNamn, vetenskapligtNamn) {
+   try {
+      // 1. Kolla om det vetenskapliga namnet redan finns i vår databas
+      let { data: befintligArt, error: selectError } = await mySupabaseClient
+         .from('arter')
+         .select('Art_id')
+         .eq('VetenskapligtNamn', vetenskapligtNamn)
+         .maybeSingle(); // Returnerar objektet om det finns, annars null
+
+      if (selectError) throw selectError;
+
+      // Om arten redan fanns, returnera dess ID direkt!
+      if (befintligArt) {
+         return befintligArt.Art_id;
+      }
+
+      // 2. Om arten INTE fanns, lägg till den live i 'arter'-tabellen!
+      const { data: nyArt, error: insertError } = await mySupabaseClient
+         .from('arter')
+         .insert([{ ArtNamn: artNamn, VetenskapligtNamn: vetenskapligtNamn }])
+         .select('Art_id')
+         .single();
+
+      if (insertError) throw insertError;
+
+      console.log(`✨ Ny art registrerad i databasen: ${artNamn} (${vetenskapligtNamn})`);
+      return nyArt.Art_id; // Returnera det sprillans nya ID:t
+
+   } catch (error) {
+      console.error("Fel i getOrCreateArt:", error);
+      return null;
+   }
+}
+
+
+// 🔥 Lägg till denna i database.js (och exportera den)
+export async function hamtaAllaArter() {
+   const { data, error } = await mySupabaseClient
+      .from('arter')
+      .select('Art_id, ArtNamn, VetenskapligtNamn')
+      .order('ArtNamn', { ascending: true });
+
+   if (error) {
+      console.error("Kunde inte hämta arter från Supabase:", error.message);
+      return [];
+   }
+   return data;
+}
+
+
+
+
+
+
+// === LADDA ARTER DYNAMISKT ===
+/* export async function laddaArter() {
+   const dbObservationStatus = document.getElementById("dbObservationStatus");
+   skapaLoggar('laddaArter', 'start', "Hämtar djurslag från databasen...", dbObservationStatus);
+
+   try {
+      // Hämta alla arter från tabellen och sortera dem i bokstavsordning
+      const { data: arter, error } = await mySupabaseClient
+         .from('arter')
+         .select('Art_id, ArtNamn')
+         .order('ArtNamn', { ascending: true });
+
+      if (error) throw error;
+
+      const artSelect = document.getElementById("obsArt");
+      if (artSelect) {
+         // Töm "Laddar..." och sätt dit vår korrekta tomma placeholder
+         artSelect.innerHTML = '<option value="" disabled selected>--- Välj djur ---</option>';
+
+         // En snygg ordbok för att matcha rätt emoji till rätt Art_id!
+         const artEmojis = {
+            1: '🐺', // Varg
+            2: '🦌', // Älg
+            3: '🦌', // Rådjur
+            4: '🦭', // Gråsäl
+            5: '🦡', // Grävling
+            6: '🐗', // Vildsvin
+            7: '🦊'  // Räv
+         };
+
+         // Loopa ut arterna och bygg alternativen dynamiskt
+         arter.forEach(art => {
+            const option = document.createElement("option");
+            option.value = art.Art_id; // Skickas till Supabase vid sparning
+            
+            // Hämta matchande emoji, eller en standardtass 🐾 om det är ett helt nytt djur
+            const emoji = artEmojis[art.Art_id] || '🐾';
+            
+            option.textContent = `${emoji} ${art.ArtNamn}`;
+            artSelect.appendChild(option);
+         });
+
+         // Logga status i F12-konsolen
+         console.log(`🦫 ART-STATUS: ${arter.length} djurslag har laddats dynamiskt.`);
+         skapaLoggar('laddaArter', 'ok', `✅ ${arter.length} djurslag inlästa!`, dbObservationStatus);
+      }
+
+   } catch (error) {
+      console.error("Fel i laddaArter:", error);
+      if (dbObservationStatus) dbObservationStatus.textContent = '❌ Fel vid laddning av arter: ' + error.message;
+   }
+} */
+
+
+
+
+
+
+
+
+
+
 // === LADDA LÄN ===
-export async function laddaLan() {
+/* export async function laddaLan() {
    const dbLanStatus = document.getElementById("dbLanStatus");
    skapaLoggar(laddaLan, 'start', "Laddar län...", dbLanStatus);
 
@@ -48,26 +362,26 @@ export async function laddaLan() {
       /* [...new Set(lan.map(obs => obs.lanNamn).filter(Boolean))]; */
 
 
-      const select = document.getElementById("lanSelect");
-      if (select) {
-         select.innerHTML = '<option value="">--- Välj län ---</option>';
+/* const select = document.getElementById("lanSelect");
+if (select) {
+   select.innerHTML = '<option value="">--- Välj län ---</option>';
 
-         unikaLan.forEach(lanNamn => {
-            const option = document.createElement("option");
-            option.value = lanNamn;
-            option.textContent = lanNamn;
-            select.appendChild(option);
-         });
+   unikaLan.forEach(lanNamn => {
+      const option = document.createElement("option");
+      option.value = lanNamn;
+      option.textContent = lanNamn;
+      select.appendChild(option);
+   });
 
-         skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa (i dropdown-menyn)!`, dbLanStatus);
-      } else {
-         skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa!`, dbLanStatus);
-      }
-
-   } catch (error) {
-      if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
-   }
+   skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa (i dropdown-menyn)!`, dbLanStatus);
+} else {
+   skapaLoggar(laddaLan, 'ok', `${unikaLan.length} unika län inlästa!`, dbLanStatus);
 }
+
+} catch (error) {
+if (dbLanStatus) dbLanStatus.textContent = '❌ Nätverksfel: ' + error.message;
+} */
+/* } */
 // -------------------------------------------------------
 
 
@@ -77,30 +391,12 @@ export async function laddaObservationer() {
    const dbObservationStatus = document.getElementById("dbObservationStatus");
    skapaLoggar(laddaObservationer, 'start', "Laddar observationer...", dbObservationStatus);
 
-   // Hämta ALL data från supabase (annars är max 1000 rader)
-   let allData = [];
-   let rangeStart = 0;
-   const batchSize = 1000;
-   let hasMore = true;
-
    try {
+      // Hämta data via RPC från Supabase
       const { data: observationer, error } = await mySupabaseClient
-         .rpc('get_observationer')
-
-      console.log(observationer);
+         .rpc('get_observationer');
 
       if (error) throw error;
-
-      if (observationer.length > 0) {
-         allData = allData.concat(observationer);
-         rangeStart += batchSize;
-      }
-
-      // När vi laddar in färre än 1000 rader är vi klara
-      if (observationer.length < batchSize) {
-         hasMore = false;
-      }
-
 
       const lista = document.getElementById('observationerLista');
       if (lista) lista.innerHTML = '';
@@ -111,15 +407,17 @@ export async function laddaObservationer() {
          return;
       }
 
+      // Spara observationerna i den globala variabeln
       allaObservationer = observationer;
 
-      // Kör filtreringen direkt så att kartan laddar första perioden på slidern!
-      allaObservationer = allData;
-      uppdateraKartaEfterFilter();
-      skapaLoggar('laddaObservationer', 'ok', `✅ ${allData.length} observationer hämtade!`, dbObservationStatus);
+      // Kör filtreringen så att kartan och legenden uppdateras med den faktiska datan
+      if (typeof uppdateraKartaEfterFilter === "function") {
+         uppdateraKartaEfterFilter();
+      }
+      
+      skapaLoggar('laddaObservationer', 'ok', `✅ ${observationer.length} observationer hämtade!`, dbObservationStatus);
 
    } catch (error) {
-      // Detta fångar oväntade tekniska fel (t.ex. att internet dör helt)
       if (dbObservationStatus) dbObservationStatus.textContent = '❌ Nätverksfel: ' + error.message;
       console.error('Kritiskt nätverksfel:', error);
       skapaLoggar('❌ Systemfel: ' + error.message, dbObservationStatus);
@@ -148,16 +446,20 @@ export async function hämtaAllaKommuner() {
 // ==========================
 // INSERT NY OBSERVATION
 // ==========================
-export async function insertObservation(artId, datum, lat, lon, kommunId) {
+export async function insertObservation(artId, datum, lat, lon, kommunId, tid) {
+
+   console.log("📥 DATABASE.JS TOG EMOT:", { artId, datum, lat, lon, kommunId, tid });
+
    const { data, error } = await mySupabaseClient
-      .from('observationer') 
+      .from('observationer')
       .insert([
-         { 
-            Art_id: artId, 
-            Datum: datum, 
-            Latitude: lat, 
+         {
+            Art_id: artId,
+            Datum: datum,
+            Latitude: lat,
             Longitude: lon,
-            Kommun_id: kommunId // Matchar exakt din kolumn i tabellen!
+            Kommun_id: kommunId,
+            Tid: tid
          }
       ]);
 
@@ -167,7 +469,7 @@ export async function insertObservation(artId, datum, lat, lon, kommunId) {
    }
 
    // Ladda om den lokala arrayen med all data så att kartan/grafen hänger med
-   await laddaObservationer(); 
+   await laddaObservationer();
    return true;
 }
 

@@ -33,7 +33,7 @@ export async function hamtaWikiSammanfattning(sokord) {
         const data = await response.json();
 
         skapaLoggar(hamtaWikiSammanfattning, 'ok', 'Wikipedia inläst', wikiStatus);
-        
+
 
         // SÄKERHETSKOLL: Kör bara render-funktionen om vi faktiskt är på index.html
         if (injectWikiData && typeof renderWikiInfo === "function") {
@@ -93,7 +93,7 @@ export async function hamtaBakgrundsbild(sokord) {
 }
 
 
-    // VÄDER ----------------------------------------------------------
+// VÄDER ----------------------------------------------------------
 
 // Hjälpfunktion för väder
 export function tolkaVaderKod(kod) {
@@ -125,14 +125,26 @@ export async function hamtaVader(lat, lon, datum, elementId) {
     }
 
     try {
-        // Formaterar datumet till YYYY-MM-DD pga API:n kräver det
+        // Formaterar det efterfrågade datumet till YYYY-MM-DD
         const d = new Date(datum);
         const aaaa = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const dd = String(d.getDate()).padStart(2, '0');
         const formateratDatum = `${aaaa}-${mm}-${dd}`;
 
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${formateratDatum}&end_date=${formateratDatum}&daily=temperature_2m_max,weather_code&timezone=auto`;
+        // Hämta även dagens faktiska datum för att jämföra med
+        const nu = new Date();
+        const dagensDatumStr = `${nu.getFullYear()}-${String(nu.getMonth() + 1).padStart(2, '0')}-${String(nu.getDate()).padStart(2, '0')}`;
+
+        // 🔥 MAGIN: Välj Forecast-API om det är idag, annars Archive-API för gamla synder
+        let baseUrl = "https://archive-api.open-meteo.com/v1/archive";
+        if (formateratDatum === dagensDatumStr) {
+            baseUrl = "https://api.open-meteo.com/v1/forecast";
+        }
+
+        // Bygg ihop URL:en dynamiskt med rätt API-adress
+        const url = `${baseUrl}?latitude=${lat}&longitude=${lon}&start_date=${formateratDatum}&end_date=${formateratDatum}&daily=temperature_2m_max,weather_code&timezone=auto`;
+
         const response = await fetch(url);
         if (!response.ok) throw new Error('Kunde inte hämta väderdata');
 
@@ -142,7 +154,6 @@ export async function hamtaVader(lat, lon, datum, elementId) {
 
         // Använder hjälpfunktionen tolkaVaderKod för att tolka väderkoden till text och emoji's
         const vaderInfo = tolkaVaderKod(historiskVaderKod);
-
 
         if (weatherStatusElem) {
             ui.skapaLoggar('hamtaVader', 'ok', `Väder hämtat: ${maxTemp}°C, ${vaderInfo.text} ${vaderInfo.emoji}`, weatherStatusElem);
@@ -167,16 +178,16 @@ export async function hamtaVader(lat, lon, datum, elementId) {
 
 // Freesound API (Hämta ljudlänk baserat på vetenskapligt namn med inbyggt CORS-stöd)
 export async function hamtaLjudUrl(latinName) {
-    const FREESOUND_TOKEN = 'hNMc4qbqSpI4LsbNbHnOvk1GltQzxkFdG83PZCcA'; 
+    const FREESOUND_TOKEN = 'hNMc4qbqSpI4LsbNbHnOvk1GltQzxkFdG83PZCcA';
 
     // Översättningstabell med specifika sökord för att garantera djurläten
     const engelskaSokord = {
         'Canis lupus familiaris': 'howl_echo',          // Vargyl
-        'Alces alces': 'Moose_Elk',         // Älgbröl
+        'Alces alces': 'Elk_Moose',         // Älgbröl
         'Capreolus capreolus': 'stag', // Rådjursskall (de skäller ju när de varnar!)
-        'Halichoerus grypus': 'seal', // Sälskrik
+        'Halichoerus grypus': 'sealpup', // Sälskrik
         'Meles meles': 'badger', // Grävling
-        'Sus scrofa': 'boar', // Vildsvin
+        'Sus scrofa': 'wildboar', // Vildsvin
         'Vulpes': 'fox' // Räv
     };
 
@@ -185,7 +196,7 @@ export async function hamtaLjudUrl(latinName) {
 
     try {
         // Vi lägger till ett filter så vi BARA får ljud som är mellan 1 och 10 sekunder långa
-        const url = `https://freesound.org/apiv2/search/text/?query=${encodeURIComponent(sokord)}&token=${FREESOUND_TOKEN}&fields=name,previews&filter=duration:[1+TO+10]&page_size=1`;
+        const url = `https://freesound.org/apiv2/search/text/?query=${encodeURIComponent(sokord)}&token=${FREESOUND_TOKEN}&fields=name,previews&page_size=1`;
 
         const response = await fetch(url);
         if (!response.ok) throw new Error('Kunde inte nå Freesound API');
@@ -198,7 +209,7 @@ export async function hamtaLjudUrl(latinName) {
 
         // Plocka ut HQ-MP3-streamen från det första sökresultatet
         const mp3Url = data.results[0].previews['preview-hq-mp3'];
-        
+
         if (!mp3Url) throw new Error('Hittade ingen MP3-förhandsvisning för detta ljud');
 
         return mp3Url;

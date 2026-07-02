@@ -2,8 +2,8 @@ import { skapaLoggar } from "./ui.js";
 
 export const nav = `    
         <div><a href="index.html">Hem</a></div>
-        <div><a href="projektinfo.html">Info om projektet</a></div>
-        <div><a href="statusar.html">Statusar för anrop</a></div>    
+        <div><a href="projektinfo.html">Projektinfo</a></div>
+        <div><a href="statusar.html">Systemstatus</a></div>    
 `;
 
 
