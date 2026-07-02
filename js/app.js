@@ -80,14 +80,14 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
 
    // 3. Matcha färger dynamiskt (så inte alla linjer blir blåa)
    const artFarger = {
-      1: { namn: "Varg", färg: "#88919c" },
-      2: { namn: "Älg", färg: "#884303" },
-      3: { namn: "Rådjur", färg: "#e78300" },
-      4: { label: "Gråsäl", färg: "#00a0e3", ikon: grasalSvg },
-      5: { label: "Grävling", färg: "#6b4c3b", ikon: gravlingSvg },
-      10: { label: "Kungsörn", färg: "#c0c0c0", ikon: kungsornSvg },
-      7: { label: "Räv", färg: "#8B4513", ikon: ravSvg },
-      6: { label: "Vildsvin", färg: "#8B4513", ikon: vildsvinSvg }
+      1: { namn: "Varg", färg: "#88919c" , ikon: vargSvg },
+      2: { namn: "Älg", färg: "#884303" , ikon: algSvg },
+      3: { namn: "Rådjur", färg: "#e78300" , ikon: radjurSvg },
+      4: { namn: "Gråsäl", färg: "#00a0e3", ikon: grasalSvg },
+      5: { namn: "Grävling", färg: "#9b9b9b", ikon: gravlingSvg },
+      10: { namn: "Kungsörn", färg: "#c0c0c0", ikon: kungsornSvg },
+      7: { namn: "Räv", färg: "#8B4513", ikon: ravSvg },
+      6: { namn: "Vildsvin", färg: "#e6a06e", ikon: vildsvinSvg }
    };
 
    // 4. Skapa datasets baserat på tidsaxeln
