@@ -212,9 +212,9 @@ body.dark-mode .wiki-url a:visited {
 /* HUVUDINNEHÅLL (MAIN) */
 .main-layout {
     display: grid;
-    grid-template-columns: clamp(240px, 20vw, 300px) 1fr;
+    grid-template-columns: clamp(200px, 20vw, 360px) 3fr 1fr;
 
-    grid-template-areas: "aside section";
+    grid-template-areas: "sidebar section aside";
     min-height: calc(100vh - 180px);
     overflow-x: hidden;
     overflow-y: auto;
@@ -223,7 +223,7 @@ body.dark-mode .wiki-url a:visited {
 
 /* SIDOFÄLT (SIDEBAR) */
 .sidebar {
-    grid-area: aside;
+    grid-area: sidebar;
     width: 100%;
     background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
@@ -314,6 +314,94 @@ body.dark-mode .wiki-url a:visited {
     margin-right: 8px;
     vertical-align: middle;
 }
+
+/* ASIDE Wikiinfo */
+.aside {
+    grid-area: sidebar;
+    width: 100%;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    padding: var(--spacing-lg);
+    
+}
+
+/* ===== WIKIPANEL ===== */
+
+.wiki-container {
+    background: var(--bg-surface);
+
+    border-left: 1px solid var(--border-color);
+
+    padding: var(--spacing-lg);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+
+    overflow-y: auto;
+}
+
+.wikiHeader {
+    margin: 0;
+
+    padding-bottom: 8px;
+
+    border-bottom: 2px solid var(--accent-color);
+
+    font-size: 1.2rem;
+}
+
+#wikiLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+#wikiData {
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+#wikiData img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+
+    box-shadow: var(--shadow-md);
+}
+
+#wikiData h4 {
+    margin-bottom: 10px;
+}
+
+#wikiData p {
+    margin-bottom: 12px;
+}
+
+#wikiData a {
+    display: inline-block;
+    margin-top: 12px;
+
+    color: var(--accent-color);
+
+    font-weight: 600;
+    text-decoration: none;
+}
+
+#wikiData a:hover {
+    text-decoration: underline;
+}
+
+.wiki-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.wiki-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 10px;
+}
+
+
 
 /* SYSTEM STATUS */
 .status-log {
