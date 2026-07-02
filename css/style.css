@@ -212,9 +212,11 @@ body.dark-mode .wiki-url a:visited {
 /* HUVUDINNEHÅLL (MAIN) */
 .main-layout {
     display: grid;
-    grid-template-columns: clamp(200px, 20vw, 360px) 3fr 1fr;
-
-    grid-template-areas: "sidebar section aside";
+    grid-template-areas: 
+        "filter map   wiki"
+        "filter chart chart"
+        ;
+    grid-template-columns: clamp(200px, 20vw, 360px) 2fr 1fr;
     min-height: calc(100vh - 180px);
     overflow-x: hidden;
     overflow-y: auto;
@@ -223,7 +225,7 @@ body.dark-mode .wiki-url a:visited {
 
 /* SIDOFÄLT (SIDEBAR) */
 .sidebar {
-    grid-area: sidebar;
+    grid-area: filter;
     width: 100%;
     background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
@@ -316,23 +318,27 @@ body.dark-mode .wiki-url a:visited {
 }
 
 /* ASIDE Wikiinfo */
-.aside {
-    grid-area: sidebar;
+/* .aside {
+    grid-area: aside;
     width: 100%;
     background-color: var(--bg-surface);
     border-right: 1px solid var(--border-color);
     padding: var(--spacing-lg);
     
-}
+} */
 
 /* ===== WIKIPANEL ===== */
 
 .wiki-container {
+    grid-area: wiki;
     background: var(--bg-surface);
 
     border-left: 1px solid var(--border-color);
 
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
 
     display: flex;
     flex-direction: column;
@@ -343,11 +349,8 @@ body.dark-mode .wiki-url a:visited {
 
 .wikiHeader {
     margin: 0;
-
     padding-bottom: 8px;
-
     border-bottom: 2px solid var(--accent-color);
-
     font-size: 1.2rem;
 }
 
@@ -363,7 +366,14 @@ body.dark-mode .wiki-url a:visited {
 }
 
 #wikiData img {
-    width: 100%;
+    width: 100%;             /* Sträcker ut bilden till 100% av textcontainern... */
+    max-width: 400px;        /* ...men stoppar den från att bli större än t.ex. 400px */
+    min-width: 150px;        /* ...och låter den aldrig bli mindre än 150px */
+    height: auto;            /* DETTA BEHÅLLER RATIO! Beräknar höjden automatiskt utifrån bredden */
+    object-fit: contain;     /* Ändrat från 'cover' till 'contain' (eller ta bort helt) så den aldrig beskärs */
+
+    place-self: center;        /* Centrerar bilden i containern */
+
     border-radius: 10px;
     margin-bottom: 15px;
 
@@ -436,7 +446,7 @@ hr {
 
 /* MAP SECTION */
 .map-section {
-    grid-area: section;
+    grid-area: map;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -448,7 +458,7 @@ hr {
 
 .map-container {
     min-height: 500px;
-    width: 50%;
+    width: 100%;
     flex: 1;
     border-radius: var(--border-radius-lg);
     border: 2px solid var(--border-color);
@@ -459,6 +469,7 @@ hr {
 
 /* ===== GRAF-CONTAINER ===== */
 .chart-container {
+    grid-area: chart;
     background-color: var(--bg-surface);
     padding: var(--spacing-md);
     border-radius: var(--border-radius-lg);
