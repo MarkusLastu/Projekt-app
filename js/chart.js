@@ -17,21 +17,21 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
 
    const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
-
+// färgpalett för linjerna i grafen
    const fargPalett = ["#88919c", "#884303", "#e78300", "#00a0e3", "#6b4c3b", "#c0c0c0", "#8B4513", "#2e7d32", "#c62828", "#1565c0"];
-
+//hämtar snygg info om valda arter (namn, färg, ikon)
    const snyggArtInfo = {};
    valdaArtIds.forEach((artId, index) => {
       const cb = document.querySelector(`#arterFilterGroup input[value="${artId}"]`);
       let namn = `Art ${artId}`;
-
+      // Om checkboxen är markerad, hämta namnet från dess label
       if (cb) {
          const labelParent = cb.closest('label');
          if (labelParent) {
             namn = labelParent.textContent.replace(/[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDC00-\uDFFF]/g, '').trim();
          }
       }
-
+      // färg från paletten baserat på index
       const farg = fargPalett[index % fargPalett.length];
 
       // 🌟 DYNAMISK IKON-LOGIK 🌟
@@ -48,7 +48,7 @@ export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
             this.src = 'images/svg/paw.svg';
          }
       };
-
+      // Spara informationen i snyggArtInfo
       snyggArtInfo[artId] = {
          namn: namn,
          färg: farg,
