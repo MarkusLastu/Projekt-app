@@ -5,7 +5,7 @@
     Jag lade även med mörkt tema-anpassningen för Leaflets inbyggda kontroller här, vilket passar perfekt.
  */
 
- 
+
 /* ===== KARTANS Sektion och BEHÅLLARE ===== */
 .map-section {
     grid-area: map;
@@ -13,9 +13,8 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: var(--spacing-lg);
-    gap: var(--spacing-lg);
-    align-self: start;
+    padding-top: var(--spacing-lg);
+    gap: var(--spacing-lg);    
 }
 
 .map-container {
@@ -25,63 +24,16 @@
     border-radius: var(--border-radius-lg);
     border: 2px solid var(--border-color);
     box-shadow: var(--shadow-md);
-    z-index: 1; /* Håller kartan under fastklistrade menyer/headers */
-}
-/* 
-
-
-/* ===== RENDERING / PROGRESSBAR (Ligger ovanpå kartan) =====
-DENNA KAN NOG TAS BORT HELT. VI HAR INTE VAR NÅGON PROGRESSBAR */
-
-.render-progress {
-    position: absolute; 
-    top: 10px;
-    right: 10px;
-    z-index: 9999; /* Alltid överst på kartan */
-
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-sm);
-    box-shadow: var(--shadow-md);
-    padding: 10px 12px;
-    min-width: 220px;
-    pointer-events: none; /* Gör så att man kan klicka "igenom" boxen ner på kartan */
+    z-index: 1;
+    /* Håller kartan under fastklistrade menyer/headers */
 }
 
-body.dark-mode .render-progress {
-    background: rgba(0, 0, 0, .55);
-}
-
-.render-progress-box {
+ #live-counter-container {
     display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-}
-
-#renderText {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.progress-bar {
-    width: 100%;
-    height: 8px;
-    background: var(--border-color);
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-#progressFill {
-    height: 100%;
-    width: 0%;
-    background: var(--accent-color);
-    border-radius: 20px;
-    transition: width 0.15s linear;
-}
- */
-
-
+    gap: 15px;
+    align-items: center;
+    margin-top: 5px;
+} 
 
 /* ===== LEAFLET KONTROLLER (Mörkt tema) ===== */
 body.dark-mode .leaflet-control-zoom a {

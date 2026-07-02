@@ -12,21 +12,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 
-    // Nya css-filerna med bättre struktur
+    <!-- Nya css-filerna med bättre struktur -->
     <link rel="stylesheet" href="css/variables.css">
     <link rel="stylesheet" href="css/base.css">
-
     <link rel="stylesheet" href="css/layout.css">
-
     <link rel="stylesheet" href="css/components.css">
-
     <link rel="stylesheet" href="css/map.css">
     <link rel="stylesheet" href="css/chart.css">
     <link rel="stylesheet" href="css/wiki.css">
     <link rel="stylesheet" href="css/projectinfo.css">
     <link rel="stylesheet" href="css/statuspage.css">
 
-    // Gamla css-filen
+    <!-- Gamla css-filen -->
     <!-- <link rel="stylesheet" href="css/style.css"> -->
 
 </head>
@@ -50,9 +47,9 @@
         <nav id="nav"></nav>
 
         <main class="main-layout">
-            
+
             <section class="sidebar">
-            <!-- Filter för observationer -->    
+                <!-- Filter för observationer -->
                 <h3>Filtrera observationer</h3>
                 <div class="filter-group">
                     <label class="filter-title">Välj arter:</label>
@@ -63,7 +60,7 @@
                         </label>
                     </div>
                 </div>
-            <!--filter för plats-->
+                <!--filter för plats-->
                 <h3>Filtrera plats</h3>
                 <div class="filter-group location-filter">
                     <div class="input-field">
@@ -135,12 +132,7 @@
                         </div>
                     </div>
                 </div>
-                    <!--Visar observationer efter antal djur i det synliga området-->
-                <div class="map-legend-container">
-                    <p><strong>Observationer i det synliga området:</strong></p>
-                    <div id="live-counter-container"
-                        style="display: flex; gap: 15px; align-items: center; margin-top: 5px;"></div>
-                </div>
+
 
                 <!-- <div class="timeline-container">
 
@@ -160,11 +152,12 @@
                     </div>
 
                 </div> -->
-
+                 
+                
+                <!--Visar observationer efter antal djur i det synliga området-->
                 <div class="map-legend-container">
                     <p><strong>Observationer i det synliga området:</strong></p>
-                    <div id="live-counter-container"
-                        style="display: flex; gap: 15px; align-items: center; margin-top: 5px;"></div>
+                    <div id="live-counter-container"></div>
                 </div>
 
 

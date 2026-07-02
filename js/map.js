@@ -329,11 +329,31 @@ function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
          fillColor: färg,
          fillOpacity: 0.75
       });
-   
-      rectangle.bindPopup(`<b>Här finns:</b> ${antalObs} st observationer.`);
+
+      /* rectangle.bindPopup(`<b>Här finns:</b> ${antalObs} st observationer.`);
+      rectangle.on('click', function () {
+         map.fitBounds(cellBounds);
+      }); */
+
+      // 1. Koppla popupen men säg till Leaflet att inte stänga den automatiskt vid andra klick om du vill ha den stabil
+      rectangle.bindPopup(`<b>Här finns:</b> ${antalObs} st observationer.`, { closeButton: false });
+
+      // 2. VISA popup när man håller musen över (Hover in)
+      rectangle.on('mouseover', function (e) {
+         this.openPopup();
+      });
+
+      // 3. DÖLJ popup när musen lämnar objektet (Hover out)
+      rectangle.on('mouseout', function (e) {
+         this.closePopup();
+      });
+
+      // 4. ZOOMA IN när man faktiskt KLICKAR på objektet
       rectangle.on('click', function () {
          map.fitBounds(cellBounds);
       });
+
+
 
       rectangle.addTo(gridLayer);
    });
@@ -367,12 +387,12 @@ function uppdateraKartLegendUI(synligaPunkter) {
             .replace(/ä/g, 'a')
             .replace(/å/g, 'a')
             .replace(/ö/g, 'o');
-         
+
          const ikonStig = `images/svg/${filnamn}.svg`;
          // 3. Lägg till HTML för varje art i räknaren
          htmlInnehåll += `
             <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold;">
-               <img src="${ikonStig}" alt="${art}" onerror="this.src='images/svg/paw.svg';" style="width: 24px; height: 24px;" />
+               <img src="${ikonStig}" alt="${art}" onerror="this.src='images/svg/paw.svg';" style="width: 24px; height: 1px;" />
                <span>${art}: ${antal} st</span>
             </div>
          `;
@@ -490,7 +510,7 @@ export function laggTillKlickFunktion() {
             </button>
          </div>
       `).openPopup();
-         // Logga klicket i konsolen och i loggfilen
+      // Logga klicket i konsolen och i loggfilen
       skapaLoggar(laggTillKlickFunktion, 'info', `📍 Klickade på: ${lat}, ${lon}`);
    });
 }
@@ -522,7 +542,7 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
       📅 ${new Date(datum).toLocaleDateString('sv-SE')}<br>
       ⏳ Laddar data...
    `);
-// När popupen öppnas, hämta väder och wiki-data
+   // När popupen öppnas, hämta väder och wiki-data
    marker.on('popupopen', async function () {
       if (marker._loaded) return;
       marker._loaded = true;
@@ -650,7 +670,7 @@ export function taEmotOchRitaObservationer(nyaPunkter) {
    currentFilteredPoints = nyaPunkter.map(pt => {
       // Lägg till eventuella kolumnnamn du ser i loggen här:
       const hittatNamn = pt.artNamn || pt.ArtNamn || pt.art_namn || pt.namn || pt.ArtNamnSvenska;
-   //returnerar lat, lon, artNamn, datum och tid för varje observation
+      //returnerar lat, lon, artNamn, datum och tid för varje observation
       return {
          lat: typeof pt.lat === 'number' ? pt.lat : parseFloat(pt.Latitude || pt.latitude || pt.latitud),
          lon: typeof pt.lon === 'number' ? pt.lon : parseFloat(pt.Longitude || pt.longitude || pt.longitud),
