@@ -220,7 +220,7 @@ export function uppdateraKartaEfterFilter() {
 
    console.log(`🔍 Hittade ${allaArtCheckboxar.length} st checkboxar i DOM:en.`);
 
-   // 2. Bygg ordlistan
+   // 2. Bygg ordlistan 
    const artNamnOrdlista = {};
    allaArtCheckboxar.forEach(cb => {
       if (cb.id === "markeraAlla") return;
@@ -307,16 +307,16 @@ export function uppdateraKartaEfterFilter() {
             klockanMatch = (timme >= 18 && timme < 22);
          }
       }
-
+      // 3. Slutgiltig matchning: Alla filter måste stämma
       const skaBehallas = artMatch && lanMatch && kommunMatch && datumMatch && klockanMatch;
-
+      // Om vi ska behålla observationen, lägg till artnamnet i objektet (för att slippa göra en lookup senare)
       if (skaBehallas) {
          obs.artNamn = artNamnOrdlista[parseInt(nuvarandeArtId)] || "Okänt djur";
       }
 
       return skaBehallas;
    });
-
+   // Logga antalet matchningar och skicka vidare till kartmodulen
    console.log(`🎯 Matchningar hittade efter filter (inkl. tid): ${filtrerade.length}`);
    mapModul.taEmotOchRitaObservationer(filtrerade);
    if (typeof uppdateraGraf === "function") {
@@ -325,14 +325,14 @@ export function uppdateraKartaEfterFilter() {
 }
 
 let debounceTimer;
-
+// Debounce-funktion för att undvika att uppdatera kartan för ofta när användaren drar i slidern
 function debouncedUppdateraKarta() {
    clearTimeout(debounceTimer);
    debounceTimer = setTimeout(() => {
       uppdateraKartaEfterFilter();
    }, 200); // Väntar 200ms efter att användaren slutat dra i slidern
 }
-
+// Lyssna på input-eventet för slidern
 async function uppdateraDashboard(lanNamn) {
    // Kör alla tre samtidigt!
    const wikiData = await api.hamtaWikiSammanfattning(lanNamn);
@@ -343,7 +343,7 @@ async function uppdateraDashboard(lanNamn) {
 // Anropa väder funktion
 async function visaVaderForObservation(lat, lon) {
    const vader = await hamtaVader(lat, lon);
-
+   
    if (vader) {
       mapModul.skapaLoggar(visaVaderForObservation, 'ok', `Det är ${vader.temp}°C och ${vader.beskrivning} där! ${vader.emoji}`)
 
@@ -351,7 +351,7 @@ async function visaVaderForObservation(lat, lon) {
       // document.getElementById('vaderRuta').innerHTML = `${vader.emoji} ${vader.temp}°C (${vader.beskrivning})`;
    }
 }
-
+// Ladda projektstatus från databasen och rendera i UI
 async function loadProjektStatus() {
    const data = await database.refreshProjektStatus();
    ui.renderProjektStatusUI(data);
@@ -359,7 +359,7 @@ async function loadProjektStatus() {
 
 
 
-
+// Filtrerar observationer baserat på valda län och kommuner
 function filtreraData() {
    const valtLan = document.getElementById('lanFilter').value;
    const valtKommun = document.getElementById('kommunFilter').value;
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', async function () {
    if (navContainer) {
       navContainer.innerHTML = components.nav;
    }
-
+   // Rendera footer
    const footerContainer = document.getElementById("footer");
    if (footerContainer) {
       footerContainer.innerHTML = components.footer;
@@ -446,7 +446,7 @@ document.addEventListener('DOMContentLoaded', async function () {
          ui.closeModal();
       });
    }
-
+// Lyssna på spara-knappen i redigeringsmodalen
    const saveBtn = document.getElementById("saveEditBtn");
    if (saveBtn) {
       saveBtn.addEventListener("click", async () => {
@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', async function () {
    const addBtn = document.getElementById("addBtn");
    const closeAddBtn = document.getElementById("closeAddBtn");
    const saveAddBtn = document.getElementById("saveAddBtn");
-
+// Lyssna på knapparna i lägg-till-modal
    if (addBtn) {
       addBtn.addEventListener("click", () => { ui.openAddModal(); });
    }
@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', async function () {
          await loadProjektStatus();
       });
    }
-
+   // Lyssna på ta bort-knappen i redigeringsmodalen
    const deleteEditBtn = document.getElementById("deleteEditBtn");
    if (deleteEditBtn) {
       deleteEditBtn.addEventListener("click", async () => {
@@ -534,7 +534,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
 
-
+   // === LOGIK FÖR DROPDOWN TRIGER (DATE PRESET SELECT) ===
    if (datePresetSelect && dateMinInput && dateMaxInput) {
       datePresetSelect.addEventListener('change', function () {
          const idag = new Date();
@@ -648,12 +648,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
    }
 
-
+   // === SÄKRAD: Datumfilter körs BARA om elementen existerar!
    if (dateMinInput && dateMaxInput && lanFilter) {
       dateMinInput.addEventListener('change', () => { if (typeof uppdateraKartaEfterFilter === 'function') uppdateraKartaEfterFilter(); });
       dateMaxInput.addEventListener('change', () => { if (typeof uppdateraKartaEfterFilter === 'function') uppdateraKartaEfterFilter(); });
    }
-
+// === SÄKRAD: Snabbknappar körs BARA om elementen existerar!
    document.querySelectorAll('.preset-btn').forEach(btn => {
       btn.addEventListener('click', function () {
          if (!dateMinInput || !dateMaxInput) return;
@@ -935,7 +935,7 @@ document.addEventListener('DOMContentLoaded', async function () {
          }
 
          const lyckades = await database.insertObservation(artId, datum, lat, lon, kommunId, tid);
-
+//         console.log("Insert observation result:", lyckades);
          if (lyckades) {
             obsModal.classList.add("hidden");
             addObsForm.reset();
@@ -968,7 +968,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             artFörslagDiv.classList.add("hidden");
             return;
          }
-
+//         console.log("Söker efter art:", sökord);
          try {
             const backboneKey = "d7dddbf4-2cf0-4f39-9b2a-bb099caae36c";
             const url = `https://api.gbif.org/v1/species/search?q=${encodeURIComponent(sökord)}&datasetKey=${backboneKey}&limit=20`;
