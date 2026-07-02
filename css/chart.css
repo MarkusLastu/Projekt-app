@@ -17,3 +17,9 @@
     height: 200px; /* Perfekt fast höjd för att inte ta över hela skärmen */
     position: relative; /* Krävs för att Chart.js ska kunna skala responsivt */
 }
+body.dark-mode .chart-container {
+    background-color: #0000006c;
+    color: white;
+    border: 1px solid var(--border-color);
+
+}

@@ -1,4 +1,10 @@
 import { skapaLoggar } from "./ui.js";
+// Nollställ allt till ljust läge direkt när scriptet laddas
+document.body.classList.remove("dark-mode");
+document.documentElement.dataset.theme = "light";
+if (localStorage.getItem("theme")) {
+    localStorage.removeItem("theme");
+}
 //Navigation med länkar till de olika sidorna
 export const nav = `    
         <div><a href="index.html">Hem</a></div>
@@ -10,12 +16,22 @@ export const nav = `
 export const footer = `    
         <p>Marcus Berggren&trade; | Markus Lasumäki&trade; | Nicklas Larsson&trade; | 2026</p>      
 `;
+
 //Variabler för att byta mellan ljust och mörkt tema
 export const themeToggle = document.getElementById("themeToggle");
 
+// Om knappen finns på sidan, se till att texten matchar det ljusa startläget direkt
+if (themeToggle) {
+        themeToggle.textContent = "🌙 Mörkt tema";
+        themeToggle.classList.add("dark-btn");
+        themeToggle.classList.remove("light-btn");
+}
+
 export function updateThemeButton() {
-        const html = document.documentElement
-        if (document.body.classList.contains("dark-mode")) {
+        const html = document.documentElement;
+        const isDarkMode = document.body.classList.contains("dark-mode");
+
+        if (isDarkMode) {
                 themeToggle.textContent = "☀️ Ljust tema";
                 themeToggle.classList.add("light-btn");
                 themeToggle.classList.remove("dark-btn");
@@ -26,8 +42,28 @@ export function updateThemeButton() {
                 themeToggle.classList.remove("light-btn");
                 html.dataset.theme = "light";
         }
-}
 
+        // KOPPLINGEN TILL DIAGRAMMET
+        try {
+                const aktivGraf = Chart.getChart("trendsChart");
+                
+                if (aktivGraf) {
+                        const textFarg = isDarkMode ? "#ffffff" : "#333333";
+                        
+                        // 1. Uppdatera färgen på artnamnen (legenden)
+                        aktivGraf.options.plugins.legend.labels.color = textFarg;
+                        
+                        // 2. Uppdatera färgen på axlarna och siffrorna
+                        if (aktivGraf.options.scales.x?.ticks) aktivGraf.options.scales.x.ticks.color = textFarg;
+                        if (aktivGraf.options.scales.y?.ticks) aktivGraf.options.scales.y.ticks.color = textFarg;
+                        
+                        // 3. Rita omedelbart om diagrammet med de nya färgerna!
+                        aktivGraf.update();
+                }
+        } catch (error) {
+                console.log("Ingen aktiv trendsChart hittades på den här undersidan.");
+        }
+}
 
 //Lägger ut data från Wikipedia från Valt Djur på kartan
 export function renderWikiInfo(data) {

@@ -454,6 +454,7 @@ hr {
     height: 200px;
     /* Perfekt höjd för att inte ta över hela skärmen */
     position: relative;
+    color: snow;
 }
 
 /* TIMELINE / SLIDER */

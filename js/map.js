@@ -326,7 +326,7 @@ function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
       }
 
       const rectangle = L.rectangle(cellBounds, {
-         color: "#444444",
+         color: "#ffffff",
          weight: 1,
          fillColor: färg,
          fillOpacity: 0.75
@@ -402,7 +402,7 @@ function uppdateraKartLegendUI(synligaPunkter) {
    });
    // 4. Om inga observationer hittades, visa ett meddelande
    if (htmlInnehåll === "") {
-      htmlInnehåll = '<em style="color: #666; font-size: 13px;">Inga observationer i detta område.</em>';
+      htmlInnehåll = '<em style="color: #ffffff; font-size: 13px;">Inga observationer i detta område.</em>';
    }
 
    container.innerHTML = htmlInnehåll;
@@ -479,7 +479,7 @@ export function laggTillKlickFunktion() {
             // Uppdatera popup-innehållet medan markören dras
             marker.setPopupContent(`
                <div style="text-align: center; min-width: 120px;">
-                  <span style="font-size:12px; font-weight:bold; color:#e78300;">📍 ${dragLat}, ${dragLon}</span>
+                  <span style="font-size:12px; font-weight:bold; color: #ce4cb8;">📍 ${dragLat}, ${dragLon}</span>
                </div>
             `).openPopup();
          });

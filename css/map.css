@@ -33,7 +33,13 @@
     gap: 15px;
     align-items: center;
     margin-top: 5px;
+    border-radius: var(--border-radius-sm);
+    padding:var(--spacing-xs);
 } 
+
+ body.dark-mode #live-counter-container {
+   background-color: rgba(158, 158, 158, 0.541);
+ }
 
 /* ===== LEAFLET KONTROLLER (Mörkt tema) ===== */
 body.dark-mode .leaflet-control-zoom a {
