@@ -29,7 +29,7 @@
             </div>
         </header>
 
-        <nav id="nav"></nav>
+        <nav id="nav"></nav> 
 
         <main class="main-layout">
 
@@ -101,11 +101,6 @@
                             <input type="date" id="dateMax" ondblclick="this.showPicker()">
                         </div>
                     </div>
-
-
-
-
-
                 </div>
 
 
@@ -129,11 +124,6 @@
                         style="display: flex; gap: 15px; align-items: center; margin-top: 5px;"></div>
                 </div>
 
-
-
-
-
-
                 <!-- <div class="timeline-container">
 
                     <div class="timeline-header">
@@ -152,19 +142,20 @@
                     </div>
 
                 </div> -->
+            </section>
+            <section class="chart-container">
 
-                <div class="chart-container">
-                    <canvas id="trendsChart"></canvas>
-                </div>
+                <canvas id="trendsChart"></canvas>
+
             </section>
 
-            <aside class="wiki-container">
+            <section class="wiki-container">
 
                 <h3 class="wikiHeader">Detaljfakta</h3>
                 <label id="wikiLabel">Välj en observation:</label>
                 <p id="wikiData">Klicka på en kartan för detaljerad info</p>
 
-            </aside>
+            </section>
 
         </main>
 
@@ -187,9 +178,6 @@
                 <input type="hidden" id="valtArtNamn">
                 <input type="hidden" id="valtVetenskapligtNamn">
             </div>
-
-
-
 
             <div class="form-group">
                 <label for="obsDatum">Datum</label>
