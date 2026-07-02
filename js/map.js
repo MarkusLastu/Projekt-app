@@ -86,8 +86,8 @@ const baverIcon = L.icon({
    popupAnchor: [0, -36]
 });
 
-const bjorIcon = L.icon({
-   iconUrl: 'images/svg/bjor.svg',
+const bjornIcon = L.icon({
+   iconUrl: 'images/svg/bjorn.svg',
    iconSize: [36, 36],
    iconAnchor: [18, 36],
    popupAnchor: [0, -36]
@@ -116,15 +116,16 @@ export function skapaKarta() {
    );
    markerLayer = L.layerGroup().addTo(map);
 
-   L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+   /* L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
       noWrap: true,
       attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
-   }).addTo(map);
-
-
-   /* L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
    }).addTo(map); */
+
+
+   // Gamla kartan
+   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+   }).addTo(map);
 
    L.control.scale({ position: 'bottomright' }).addTo(map);
 
@@ -235,7 +236,7 @@ export function uppdateraVynBaseratPaOmrade() {
                else if (pt.artNamn?.includes('Grävling')) icon = gravlingIcon;
                else if (pt.artNamn?.includes('Räv')) icon = ravIcon;
                else if (pt.artNamn?.includes('Vildsvin')) icon = vildsvinIcon;
-               else if (pt.artNamn?.includes('Björn')) icon = bjorIcon;
+               else if (pt.artNamn?.includes('Björn')) icon = bjornIcon;
                else if (pt.artNamn?.includes('Bäver')) icon = baverIcon;
                else if (pt.artNamn?.includes('Kungsörn')) icon = kungsornIcon;
 
@@ -288,139 +289,6 @@ export function uppdateraVynBaseratPaOmrade() {
    }, 25); // 25ms är precis lagom för att ge webbläsaren en chans att uppdatera gränssnittet
 }
 
-// 🔥 UPPDATERAD LOGIK: Visar laddaren under tiden kartan renderar rutor/markörer
-/* export function uppdateraVynBaseratPaOmrade() {
-   if (!map) return;
-
-   const loader = document.getElementById("map-loader");
-
-   // 1. Visa laddaren direkt så webbläsaren vet att den ska upp på skärmen
-   if (loader) {
-      loader.classList.remove("hidden");
-   }
-
-   // 2. Lägg resten av logiken i en kort timeout. 
-   // Detta låter webbläsaren "andas" och rita ut laddningsrutan innan tråden blockeras av loopen.
-   setTimeout(() => {
-      try {
-         map.closePopup();
-
-         nuvarandeLaddningsId++;
-         const mittLaddningsId = nuvarandeLaddningsId;
-
-         const bounds = map.getBounds();
-         const zoom = map.getZoom();
-
-         const synligaPunkter = currentFilteredPoints.filter(pt => {
-            if (!pt || typeof pt.lat !== 'number' || typeof pt.lon !== 'number') return false;
-            return bounds.contains(L.latLng(pt.lat, pt.lon));
-         });
-
-         // 1. Rensa ALLTID lagren först, oavsett om det finns punkter eller inte!
-         if (markerLayer) { markerLayer.clearLayers(); }
-
-         if (gridLayer) {
-            gridLayer.clearLayers();
-         } else {
-            gridLayer = L.layerGroup().addTo(map);
-         }
-
-         // 2. Uppdatera legenden DIREKT med de punkter som finns (eller tom lista)
-         uppdateraKartLegendUI(synligaPunkter);
-
-         // 3. Avbryt sedan renderingen om det var tomt – men nu är kartan och UI synkade!
-         if (synligaPunkter.length === 0) {
-            return;
-         }
-
-         // 🔥 ZOOM-TRÖSKEL
-         if (zoom <= 10) {
-            let gridSize = 0.4;
-            if (zoom <= 3) gridSize = 4.0;
-            else if (zoom === 4) gridSize = 2.0;
-            else if (zoom === 5) gridSize = 0.8;
-            else if (zoom === 6) gridSize = 0.4;
-            else if (zoom === 7) gridSize = 0.2;
-            else if (zoom === 8) gridSize = 0.1;
-            else if (zoom === 9) gridSize = 0.05;
-            else if (zoom === 10) gridSize = 0.02;
-
-            const gridCounter = {};
-            synligaPunkter.forEach(pt => {
-               const gridLat = Math.floor(pt.lat / gridSize) * gridSize;
-               const gridLon = Math.floor(pt.lon / gridSize) * gridSize;
-               const key = `${gridLat.toFixed(4)},${gridLon.toFixed(4)}`;
-               if (!gridCounter[key]) gridCounter[key] = 0;
-               gridCounter[key]++;
-            });
-
-            renderGridmap(gridCounter, gridSize, mittLaddningsId);
-
-         } else {
-            // 🔥 MARKÖRER
-            synligaPunkter.forEach(pt => {
-               if (mittLaddningsId !== nuvarandeLaddningsId) return;
-
-               let icon = pawIcon; // Standardikon
-               if (pt.artNamn?.includes('Varg')) icon = vargIcon;
-               else if (pt.artNamn?.includes('Älg')) icon = algIcon;
-               else if (pt.artNamn?.includes('Rådjur')) icon = radjurIcon;
-               else if (pt.artNamn?.includes('Gråsäl')) icon = grasalIcon;
-               else if (pt.artNamn?.includes('Grävling')) icon = gravlingIcon;
-               else if (pt.artNamn?.includes('Räv')) icon = ravIcon;
-               else if (pt.artNamn?.includes('Vildsvin')) icon = vildsvinIcon;
-               else if (pt.artNamn?.includes('Björn')) icon = bjorIcon;
-               else if (pt.artNamn?.includes('Bäver')) icon = baverIcon;
-               else if (pt.artNamn?.includes('Kungsörn')) icon = kungsornIcon;
-
-               const marker = L.marker([pt.lat, pt.lon], { icon }).addTo(markerLayer);
-
-               let formateratDatum = "Okänt datum";
-               if (pt.datum) {
-                  const testDate = new Date(pt.datum);
-                  if (!isNaN(testDate.getTime())) {
-                     formateratDatum = testDate.toLocaleDateString('sv-SE');
-                  }
-               }
-
-               const visningsTid = pt.tid ? ` 🕒 ${pt.tid.substring(0, 5)}` : "";
-
-               marker.bindPopup(`
-                  <strong>${pt.artNamn || "Okänt djur"}</strong><br>
-                  📅 ${formateratDatum}<br>
-                  ${visningsTid}<br>
-                  <em>⏳ Laddar väder och info...</em>
-               `);
-
-               marker.on('popupopen', async function () {
-                  if (marker._loaded) return;
-                  marker._loaded = true;
-
-                  const vader = await hamtaVader(pt.lat, pt.lon, pt.datum);
-                  const wiki = await hamtaWikiSammanfattning(pt.artNamn);
-
-                  if (marker.getPopup().isOpen()) {
-                     marker.setPopupContent(`
-                        <strong>${pt.artNamn || "Okänt djur"}</strong><br>
-                        📅 ${formateratDatum}<br>
-                        ${visningsTid}<br>
-                        <hr>
-                        ${vader ? `${vader.emoji} ${vader.temp}°C` : "❌ Väder saknas"}<br>
-                     `);
-                  }
-               });
-            });
-         }
-      } catch (error) {
-         console.error("Layout- eller datatypfel vid uppdatering av kartvyn:", error);
-      } finally {
-         // 3. Dölj laddaren FÖRST när hela loopen och renderingen är helt färdigberäknad
-         if (loader) {
-            loader.classList.add("hidden");
-         }
-      }
-   }, 25); // 25ms är precis lagom för att ge webbläsaren en chans att uppdatera gränssnittet
-} */
 
 function renderGridmap(gridCounter, gridSize, mittLaddningsId) {
    if (mittLaddningsId !== nuvarandeLaddningsId) return;
@@ -518,62 +386,6 @@ function uppdateraKartLegendUI(synligaPunkter) {
    container.innerHTML = htmlInnehåll;
 }
 
-
-
-
-
-/* function uppdateraKartLegendUI(synligaPunkter) {
-   const container = document.getElementById("live-counter-container");
-   if (!container) return;
-
-   const räknare = { Varg: 0, Älg: 0, Rådjur: 0, Björn: 0, Gråsäl: 0, Grävling: 0, Kungsörn: 0, Räv: 0, Vildsvin: 0, Bäver: 0 };
-
-   synligaPunkter.forEach(pt => {
-      if (pt.artNamn?.includes('Varg')) räknare.Varg++;
-      else if (pt.artNamn?.includes('Älg')) räknare.Älg++;
-      else if (pt.artNamn?.includes('Rådjur')) räknare.Rådjur++;
-      else if (pt.artNamn?.includes('Björn')) räknare.Björn++;
-      else if (pt.artNamn?.includes('Gråsäl')) räknare.Gråsäl++;
-      else if (pt.artNamn?.includes('Grävling')) räknare.Grävling++;
-      else if (pt.artNamn?.includes('Kungsörn')) räknare.Kungsörn++;
-      else if (pt.artNamn?.includes('Räv')) räknare.Räv++;
-      else if (pt.artNamn?.includes('Vildsvin')) räknare.Vildsvin++;
-      else if (pt.artNamn?.includes('Bäver')) räknare.Bäver++;
-   });
-
-   const ikonSökvägar = {
-      Varg: 'images/svg/varg.svg',
-      Älg: 'images/svg/alg.svg',
-      Rådjur: 'images/svg/radjur.svg',
-      Björn: 'images/svg/bjorn.svg',
-      Gråsäl: 'images/svg/grasal.svg',
-      Grävling: 'images/svg/gravling.svg',
-      Kungsörn: 'images/svg/kungsorn.svg',
-      Räv: 'images/svg/rav.svg',
-      Vildsvin: 'images/svg/vildsvin.svg',
-      Bäver: 'images/svg/baver.svg'
-   };
-
-   let htmlInnehåll = "";
-
-   Object.keys(räknare).forEach(art => {
-      const antal = räknare[art];
-      if (antal > 0) {
-         htmlInnehåll += `
-            <div style="display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: bold;">
-               <img src="${ikonSökvägar[art]}" alt="${art}" style="width: 24px; height: 24px;" />
-               <span>${antal} st</span>
-            </div>
-         `;
-      }
-   });
-
-   if (htmlInnehåll === "") {
-      htmlInnehåll = '<em style="color: #666; font-size: 13px;">Inga observationer i detta område.</em>';
-   }
-
-   container.innerHTML = htmlInnehåll;
-} */
 
 async function identifieraOchValjKommun(lat, lon) {
    const obsKommunSelect = document.getElementById("obsKommun");
@@ -699,7 +511,7 @@ export function addObservationMarker(lat, lon, artNamn, datum) {
    else if (artNamn.includes('Vildsvin')) icon = vildsvinIcon;
    else if (artNamn.includes('Rådjur')) icon = radjurIcon;
    else if (artNamn.includes('Bäver')) icon = baverIcon;
-   else if (artNamn.includes('Björn')) icon = bjorIcon;
+   else if (artNamn.includes('Björn')) icon = bjornIcon;
    else if (artNamn.includes('Kungsörn')) icon = kungsornIcon;
 
    const marker = L.marker([lat, lon], { icon });
@@ -765,27 +577,6 @@ export function clearObservationMarkers() {
    console.log("🧹 Kartans lager har rensats och förberetts för ny data!");
 }
 
-
-
-// === TAR BORT MARKERING PÅ KARTAN ===
-
-/* export function clearObservationMarkers() {
-   if (markerClusterGroup) {
-      markerClusterGroup.clearLayers();
-   }
-
-   if (heatLayer) {
-      map.removeLayer(heatLayer);
-      heatLayer = null;
-   }
-
-   allHeatPoints = [];
-
-   if (marker) {
-      map.removeLayer(marker);
-      marker = null;
-   }
-} */
 
 let useHeatMap = false
 // === HEATMAP ===

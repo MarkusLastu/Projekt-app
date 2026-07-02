@@ -57,108 +57,106 @@ function hamtaIndexFranDatum(datumStr) {
 }
 
 // Uppdaterar linjegrafen (visar alltid hela 2016-2026 baserat på valda arter)
-function uppdateraGraf(valdaArtIds = [], minVal = 0, maxVal = 20) {
-
-   // 1. Berätta för statussidan direkt att grafmodulen är laddad och redo under huven!
-   const grafStatus = document.getElementById("uppdateraGraf");
-   if (grafStatus) {
-      ui.skapaLoggar('uppdateraGraf', 'ok', "Grafmodulen laddad (hoppades över på statussidan)", grafStatus);
-   }
-
-   // 2. Leta efter själva ritytan (canvasen) som finns på index.html
+export function uppdateraGraf(valdaArtIds = [], filtreradData = []) {
    const canvas = document.getElementById('trendsChart');
-   if (!canvas) {
-      // Om canvas saknas (t.ex. på statusar.html), stanna här i lugn och ro!
-      return;
-   }
+   if (!canvas) return;
 
    const ctx = canvas.getContext('2d');
-   const tidsEtiketter = [];
-   const perioderIndex = [];
 
-   // Fyll på tidsaxeln
-   for (let i = minVal; i <= maxVal; i++) {
-      perioderIndex.push(i);
-      tidsEtiketter.push(indexTillText(i));
-   }
+   // 1. Hämta de faktiska datumen från dina filter i sidebaren
+   const minInput = document.getElementById('dateMin')?.value;
+   const maxInput = document.getElementById('dateMax')?.value;
 
-   const artInställningar = {
-      1: { label: "Varg", färg: "#88919ce0", ikon: vargSvg },
-      2: { label: "Älg", färg: "#884303f5", ikon: algSvg },
-      3: { label: "Rådjur", färg: "#e78300", ikon: radjurSvg }
+   // Fallback: Om inget datum är valt, sätt standard (t.ex. senaste 7 dagarna eller fasta datum)
+   const startDatumStr = minInput || "2026-01-01"; 
+   const slutDatumStr = maxInput || new Date().toISOString().split('T')[0];
+
+   // 2. Generera X-axeln: En lista med alla datum mellan start och slut
+   const tidsEtiketter = genereraDatumIntervall(startDatumStr, slutDatumStr);
+
+   // 3. Matcha färger dynamiskt (så inte alla linjer blir blåa)
+   const artFarger = {
+      1: { namn: "Varg", färg: "#88919c" },
+      2: { namn: "Älg", färg: "#884303" },
+      3: { namn: "Rådjur", färg: "#e78300" }
    };
 
+   // 4. Skapa datasets baserat på tidsaxeln
    const nyaDatasets = valdaArtIds.map(artId => {
-      const info = artInställningar[artId] || { label: `Art ${artId}`, färg: "#666" };
+      const artInfo = artFarger[artId] || { namn: `Art ${artId}`, färg: "#666666" };
+      
+      // Filtrera fram observationer för just denna art
+      const artData = filtreradData.filter(obs => {
+         const nuvarandeArtId = typeof obs.Art_id !== 'undefined' ? obs.Art_id : obs.art_id;
+         return parseInt(nuvarandeArtId) === artId;
+      });
 
-      const punkterData = perioderIndex.map(pIndex => {
-         return database.allaObservationer.filter(obs => {
-            if (obs.Art_id !== artId) return false;
-            return hamtaIndexFranDatum(obs.Datum) === pIndex;
+      // Räkna hur många observationer som gjordes på VARJE enskilt datum i listan
+      const punkterData = tidsEtiketter.map(datum => {
+         return artData.filter(obs => {
+            const obsDatum = obs.Datum || obs.datum;
+            return obsDatum === datum;
          }).length;
       });
 
-      // Räkna ihop totalsumman för just denna art i det valda tidsintervallet
-      const totaltAntal = punkterData.reduce((summa, antal) => summa + antal, 0);
+      const totaltAntal = artData.length;
 
       return {
-         // Lägger till totalsumman direkt i namnet (label)
-         label: `${info.label} (${totaltAntal} st)`,
-         data: punkterData,
-         borderColor: info.färg,
-         backgroundColor: info.färg + "22",
-         tension: 0.3,
+         label: `${artInfo.namn} (${totaltAntal} st)`,
+         data: punkterData, // Array med antal per datum, t.ex. [0, 2, 1, 0, 5...]
+         backgroundColor: artInfo.färg + "22", // Genomskinlig fyllning under linjen
+         borderColor: artInfo.färg,
          borderWidth: 3,
-         legendIkon: info.ikon
+         tension: 0.3, // 🌟 Detta gör linjen rundkantig och mjuk!
+         fill: true
       };
    });
 
-   if (!trendsChart) {
-      trendsChart = new Chart(ctx, {
-         type: 'line',
-         data: { labels: tidsEtiketter, datasets: nyaDatasets },
-
-         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-               legend: {
-                  labels: {
-                     usePointStyle: true,
-                     boxWidth: 20,
-                     boxHeight: 20,
-                     font: { size: 14 },
-
-                     // Tvingar bara LEGENDEN att använda sig av SVG-ikonerna
-                     generateLabels: function (chart) {
-                        const datasets = chart.data.datasets;
-                        return datasets.map((dataset, i) => ({
-                           text: dataset.label,
-                           fillStyle: dataset.borderColor,
-                           strokeStyle: dataset.borderColor,
-                           lineWidth: dataset.borderWidth,
-                           hidden: !chart.isDatasetVisible(i),
-                           datasetIndex: i,
-                           pointStyle: dataset.legendIkon
-                        }));
-                     }
-                  }
-               }
-            },
-
-            scales: {
-               x: { grid: { display: false } },
-               y: { beginAtZero: true, ticks: { precision: 0 } }
-            }
-         }
-      });
-
-   } else {
+   // 5. Uppdatera eller rita grafen
+   if (trendsChart) {
       trendsChart.data.labels = tidsEtiketter;
       trendsChart.data.datasets = nyaDatasets;
       trendsChart.update();
+   } else {
+      trendsChart = new Chart(ctx, {
+         type: 'line',
+         data: {
+            labels: tidsEtiketter, // X-axeln får datumen
+            datasets: nyaDatasets
+         },
+         options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+               x: {
+                  grid: { display: false },
+                  ticks: { maxTicksLimit: 10 } // Hindrar att X-axeln blir helt klottrad om intervallet är långt
+               },
+               y: {
+                  beginAtZero: true,
+                  ticks: { precision: 0 }
+               }
+            }
+         }
+      });
    }
+}
+
+// 🛠️ Hjälpfunktion för att bygga listan med datum (X-axeln)
+function genereraDatumIntervall(startStr, slutStr) {
+   const datumLista = [];
+   let nuvarande = new Date(startStr);
+   const slut = new Date(slutStr);
+
+   // Säkerhetsspärr ifall datumen är helt galna
+   let maxLoop = 0;
+
+   while (nuvarande <= slut && maxLoop < 366) {
+      datumLista.push(nuvarande.toISOString().split('T')[0]);
+      nuvarande.setDate(nuvarande.getDate() + 1); // Gå till nästa dag
+      maxLoop++;
+   }
+   return datumLista;
 }
 
 export function uppdateraKartaEfterFilter() {
@@ -238,7 +236,7 @@ export function uppdateraKartaEfterFilter() {
       const filterMax = document.getElementById('dateMax')?.value;
       const datumMatch = (!filterMin || faktisktDatum >= filterMin) && (!filterMax || faktisktDatum <= filterMax);
 
-      // 2. Klockslagfilter (🌟 NYTT)
+      // 2. Klockslagfilter
       let klockanMatch = true;
       if (valtTidsdygn !== "all" && faktisktTid) {
          // Vi plockar ut bara timmen (t.ex. 23 från "23:15") för att göra enklare jämförelser
@@ -267,6 +265,9 @@ export function uppdateraKartaEfterFilter() {
 
    console.log(`🎯 Matchningar hittade efter filter (inkl. tid): ${filtrerade.length}`);
    mapModul.taEmotOchRitaObservationer(filtrerade);
+   if (typeof uppdateraGraf === "function") {
+      uppdateraGraf(valdaArtIds, filtrerade);
+   }
 }
 
 let debounceTimer;
